@@ -1,0 +1,10 @@
+/* HTML page style*/
+body 
+{
+    background-color: rgb(0, 0, 0);
+}
+/* WebGL canvas style*/
+canvas 
+{
+    border: 1px solid rgb(0, 0, 0);
+} 

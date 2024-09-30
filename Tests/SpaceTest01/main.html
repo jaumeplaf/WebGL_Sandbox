@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+  
+    <meta charset="utf-8">
+    
+    <title> SpaceTest01 </title>
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- Shaders -->
+    <script id="myVertexShader" 
+          type="x-shader/x-vertex">#version 300 es
+
+      // Vertex shader
+
+      in vec3 VertexPosition;
+      in float VertexSize;
+      
+      void main()  {
+
+        gl_Position = vec4(VertexPosition, 1.0);
+        gl_PointSize = VertexSize;
+
+      }
+
+    </script>
+
+    <script id="myFragmentShader" 
+          type="x-shader/x-fragment">#version 300 es
+    
+      // Fragment shader
+
+      precision mediump float;
+      out vec4 fragmentColor;
+      
+      void main() {
+
+        //Star color
+        fragmentColor = vec4(1.0,1.0,1.0,1.0);
+
+      }
+
+    </script>
+  </head>
+
+  <body>
+  
+    <canvas id="myCanvas" width="1900" height="1050">
+      El Navegador no soporta HTML5
+    </canvas>
+    
+    <script src = "script.js"></script>
+    
+  </body>
+  
+</html>

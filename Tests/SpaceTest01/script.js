@@ -1,9 +1,10 @@
 var gl = null;
 var program;
 
-var pointNumber = 1000;
+var pointNumber = 10000;
 var minSizeStar = 0;
-var maxSizeStar = 4;
+var maxSizeStar = 3;
+
 var rPoints = randPoints(pointNumber, minSizeStar, maxSizeStar);
 
 function getWebGLContext() {

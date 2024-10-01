@@ -1,7 +1,7 @@
 var gl = null;
 var program;
 
-var pointNumber = 10000;
+var pointNumber = 2000;
 var minSizeStar = 0;
 var maxSizeStar = 3;
 

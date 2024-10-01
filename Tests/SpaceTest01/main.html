@@ -14,14 +14,17 @@
 
       // Vertex shader
 
+      precision mediump float;
       in vec3 VertexPosition;
       in float VertexSize;
+      out vec3 fragVertexPosition;
       
       void main()  {
 
         gl_Position = vec4(VertexPosition, 1.0);
         gl_PointSize = VertexSize;
-
+        fragVertexPosition = VertexPosition;
+        
       }
 
     </script>
@@ -33,11 +36,45 @@
 
       precision mediump float;
       out vec4 fragmentColor;
+      in vec3 fragVertexPosition;
+
+      //Control parameters
+      float colorDesaturate = 0.7;
+      float colorIntensity = 0.4;
+
+      //Declare random float (0-1)
+      float random(float seed)
+      {
+        return fract(sin(seed) * 43758.5453);
+      }
       
+      //Declare saturate to simplify
+      float saturate(float value){
+        return clamp(value, 0.0, 1.0);
+      }
+
       void main() {
 
         //Star color
-        fragmentColor = vec4(1.0,1.0,1.0,1.0);
+
+        //Hue
+        float randomValueX = random(fragVertexPosition.x);
+        float randomValueY = random(fragVertexPosition.y);
+        float randomValueZ = random(fragVertexPosition.z);
+
+        //Random mask
+        float randomValue = random(fragVertexPosition.x + fragVertexPosition.y + fragVertexPosition.z);
+        float applyColor = saturate(step(0.5, randomValue));
+        //float applyColor = 1.0;
+
+        //Color mix
+        float cX = saturate(colorIntensity * applyColor + randomValueX + colorDesaturate);
+        float cY = saturate(colorIntensity * applyColor + randomValueY + colorDesaturate);
+        float cZ = saturate(colorIntensity * applyColor + randomValueZ + colorDesaturate);
+
+        //Out
+        fragmentColor = vec4(cX, cY, cZ, 1.0);
+        //fragmentColor = vec4(1.0, 1.0, 1.0, 1.0);
 
       }
 

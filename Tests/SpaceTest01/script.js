@@ -1,7 +1,12 @@
 var gl = null;
 var program;
 
-var pointNumber = 10000;
+//Inputs
+
+var sliderPointNum = document.getElementById("PointNumber");
+
+//var pointNumber = 10000;
+var pointNumber = sliderPointNum.value;
 var minSizeStar = 0;
 var maxSizeStar = 3;
 
@@ -105,6 +110,13 @@ function initWebGL() {
 
 }
 
+function updateCanvas() {
+  rPoints = randPoints(pointNumber, minSizeStar, maxSizeStar);
+  // Reinitialize buffers with updated points
+  initBuffers(rPoints);
+  drawScene(); // Redraw the scene with the new data
+}
+
 //Utilities
 function remapRange(value, low1, high1, low2, high2) {
   return low2 + (high2 - low2) * (value - low1) / (high1 - low1);
@@ -132,5 +144,13 @@ function randPoints(pNum, maxSize, minSize)
   return points;
 }
 
-
+//Execute
 initWebGL();
+
+// Update the current slider value (each time you drag the slider handle)
+sliderPointNum.oninput = function() {
+  pointNumber = this.value;
+  console.log(pointNumber);
+  updateCanvas();
+} 
+

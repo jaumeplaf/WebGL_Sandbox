@@ -8,3 +8,81 @@ canvas
 {
     border: 1px solid rgb(0, 0, 0);
 } 
+
+/* Slider bars style */
+.slidecontainer 
+{
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    width: 400px; /* Set the total width for your container */
+    margin: 0;
+}
+  
+  /* The slider itself */
+
+.slider 
+{
+    -webkit-appearance: none;  /* Override default CSS styles */
+    appearance: none;
+    width: 100%; /* Full-width */
+    height: 5px; /* Specified height */
+    margin-left: 10px;
+    background: #3f3f3f; /* Grey background */
+    outline: none; /* Remove outline */
+    opacity: 0.7; /* Set transparency (for mouse-over effects on hover) */
+    -webkit-transition: .2s; /* 0.2 seconds transition on hover */
+    transition: opacity .2s;
+}
+
+/* Mouse-over effects */
+.slider:hover 
+{
+    opacity: 1; /* Fully shown on mouse-over */
+}
+
+/* The slider handle (use -webkit- (Chrome, Opera, Safari, Edge) and -moz- (Firefox) to override default look) */
+.slider::-webkit-slider-thumb 
+{
+    -webkit-appearance: none; /* Override default look */
+    appearance: none;
+    width: 10px; /* Set a specific slider handle width */
+    height: 10px; /* Slider handle height */
+    background: #fcff53; /* Green background */
+    cursor: pointer; /* Cursor on hover */
+}
+
+.slider::-moz-range-thumb 
+{
+    width: 10px; /* Set a specific slider handle width */
+    height: 10px; /* Slider handle height */
+    background: #fcff53; /* Green background */
+    cursor: pointer; /* Cursor on hover */
+}
+
+/* Tooltip on hover */
+.slider:hover::after {
+    content: attr(value); /* Display the current value on hover */
+    position: absolute;
+    top: -30px;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: #000;
+    color: #fff;
+    padding: 5px;
+    border-radius: 5px;
+    font-size: 12px;
+    white-space: nowrap;
+  }
+  
+  .value-display {
+    margin-left: 15px;
+    font-family: 'Lucida Sans', 'Lucida Sans Regular', 'Lucida Grande', 'Lucida Sans Unicode', Geneva, Verdana, sans-serif;
+    font-size: 16px;
+    font-weight: bold;
+    color: #777777;
+  }
+span{
+    margin-top: 0;
+    margin-bottom: 0;
+}

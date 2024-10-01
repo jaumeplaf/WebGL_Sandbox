@@ -74,7 +74,6 @@
 
         //Out
         fragmentColor = vec4(cX, cY, cZ, 1.0);
-        //fragmentColor = vec4(1.0, 1.0, 1.0, 1.0);
 
       }
 
@@ -82,8 +81,14 @@
   </head>
 
   <body>
-  
-    <canvas id="myCanvas" width="1900" height="1050">
+    <div class="slidecontainer">
+      <input type="range" min="10" max="6000" value="2000" class="slider" id="PointNumber">
+      <span class="value-display" id="PointNumberDisplay">2000</span>
+      <input type="range" min="2" max="10" value="3" class="slider" id="MaxSizeStar">
+      <span class="value-display" id="MaxSizeDisplay">3</span>
+
+    </div>
+    <canvas id="myCanvas" width="1910" height="1030">
       El Navegador no soporta HTML5
     </canvas>
     

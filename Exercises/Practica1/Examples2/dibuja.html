@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+  
+    <meta charset="utf-8">
+    
+    <title> Dibuja </title>
+    
+    <style type="text/css">
+      canvas {border: 1px solid black;}
+    </style>
+
+    <script id="myVertexShader" 
+          type="x-shader/x-vertex">#version 300 es
+      
+      in vec3 VertexPosition;
+      
+      void main()  {
+
+        gl_Position = vec4 (VertexPosition, 1.0);
+
+      }
+    
+    </script>
+    
+    <script id="myFragmentShader" 
+          type="x-shader/x-fragment">#version 300 es
+      
+      precision mediump float;
+      out vec4 fragmentColor;
+      
+      void main() {
+
+        fragmentColor = vec4(0.0,1.0,0.0,1.0);
+
+      }
+    
+    </script>
+    
+  </head>
+
+  <body>
+  
+    <canvas id="myCanvas" width="600" height="600">
+      El Navegador no soporta HTML5
+    </canvas>
+
+    <script src = "dibuja.js"></script>
+
+  </body>
+  
+</html>

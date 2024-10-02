@@ -1,9 +1,17 @@
 var gl = null;
 var program;
 
-var pointNumber = 2000;
+//Inputs
+
+let sliderPointNum = document.getElementById("PointNumber");
+let sliderMaxSize = document.getElementById("MaxSizeStar");
+let pointNumDisp = document.getElementById("PointNumberDisplay");
+let maxSizeDisp = document.getElementById("MaxSizeDisplay");
+
+//var pointNumber = 10000;
+var pointNumber = parseFloat(sliderPointNum.value);
 var minSizeStar = 0;
-var maxSizeStar = 3;
+var maxSizeStar = parseFloat(sliderMaxSize.value);
 
 var rPoints = randPoints(pointNumber, minSizeStar, maxSizeStar);
 
@@ -103,6 +111,18 @@ function initWebGL() {
   
   requestAnimationFrame(drawScene);
 
+  pointNumDisp.textContent = "Stars number: " + sliderPointNum.value;
+  maxSizeDisp.textContent = "Max star size: " + sliderMaxSize.value;
+
+}
+
+function updateCanvas() {
+  rPoints = randPoints(pointNumber, minSizeStar, maxSizeStar);
+  // Reinitialize buffers with updated points
+  initBuffers(rPoints);
+  drawScene(); // Redraw the scene with the new data
+  pointNumDisp.textContent = "Stars number: " + sliderPointNum.value;
+  maxSizeDisp.textContent = "Max star size: " + sliderMaxSize.value;
 }
 
 //Utilities
@@ -132,5 +152,18 @@ function randPoints(pNum, maxSize, minSize)
   return points;
 }
 
-
+//Execute
 initWebGL();
+
+// Update the current slider value (each time you drag the slider handle)
+sliderPointNum.oninput = function() {
+  pointNumber = parseFloat(this.value);
+  console.log(pointNumber);
+  updateCanvas();
+} 
+sliderMaxSize.oninput = function() {
+  maxSizeStar = parseFloat(this.value);
+  console.log(maxSizeStar);
+  updateCanvas();
+} 
+

@@ -1,3 +1,7 @@
+console.log("Loaded Basic Utilities library");
+
+const pi = Math.PI;
+
 function clamp(value, min, max) 
 {
     return Math.min(Math.max(value, min), max);
@@ -9,15 +13,15 @@ function remapRange(value, low1, high1, low2, high2) {
 
 function randPoints(pNum, maxSize, minSize)
 {
-  //Spawn pNum points of set size range randomly in (-1,-1,-1)->(1,1,1) space
+  //Spawn pNum points randomly in (-1,-1,-1)->(1,1,1) space
   //This function  depends on the remapRange() function
 
-  var points = {
+  let points = {
     "vertices" : [],
     "sizes" : []
   }
 
-  for(var i = 0; i < pNum; i++)
+  for(let i = 0; i < pNum; i++)
   {
     let randX = remapRange(Math.random(), 0, 1, -1, 1);
     let randY = remapRange(Math.random(), 0, 1, -1, 1);
@@ -31,3 +35,4 @@ function randPoints(pNum, maxSize, minSize)
   console.log(points);
   return points;
 }
+

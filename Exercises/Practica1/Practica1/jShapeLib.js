@@ -1,4 +1,6 @@
-var exampleTriangle = {
+console.log("Loaded Shapes library");
+
+const exampleTriangle = {
 
     "vertices" : [-0.7, -0.7, 0.0,
                    0.7, -0.7, 0.0,
@@ -18,16 +20,16 @@ function polyCircle(segments, radius, center, fill)
     else if(center.length == 0) center.push(0, 0, 0);
     
     segments = clamp(segments, 2, 4096);
-    var polyPoints = {
+    let polyPoints = {
         "vertices" : [center[0], center[1], center[2]],
         "indices" : [0]
     }
-    var angleStep = 2 * pi / segments
-
+    let angleStep = 2 * pi / segments
+    let ratio = getCanvasRatio(myCanvas);
     for(i = 0; i<segments; i++)
     {
         let angle = i * angleStep;
-        let x = center[0] + radius * Math.cos(angle);
+        let x = center[0] + radius * Math.cos(angle) * ratio;
         let y = center[1] + radius * Math.sin(angle);
         polyPoints.indices.push(i+1);
         polyPoints.vertices.push(x, y, 0);
@@ -36,7 +38,7 @@ function polyCircle(segments, radius, center, fill)
     if(fill)
     {
         let angle = 0 * angleStep;
-        let x = center[0] + radius * Math.cos(angle);
+        let x = center[0] + radius * Math.cos(angle) * ratio;
         let y = center[1] + radius * Math.sin(angle);
         polyPoints.indices.push(segments+1);
         polyPoints.vertices.push(x, y, 0);
@@ -56,16 +58,16 @@ function polyStar(sides, r1, r2, center)
 
     
     sides = clamp(sides, 4, 4096);
-    var segments = sides * 2;
-    var starPoints = {
+    let segments = sides * 2;
+    let starPoints = {
         "vertices" : [],
         "indices" : []
     }
 
     //Generates origin + outer ring points
-    var outerCircle = polyCircle(segments, r2, center, false);
+    let outerCircle = polyCircle(segments, r2, center, false);
     //Generates inner ring points
-    var innerCircle = polyCircle(segments, r1, center, false);
+    let innerCircle = polyCircle(segments, r1, center, false);
 
     //Remove origin point
     outerCircle.indices.splice(0,1);
@@ -81,7 +83,7 @@ function polyStar(sides, r1, r2, center)
     
     for(let i = 0; i < segments; i++) //Merge both arrays in a criss-cross
     {
-        var j = 3 * i;
+        let j = 3 * i;
         if(i % 2 == 0) //if even, save outer position
         {
             starPoints.indices.push(outerCircle.indices[i]);

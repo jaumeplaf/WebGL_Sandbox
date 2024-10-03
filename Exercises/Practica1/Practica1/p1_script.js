@@ -1,6 +1,5 @@
 var gl = null;
 var program;
-const pi = Math.PI;
 
 //Set canvas and shaders
 const myCanvas = 'myCanvas';
@@ -36,7 +35,7 @@ function initWebGL() {
 
 }
 
-var originStar01 = [0, 0];
-//var star01 = polyCircle(10, 0.5, originStar01, true);
-var star01 = polyStar(5, 0.2, 0.5, originStar01);
+let originStar01 = [0, 0];
+let star01 = polyStar(5, 0.2, 0.5, originStar01);
+
 initWebGL();     

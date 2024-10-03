@@ -1,6 +1,8 @@
+console.log("Loaded WebGL2.0 Utilities library");
+
 function getWebGLContext(canv) 
 {
-    var canvas = document.getElementById(canv);
+    const canvas = document.getElementById(canv);
 
     try {
         return canvas.getContext("webgl2");
@@ -9,6 +11,13 @@ function getWebGLContext(canv)
     }
 
     return null;
+}
+
+function getCanvasRatio(canv){
+    let canvas = document.getElementById(canv);
+    let aspectRatio = 1 / (canvas.width / canvas.height);
+    
+    return aspectRatio;
 }
 
 function initShader(vShader, fShader) 

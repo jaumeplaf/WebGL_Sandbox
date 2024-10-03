@@ -7,20 +7,18 @@
     
     <title> P1 Jaume Pla </title>
     
+    <!-- Link style CSS file -->
     <link rel="stylesheet" href="p1_style.css">
     
-    <script id="myVertexShader" 
+    <script id="solidColorVS" 
           type="x-shader/x-vertex">#version 300 es
+      
+      //Vertex shader
 
-      // Shader de vértices
-
-      // Declaración del atributo posición
       in vec3 VertexPosition;
       
       void main()  {
 
-        // se asigna la posición del vértice a 
-        // la variable predefinida gl_Position
         gl_Position = vec4(VertexPosition, 1.0);
         gl_PointSize = 10.0;
 
@@ -28,17 +26,16 @@
 
     </script>
 
-    <script id="myFragmentShader" 
+    <script id="solidColorFS" 
           type="x-shader/x-fragment">#version 300 es
-    
-      // Shader de fragmentos
+
+      //Fragment shader
 
       precision mediump float;
       out vec4 fragmentColor;
       
       void main() {
 
-        // se asigna el color verde a cada fragmento
         fragmentColor = vec4(1.0,0.0,0.0,1.0);
 
       }
@@ -50,11 +47,15 @@
   <body>
 
     <canvas id="myCanvas" width="600" height="600">
-      El Navegador no soporta HTML5
+      HTML5 not supported
     </canvas>
 
-    <script src = "jLib.js"></script>
-    <script src = "p1_shapes.js"></script>
+    <!-- Load custom utilities and shapes libraries -->
+    <script src = "jWebGlLib.js"></script>
+    <script src = "jUtilLib.js"></script>
+    <script src = "jShapeLib.js"></script>
+
+    <!-- Load main script -->
     <script src = "p1_script.js"></script>
 
   </body>

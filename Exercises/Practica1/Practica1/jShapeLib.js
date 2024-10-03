@@ -1,7 +1,18 @@
-//Shape functions file
+var exampleTriangle = {
+
+    "vertices" : [-0.7, -0.7, 0.0,
+                   0.7, -0.7, 0.0,
+                   0.0,  0.7, 0.0,
+                   0.0, -0.9, 0.0],
+  
+    "indices" : [ 0, 1, 2, 3]
+  
+  };
 
 function polyCircle(segments, radius, center, fill)
 {
+    //Creates the points to display a circle, to display with TRIANGLE_FAN
+
     //Make sure center is set as a vector3
     if(center.length == 2) center.push(0);
     else if(center.length == 0) center.push(0, 0, 0);
@@ -12,6 +23,7 @@ function polyCircle(segments, radius, center, fill)
         "indices" : [0]
     }
     var angleStep = 2 * pi / segments
+
     for(i = 0; i<segments; i++)
     {
         let angle = i * angleStep;
@@ -20,9 +32,9 @@ function polyCircle(segments, radius, center, fill)
         polyPoints.indices.push(i+1);
         polyPoints.vertices.push(x, y, 0);
     }
+    //Duplicates first point to fill last triangle
     if(fill)
     {
-        //Needed to fill last triangle
         let angle = 0 * angleStep;
         let x = center[0] + radius * Math.cos(angle);
         let y = center[1] + radius * Math.sin(angle);
@@ -35,6 +47,7 @@ function polyCircle(segments, radius, center, fill)
 
 function polyStar(sides, r1, r2, center) 
 {
+    //Creates the points to display a star, to display with TRIANGLE_FAN
     //This shape function depends on the polyCircle() function
     
     //Make sure center is set as a vector3

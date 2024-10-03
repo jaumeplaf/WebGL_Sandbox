@@ -1,3 +1,5 @@
+//Shape functions file
+
 function polyCircle(segments, radius, fill)
 {
     var polyPoints = {
@@ -56,23 +58,29 @@ function polyStar(sides, r1, r2)
         var j = 3 * i;
         if(i % 2 == 0) //if odd, save outer position
         {
+            console.log("outer point: [", outerCircle.indices[i], "]: ", outerCircle.vertices[j], outerCircle.vertices[j+1], outerCircle.vertices[j+2]);
             starPoints.indices.push(outerCircle.indices[i]);
             starPoints.vertices.push(outerCircle.vertices[j], outerCircle.vertices[j+1], outerCircle.vertices[j+2]);
         }
         else //if even, save inner position
         {
+            console.log("inner point: [", innerCircle.indices[i], "]: ", innerCircle.vertices[j], innerCircle.vertices[j+1], innerCircle.vertices[j+2]);
             starPoints.indices.push(innerCircle.indices[i]);
             starPoints.vertices.push(innerCircle.vertices[j], innerCircle.vertices[j+1], innerCircle.vertices[j+2]);
         }
     }
+    
     //Re-add origin
-    starPoints.indices.unshift(0);
+    starPoints.indices.unshift(0); //IF I COMMENT THESE TWOL LINES OUT, IT SHOWS THE INNER POINTS ONLY, AND STILL SHOWS THE ORIGIN
     starPoints.vertices.unshift(0, 0, 0);
-    /*
+    //Re-add first point to close shape
+    starPoints.indices.push(outerCircle.indices[0]);
+    starPoints.vertices.push(outerCircle.vertices[0], outerCircle.vertices[1], outerCircle.vertices[2]);
+    
     console.log("outerCircle: ");
     console.log(outerCircle);
     console.log("innerCircle: ");
-    console.log(innerCircle);*/
+    console.log(innerCircle);
     console.log("starPoints: ");
     console.log(starPoints);
     

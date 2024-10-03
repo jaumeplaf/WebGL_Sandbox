@@ -44,7 +44,7 @@ function initShaders() {
 
 function initRendering() {
 
-    gl.clearColor(0.0,0.0,1.0,1.0);
+    gl.clearColor(0.6,0.8,1.0,1.0);
   
 }
 
@@ -66,9 +66,8 @@ function drawLine(model) {
     gl.vertexAttribPointer(program.vertexPositionAttribute, 3, gl.FLOAT, false, 0, 0);
 
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, model.idBufferIndices);
-    //NOT DISPLAYING: INNER POINTS NOT WORKING? THEY ARE THERE ON THE ARRAY 
-    gl.drawElements(gl.TRIANGLE_FAN, model.indices.length, gl.UNSIGNED_SHORT, 0);
-    gl.drawElements(gl.POINTS, model.indices.length, gl.UNSIGNED_SHORT, 0);
+    //gl.drawElements(gl.POINTS, model.indices.length, gl.UNSIGNED_SHORT, 0);
+    gl.drawArrays(gl.TRIANGLE_FAN, 0, model.indices.length);
 
 }
 
@@ -77,7 +76,8 @@ function drawScene() {
     gl.clear(gl.COLOR_BUFFER_BIT);
 
     drawLine(circle01);
-    console.log(circle01.vertices);
+    console.log("circle01: ");
+    console.log(circle01);
 
 }
   

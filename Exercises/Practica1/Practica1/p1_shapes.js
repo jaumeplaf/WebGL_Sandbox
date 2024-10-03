@@ -1,18 +1,22 @@
 //Shape functions file
 
-function polyCircle(segments, radius, fill)
+function polyCircle(segments, radius, center, fill)
 {
+    //Make sure center is set as a vector3
+    if(center.length == 2) center.push(0);
+    else if(center.length == 0) center.push(0, 0, 0);
+    
     segments = clamp(segments, 2, 4096);
     var polyPoints = {
-        "vertices" : [0, 0, 0],
+        "vertices" : [center[0], center[1], center[2]],
         "indices" : [0]
     }
     var angleStep = 2 * pi / segments
     for(i = 0; i<segments; i++)
     {
         let angle = i * angleStep;
-        let x = radius * Math.cos(angle);
-        let y = radius * Math.sin(angle);
+        let x = center[0] + radius * Math.cos(angle);
+        let y = center[1] + radius * Math.sin(angle);
         polyPoints.indices.push(i+1);
         polyPoints.vertices.push(x, y, 0);
     }
@@ -20,8 +24,8 @@ function polyCircle(segments, radius, fill)
     {
         //Needed to fill last triangle
         let angle = 0 * angleStep;
-        let x = radius * Math.cos(angle);
-        let y = radius * Math.sin(angle);
+        let x = center[0] + radius * Math.cos(angle);
+        let y = center[1] + radius * Math.sin(angle);
         polyPoints.indices.push(segments+1);
         polyPoints.vertices.push(x, y, 0);
     }
@@ -29,9 +33,15 @@ function polyCircle(segments, radius, fill)
     return polyPoints;
 }
 
-function polyStar(sides, r1, r2) 
+function polyStar(sides, r1, r2, center) 
 {
-    //Depends on the polyCircle function
+    //This shape function depends on the polyCircle() function
+    
+    //Make sure center is set as a vector3
+    if(center.length == 2) center.push(0);
+    else if(center.length == 0) center.push(0, 0, 0);
+
+    
     sides = clamp(sides, 4, 4096);
     var segments = sides * 2;
     var starPoints = {
@@ -40,9 +50,9 @@ function polyStar(sides, r1, r2)
     }
 
     //Generates origin + outer ring points
-    var outerCircle = polyCircle(segments, r2, false);
+    var outerCircle = polyCircle(segments, r2, center, false);
     //Generates inner ring points
-    var innerCircle = polyCircle(segments, r1, false);
+    var innerCircle = polyCircle(segments, r1, center, false);
 
     //Remove origin point
     outerCircle.indices.splice(0,1);
@@ -72,8 +82,8 @@ function polyStar(sides, r1, r2)
     }
     
     //Re-add origin
-    starPoints.indices.unshift(0); //IF I COMMENT THESE TWOL LINES OUT, IT SHOWS THE INNER POINTS ONLY, AND STILL SHOWS THE ORIGIN
-    starPoints.vertices.unshift(0, 0, 0);
+    starPoints.indices.unshift(0);
+    starPoints.vertices.unshift(center[0], center[1], center[2]);
     //Re-add first point to close shape
     starPoints.indices.push(outerCircle.indices[0]);
     starPoints.vertices.push(outerCircle.vertices[0], outerCircle.vertices[1], outerCircle.vertices[2]);

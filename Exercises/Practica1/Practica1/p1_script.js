@@ -75,7 +75,7 @@ function drawScene() {
 
     gl.clear(gl.COLOR_BUFFER_BIT);
 
-    drawStar(circle01);
+    drawStar(star01);
     
 }
   
@@ -90,13 +90,14 @@ function initWebGL() {
 
     initShaders();
 
-    initBuffers(circle01);
+    initBuffers(star01);
     initRendering();
 
     requestAnimationFrame(drawScene);
 
 }
+var originStar01 = [-0.1, -0.4];
 
-//var circle01 = polyCircle(10, 0.5, false);
-var circle01 = polyStar(5, 0.3, 0.6);
+//var star01 = polyCircle(10, 0.5, originStar01, true);
+var star01 = polyStar(5, 0.3, 0.6, originStar01);
 initWebGL();     

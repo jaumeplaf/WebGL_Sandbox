@@ -2,6 +2,7 @@
 
 function polyCircle(segments, radius, fill)
 {
+    segments = clamp(segments, 2, 4096);
     var polyPoints = {
         "vertices" : [0, 0, 0],
         "indices" : [0]
@@ -24,12 +25,14 @@ function polyCircle(segments, radius, fill)
         polyPoints.indices.push(segments+1);
         polyPoints.vertices.push(x, y, 0);
     }
-    //console.log(polyPoints);
+    //console.log("Circle points: ", polyPoints);
     return polyPoints;
 }
 
-function polyStar(sides, r1, r2)
+function polyStar(sides, r1, r2) 
 {
+    //Depends on the polyCircle function
+    sides = clamp(sides, 4, 4096);
     var segments = sides * 2;
     var starPoints = {
         "vertices" : [],
@@ -47,7 +50,7 @@ function polyStar(sides, r1, r2)
     innerCircle.indices.splice(0,1);
     innerCircle.vertices.splice(0,3);
 
-    //Manipulate arrays to avoid duplicates
+    //Manipulate indices array to avoid duplicate indices
     for(let i = 0; i < segments; i++)
     {
         innerCircle.indices[i] += segments;
@@ -56,15 +59,13 @@ function polyStar(sides, r1, r2)
     for(let i = 0; i < segments; i++) //Merge both arrays in a criss-cross
     {
         var j = 3 * i;
-        if(i % 2 == 0) //if odd, save outer position
+        if(i % 2 == 0) //if even, save outer position
         {
-            console.log("outer point: [", outerCircle.indices[i], "]: ", outerCircle.vertices[j], outerCircle.vertices[j+1], outerCircle.vertices[j+2]);
             starPoints.indices.push(outerCircle.indices[i]);
             starPoints.vertices.push(outerCircle.vertices[j], outerCircle.vertices[j+1], outerCircle.vertices[j+2]);
         }
-        else //if even, save inner position
+        else //if odd, save inner position
         {
-            console.log("inner point: [", innerCircle.indices[i], "]: ", innerCircle.vertices[j], innerCircle.vertices[j+1], innerCircle.vertices[j+2]);
             starPoints.indices.push(innerCircle.indices[i]);
             starPoints.vertices.push(innerCircle.vertices[j], innerCircle.vertices[j+1], innerCircle.vertices[j+2]);
         }
@@ -76,45 +77,9 @@ function polyStar(sides, r1, r2)
     //Re-add first point to close shape
     starPoints.indices.push(outerCircle.indices[0]);
     starPoints.vertices.push(outerCircle.vertices[0], outerCircle.vertices[1], outerCircle.vertices[2]);
-    
-    console.log("outerCircle: ");
-    console.log(outerCircle);
-    console.log("innerCircle: ");
-    console.log(innerCircle);
-    console.log("starPoints: ");
-    console.log(starPoints);
+
+    //console.log("Star points: ", starPoints);
     
    return starPoints;
-
-}
-
-function polyLine(sides, r1, r2, depth) {
-    var faces = 2*sides;
-    var angleStep = 2 * pi / sides
-    var polyPoints = {
-        "vertices" : [0, 0, 0],
-        "indices" : [0]
-    }
-    for(i = 1; i < faces; i++)
-    {
-        let angle = i * angleStep;
-        if (i%2 == 0) 
-        {
-            let x1 = r1 * Math.cos(angle);
-            let y1 = r1 * Math.sin(angle);
-            polyPoints.indices.push(i);
-            polyPoints.vertices.push(x1,y1, depth);
-        }
-        else
-        {
-            let x2 = r2 * Math.cos(angle);
-            let y2 = r2 * Math.sin(angle);
-            polyPoints.indices.push(i);
-            polyPoints.vertices.push(x2,y2, depth);
-        }
-        
-    }
-   
-    return polyPoints;
 
 }

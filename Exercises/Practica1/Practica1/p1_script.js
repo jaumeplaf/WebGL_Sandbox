@@ -60,7 +60,7 @@ function initBuffers(model) {
 
 }
 
-function drawLine(model) { 
+function drawStar(model) { 
 
     gl.bindBuffer(gl.ARRAY_BUFFER, model.idBufferVertices);
     gl.vertexAttribPointer(program.vertexPositionAttribute, 3, gl.FLOAT, false, 0, 0);
@@ -75,10 +75,8 @@ function drawScene() {
 
     gl.clear(gl.COLOR_BUFFER_BIT);
 
-    drawLine(circle01);
-    console.log("circle01: ");
-    console.log(circle01);
-
+    drawStar(circle01);
+    
 }
   
 function initWebGL() {

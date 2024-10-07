@@ -40,6 +40,8 @@ function initShader(vShader, fShader)
 
     program.vertexPositionAttribute = gl.getAttribLocation( program, "VertexPosition");
     gl.enableVertexAttribArray(program.vertexPositionAttribute);
+    program.scaleAnimValue = gl.getAttribLocation( program, "ScaleAnim");
+    gl.enableVertexAttribArray(program.scaleAnimValue);
 }
 
 function initBuffers(model) 
@@ -65,6 +67,7 @@ function drawTriangles(model, useArray)
 { 
     gl.bindBuffer(gl.ARRAY_BUFFER, model.idBufferVertices);
     gl.vertexAttribPointer(program.vertexPositionAttribute, 3, gl.FLOAT, false, 0, 0);
+    gl.vertexAttribPointer(program.scaleAnimValue, 1, gl.FLOAT, false, 0, 0);
     
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, model.idBufferIndices);
 
@@ -77,6 +80,7 @@ function drawTriangleFan(model, useArray)
 { 
     gl.bindBuffer(gl.ARRAY_BUFFER, model.idBufferVertices);
     gl.vertexAttribPointer(program.vertexPositionAttribute, 3, gl.FLOAT, false, 0, 0);
+    gl.vertexAttribPointer(program.scaleAnimValue, 1, gl.FLOAT, false, 0, 0);
 
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, model.idBufferIndices);
     if(!useArray) gl.drawElements(gl.TRIANGLE_FAN, 3, gl.UNSIGNED_SHORT, 0);
@@ -87,6 +91,7 @@ function drawTriangleStrip(model)
 { 
     gl.bindBuffer(gl.ARRAY_BUFFER, model.idBufferVertices);
     gl.vertexAttribPointer(program.vertexPositionAttribute, 3, gl.FLOAT, false, 0, 0);
+    gl.vertexAttribPointer(program.scaleAnimValue, 1, gl.FLOAT, false, 0, 0);
 
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, model.idBufferIndices);
     if(!useArray) gl.drawElements(gl.TRIANGLE_STRIP, 3, gl.UNSIGNED_SHORT, 0);

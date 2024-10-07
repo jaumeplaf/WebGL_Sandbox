@@ -11,6 +11,7 @@ const exampleTriangle = {
   
   };
 
+
 function polyCircle(segments, radius, center, fill)
 {
     //Creates the points to display a circle, to display with TRIANGLE_FAN

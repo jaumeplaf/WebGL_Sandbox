@@ -2,7 +2,7 @@ console.log("Loaded WebGL2.0 Utilities library");
 
 function getWebGLContext(canv) 
 {
-    const canvas = document.getElementById(canv);
+    let canvas = document.getElementById(canv);
 
     try {
         return canvas.getContext("webgl2");
@@ -92,6 +92,22 @@ function drawTriangleStrip(model)
     if(!useArray) gl.drawElements(gl.TRIANGLE_STRIP, 3, gl.UNSIGNED_SHORT, 0);
     else gl.drawArrays(gl.TRIANGLE_STRIP, 0, model.indices.length);
 }
+
+function drawLineStrip(model) 
+{
+    gl.bindBuffer(gl.ARRAY_BUFFER, model.idBufferVertices);
+    gl.vertexAttribPointer(program.vertexPositionAttribute, 3, gl.FLOAT, false, 0, 0);
+    gl.drawArrays(gl.LINE_STRIP, 0, model.np);
+}
+
+function drawPoints(model) 
+{
+    gl.bindBuffer(gl.ARRAY_BUFFER, model.idBufferVertices);
+    gl.vertexAttribPointer(program.vertexPositionAttribute, 3, gl.FLOAT, false, 0, 0);
+    gl.drawArrays(gl.POINTS, 0, model.np);
+}
+
+
 
 /*example initWebGL() function
 

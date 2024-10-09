@@ -9,14 +9,13 @@
     
     <!-- Link style CSS file -->
     <link rel="stylesheet" href="p1_style.css">
-    
+
     <script id="solidColorVS" 
           type="x-shader/x-vertex">#version 300 es
       
       //Vertex shader
 
       in vec3 VertexPosition;
-      uniform float ScaleAnim;
       
       void main()  {
 
@@ -24,9 +23,7 @@
         gl_PointSize = 10.0;
 
       }
-
     </script>
-
     <script id="solidColorFS" 
           type="x-shader/x-fragment">#version 300 es
 
@@ -41,7 +38,6 @@
         fragmentColor = vec4(1.0,0.0,0.0,1.0);
 
       }
-
     </script>
 
   </head>

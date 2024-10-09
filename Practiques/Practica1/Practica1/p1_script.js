@@ -13,8 +13,10 @@ var idMyColor, idMySize;
 function drawScene() {
 
     gl.clear(gl.COLOR_BUFFER_BIT);
-    //drawPoints(pointBuffer);
-    drawLineStrip(pointBuffer);
+
+    drawPoints(pointBuffer);
+    //drawLineStrip(pointBuffer);
+
     //drawTriangleFan(star01, true);
     
 }
@@ -52,27 +54,30 @@ function initBuffersPoints(model) {
     model.idBufferVertices = gl.createBuffer ();
 }
 
-function initHandlers() {
-    var canvas2     = document.getElementById("myCanvas");
-    canvas2.addEventListener("mousedown", function(event){
-        let tx = 2*event.clientX/canvas2.width-1;
-        let ty = 2*(canvas2.height-event.clientY)/canvas2.height-1;
-		pointBuffer.vertices.push(tx);
-        pointBuffer.vertices.push(ty);
-        pointBuffer.vertices.push(0.0);
-        pointBuffer.pointnum++;
-        updateBuffer(pointBuffer);
-        //console.log(event);
-        //console.log(pointBuffer);
-        console.log("tx: ", tx, "ty: ", ty)
-        drawScene();
-	} );
-}
-
 function updateBuffer(model) {
     gl.bindBuffer (gl.ARRAY_BUFFER, model.idBufferVertices);
     gl.bufferData (gl.ARRAY_BUFFER, new Float32Array(model.vertices), gl.STATIC_DRAW);
   }
+
+function initHandlers()
+{
+    var canvas2     = document.getElementById("myCanvas");
+
+    canvas2.addEventListener("mousedown", 
+        function(event){
+            let tx = 2*event.clientX/canvas2.width-1;
+            let ty = 2*(canvas2.height-event.clientY)/canvas2.height-1;
+            pointBuffer.vertices.push(tx);
+            pointBuffer.vertices.push(ty);
+            pointBuffer.vertices.push(0.0);
+            pointBuffer.pointnum++;
+            updateBuffer(pointBuffer);
+            console.log("X: ", tx, "Y: ", ty)
+            drawScene();
+	    } 
+    );
+}
+
 
 initWebGL();
 

@@ -8,7 +8,6 @@ let sliderMaxSize = document.getElementById("MaxSizeStar");
 let pointNumDisp = document.getElementById("PointNumberDisplay");
 let maxSizeDisp = document.getElementById("MaxSizeDisplay");
 
-//var pointNumber = 10000;
 var pointNumber = parseFloat(sliderPointNum.value);
 var minSizeStar = 0;
 var maxSizeStar = parseFloat(sliderMaxSize.value);
@@ -148,7 +147,6 @@ function randPoints(pNum, maxSize, minSize)
     points.sizes.push(randSize);
   }
 
-  console.log(points);
   return points;
 }
 
@@ -158,12 +156,10 @@ initWebGL();
 // Update the current slider value (each time you drag the slider handle)
 sliderPointNum.oninput = function() {
   pointNumber = parseFloat(this.value);
-  console.log(pointNumber);
   updateCanvas();
 } 
 sliderMaxSize.oninput = function() {
   maxSizeStar = parseFloat(this.value);
-  console.log(maxSizeStar);
   updateCanvas();
 } 
 

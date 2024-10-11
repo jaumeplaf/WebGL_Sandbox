@@ -9,15 +9,16 @@ const starFragmentShader = 'solidColorFS';
 //Set color variables
 var colorBackground = [0.6,0.8,1.0,1.0];
 var idMyColor, idMySize;
+var totalStars = 0;
 
 function drawScene() {
 
     gl.clear(gl.COLOR_BUFFER_BIT);
 
-    drawPoints(pointBuffer);
+    //drawPoints(pointBuffer);
     //drawLineStrip(pointBuffer);
 
-    //drawTriangleFan(star01, true);
+    if(totalStars != 0) drawTriangleFan(star01, true);
     
 }
   
@@ -32,8 +33,8 @@ function initWebGL() {
 
     initShader(starVertexShader, starFragmentShader);
 
-    //initBuffers(star01);
-    initBuffersPoints(pointBuffer);
+    initBuffers(star01);
+    //initBuffersPoints(pointBuffer);
     initRendering(colorBackground);
     initHandlers();
 
@@ -57,22 +58,32 @@ function initBuffersPoints(model) {
 function updateBuffer(model) {
     gl.bindBuffer (gl.ARRAY_BUFFER, model.idBufferVertices);
     gl.bufferData (gl.ARRAY_BUFFER, new Float32Array(model.vertices), gl.STATIC_DRAW);
-  }
+    gl.bindBuffer (gl.ELEMENT_ARRAY_BUFFER, model.idBufferIndices);
+    gl.bufferData (gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(model.indices), gl.STATIC_DRAW);
+}
 
 function initHandlers()
 {
     var canvas2     = document.getElementById("myCanvas");
 
     canvas2.addEventListener("mousedown", 
-        function(event){
+        function(event){ 
+
+            totalStars++;
+
             let tx = 2*event.clientX/canvas2.width-1;
             let ty = 2*(canvas2.height-event.clientY)/canvas2.height-1;
+            
             pointBuffer.vertices.push(tx);
             pointBuffer.vertices.push(ty);
             pointBuffer.vertices.push(0.0);
             pointBuffer.pointnum++;
-            updateBuffer(pointBuffer);
+            //updateBuffer(pointBuffer);
             console.log("X: ", tx, "Y: ", ty)
+            originStar01 = [tx,ty];
+            let sidesOffset = Math.trunc(Math.random(tx-ty)*10-1);
+            star01 = polyStar(5+sidesOffset, 0.025, 0.05, originStar01);
+            initBuffers(star01);
             drawScene();
 	    } 
     );

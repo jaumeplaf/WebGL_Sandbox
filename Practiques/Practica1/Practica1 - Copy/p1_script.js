@@ -4,11 +4,15 @@ var program;
 
 //Set canvas and shaders
 const myCanvas = 'myCanvas';
+const mainCanvas = document.getElementById(myCanvas);
 const starVertexShader = 'solidColorVS';
 const starFragmentShader = 'solidColorFS';
 
 //Set color variables
 var colorBackground = [0.6,0.8,1.0,1.0];
+var maxSides = 10;
+maxSides -= 3;
+//?
 var idMyColor, idMySize;
 
 //Initialize stars and lines arrays
@@ -73,12 +77,11 @@ function drawScene() {
 //Event listeners
 function initHandlers()
 {
-    var canvas2     = document.getElementById("myCanvas");
-    
-    canvas2.addEventListener("mousedown", 
+    mainCanvas.addEventListener("mousedown", 
         function(event){ 
-            let tx = 2*event.clientX/canvas2.width-1;
-            let ty = 2*(canvas2.height-event.clientY)/canvas2.height-1;
+            let rect = mainCanvas.getBoundingClientRect();
+            let tx = 2 * (event.clientX - rect.left) / mainCanvas.width - 1;
+            let ty = 2 * (rect.height - (event.clientY - rect.top)) / mainCanvas.height - 1;
             let clickPos = [tx, ty];
             
             pointBuffer.vertices.push(tx);
@@ -86,10 +89,13 @@ function initHandlers()
             pointBuffer.vertices.push(0.0);
             pointBuffer.pointnum++;
             
-            let sidesOffset = Math.trunc(Math.random(tx-ty)*10-1);
+            //Randomize star sides
+            let sidesOffset = Math.trunc(Math.random(tx - ty) * maxSides - 1);
+            //Create new star
             let newStar = polyStar(5 + sidesOffset, 0.025, 0.05, clickPos);
             initBuffers(newStar);
             starArray.push(newStar);
+
             drawScene();
 	    } 
     );

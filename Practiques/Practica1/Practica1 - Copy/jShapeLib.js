@@ -1,7 +1,7 @@
 console.log("Loaded Shapes library");
 
-const exampleTriangle = {
-
+const exampleTriangle = 
+{
     "vertices" : [-0.7, -0.7, 0.0,
                    0.7, -0.7, 0.0,
                    0.0,  0.7, 0.0,
@@ -9,17 +9,11 @@ const exampleTriangle = {
   
     "indices" : [ 0, 1, 2, 3]
   
-  };
-
+};
 
 function polyCircle(segments, radius, center, fill)
 {
     //Creates the points to display a circle, to display with TRIANGLE_FAN
-
-    //Make sure center is set as a vector3
-    if(center.length == 2) center.push(0);
-    else if(center.length == 0) center.push(0, 0, 0);
-    
     segments = clamp(segments, 2, 4096);
     let polyPoints = {
         "vertices" : [center[0], center[1], center[2]],
@@ -37,33 +31,30 @@ function polyCircle(segments, radius, center, fill)
     }
     //Duplicates first point to fill last triangle
     if(fill)
-    {
-        let angle = 0 * angleStep;
-        let x = center[0] + radius * Math.cos(angle) * ratio;
-        let y = center[1] + radius * Math.sin(angle);
-        polyPoints.indices.push(segments+1);
-        polyPoints.vertices.push(x, y, 0);
+        {
+            let angle = 0 * angleStep;
+            let x = center[0] + radius * Math.cos(angle) * ratio;
+            let y = center[1] + radius * Math.sin(angle);
+            polyPoints.indices.push(segments+1);
+            polyPoints.vertices.push(x, y, 0);
+        }
+        return polyPoints;
     }
-    //console.log("Circle points: ", polyPoints);
-    return polyPoints;
-}
-
-function polyStar(sides, r1, r2, center) 
-{
-    //Creates the points to display a star, to display with TRIANGLE_FAN
-    //This shape function depends on the polyCircle() function
     
-    //Make sure center is set as a vector3
-    if(center.length == 2) center.push(0);
-    else if(center.length == 0) console.log("Error: missing star center");
-
-    
-    sides = clamp(sides, 4, 4096);
-    let segments = sides * 2;
-    let starPoints = {
-        "vertices" : [],
-        "indices" : [],
-        "vCenter" : []
+    function polyStar(sides, r1, r2, center) 
+    {
+        //Creates the points to display a star, to display with TRIANGLE_FAN
+        //This shape function depends on the polyCircle() function
+        
+        //Make sure center is set as a vector3
+        if(center.length == 2) center.push(0);
+        
+        sides = clamp(sides, 4, 4096);
+        let segments = sides * 2;
+        let starPoints = {
+            "vertices" : [],
+            "indices" : [],
+            "vCenter" : []
     }
 
     //Generates origin + outer ring points

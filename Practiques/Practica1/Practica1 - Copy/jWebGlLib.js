@@ -2,21 +2,18 @@ console.log("Loaded WebGL2.0 Utilities library");
 
 function getWebGLContext(canv) 
 {
-    let canvas = document.getElementById(canv);
-
     try {
-        return canvas.getContext("webgl2");
+        return document.getElementById(canv).getContext("webgl2");
     }
     catch(e) {
     }
-
     return null;
 }
 
-function getCanvasRatio(canv){
-    let canvas = document.getElementById(canv);
-    let aspectRatio = 1 / (canvas.width / canvas.height);
-    
+function getCanvasRatio(canv)
+{
+    let currCanv = document.getElementById(canv);
+    let aspectRatio = 1 / (currCanv.width / currCanv.height);
     return aspectRatio;
 }
 
@@ -125,26 +122,3 @@ function drawLines(model)
     gl.vertexAttribPointer(program.vertexPositionAttribute, 3, gl.FLOAT, false, 0, 0);
     gl.drawArrays(gl.POINTS, 0, model.np);
 }
-
-
-
-/*example initWebGL() function
-
-function initWebGL() {
-      
-    gl = getWebGLContext(myCanvas);
-
-    if (!gl) {
-        alert("WebGL 2.0 is not aviable");
-        return;
-    }
-
-    initShader(starVertexShader, starFragmentShader);
-
-    initBuffers(star01);
-    
-    initRendering(colorBackground);
-
-    requestAnimationFrame(drawScene);
-
-}*/

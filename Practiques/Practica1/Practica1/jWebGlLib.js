@@ -1,5 +1,9 @@
 console.log("Loaded WebGL2.0 Utilities library");
 
+//Initialize program
+var gl = null;
+var program;
+
 function getWebGLContext(canv) 
 {
     try {
@@ -38,8 +42,8 @@ function initShader(vShader, fShader)
     program.vertexPositionAttribute = gl.getAttribLocation( program, "VertexPosition");
     gl.enableVertexAttribArray(program.vertexPositionAttribute);
 
-    //program.vertexCenterAttribute = gl.getAttribLocation( program, "StarCenter");
-    //gl.enableVertexAttribArray(program.vertexCenterAttribute);
+    program.vertexCenterAttribute = gl.getAttribLocation( program, "StarCenter");
+    gl.enableVertexAttribArray(program.vertexCenterAttribute);
 }
 
 function initBuffers(model) 

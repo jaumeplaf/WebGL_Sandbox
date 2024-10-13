@@ -1,7 +1,3 @@
-//Initialize program
-var gl = null;
-var program;
-
 //Set canvas and shaders
 const myCanvas = 'myCanvas';
 const mainCanvas = document.getElementById(myCanvas);
@@ -10,13 +6,12 @@ const starFragmentShader = 'solidColorFS';
 
 //Initialize buttons
 var newLineButton = document.getElementById("newLineButton");
+var clearSceneButton = document.getElementById("clearSceneButton");
 
 //Set color variables
-var colorBackground = [0.6,0.8,1.0,1.0];
+var colorBackground = [0.0,0.0,0.0,1.0];
 var maxSides = 10;
 maxSides -= 3;
-//?
-var idMyColor, idMySize;
 
 //Initialize stars and lines arrays
 var starArray = [];
@@ -29,10 +24,9 @@ var currentLine = {
     "idBufferVertices": null
 };
 
-
 //Initialize WebGL & required components
-function initWebGL() {
-    
+function initWebGL() 
+{
     gl = getWebGLContext(myCanvas);
     
     if (!gl) {
@@ -45,18 +39,18 @@ function initWebGL() {
     initHandlers();
     
     requestAnimationFrame(drawScene);
-    
 }
 
 //Initialize points buffer
-function initBuffersPoints(model) {
-    
+function initBuffersPoints(model) 
+{
     model.idBufferVertices = gl.createBuffer ();
     gl.bindBuffer(gl.ARRAY_BUFFER, model.idBufferVertices);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(model.vertices), gl.DYNAMIC_DRAW);
 }
 
-function startNewLine() {
+function startNewLine() 
+{
     // Add the current line to the lineArray
     if (currentLine.np > 0) {
         lineArray.push(currentLine);
@@ -72,14 +66,16 @@ function startNewLine() {
 }
 
 //Update star buffer
-function updateBuffer(model) {
+function updateBuffer(model) 
+{
     gl.bindBuffer (gl.ARRAY_BUFFER, model.idBufferVertices);
     gl.bufferData (gl.ARRAY_BUFFER, new Float32Array(model.vertices), gl.STATIC_DRAW);
     gl.bindBuffer (gl.ELEMENT_ARRAY_BUFFER, model.idBufferIndices);
     gl.bufferData (gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(model.indices), gl.STATIC_DRAW);
 }
 
-function updateBufferLines(model) {
+function updateBufferLines(model) 
+{
     if (model.idBufferVertices) {
         gl.bindBuffer(gl.ARRAY_BUFFER, model.idBufferVertices);
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(model.vertices), gl.STATIC_DRAW);
@@ -87,8 +83,8 @@ function updateBufferLines(model) {
 }
 
 //Main draw function
-function drawScene() {
-    
+function drawScene() 
+{
     gl.clear(gl.COLOR_BUFFER_BIT);
     //Draw stars
     for(let i = 0; i < starArray.length; i++){    
@@ -103,8 +99,8 @@ function drawScene() {
      if (currentLine.np > 0) {
         drawLineStrip(currentLine);
     }
-    
 }
+
 function clearScene() 
 {
     starArray = [];
@@ -170,7 +166,6 @@ function initHandlers()
         startNewLine();
     });
     // Clear scene button
-    var clearSceneButton = document.getElementById("clearSceneButton");
     clearSceneButton.addEventListener("click", function() {
         clearScene();
     });
@@ -181,5 +176,3 @@ function initHandlers()
 
 //Program execution
 initWebGL();
-
-

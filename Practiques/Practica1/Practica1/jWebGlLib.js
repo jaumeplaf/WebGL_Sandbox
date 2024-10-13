@@ -2,21 +2,18 @@ console.log("Loaded WebGL2.0 Utilities library");
 
 function getWebGLContext(canv) 
 {
-    let canvas = document.getElementById(canv);
-
     try {
-        return canvas.getContext("webgl2");
+        return document.getElementById(canv).getContext("webgl2");
     }
     catch(e) {
     }
-
     return null;
 }
 
-function getCanvasRatio(canv){
-    let canvas = document.getElementById(canv);
-    let aspectRatio = 1 / (canvas.width / canvas.height);
-    
+function getCanvasRatio(canv)
+{
+    let currCanv = document.getElementById(canv);
+    let aspectRatio = 1 / (currCanv.width / currCanv.height);
     return aspectRatio;
 }
 
@@ -97,12 +94,9 @@ function drawTriangleFan(model, useArray)
     gl.bindBuffer(gl.ARRAY_BUFFER, model.idBufferVertices);
     gl.vertexAttribPointer(program.vertexPositionAttribute, 3, gl.FLOAT, false, 0, 0);
     
-    //gl.bindBuffer(gl.ARRAY_BUFFER, model.idBufferCenter);
-    //gl.vertexAttribPointer(program.vertexCenterAttribute, 3, gl.FLOAT, false, 0, 0);
-
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, model.idBufferIndices);
-    if(!useArray) gl.drawElements(gl.TRIANGLE_FAN, 3, gl.UNSIGNED_SHORT, 0);
-    else gl.drawArrays(gl.TRIANGLE_FAN, 0, model.indices.length);
+    if (!useArray) gl.drawElements(gl.TRIANGLE_FAN, model.indices.length, gl.UNSIGNED_SHORT, 0); 
+    else gl.drawArrays(gl.TRIANGLE_FAN, 0, model.vertices.length / 3);
 }
 
 function drawTriangleStrip(model) 
@@ -128,26 +122,3 @@ function drawLines(model)
     gl.vertexAttribPointer(program.vertexPositionAttribute, 3, gl.FLOAT, false, 0, 0);
     gl.drawArrays(gl.POINTS, 0, model.np);
 }
-
-
-
-/*example initWebGL() function
-
-function initWebGL() {
-      
-    gl = getWebGLContext(myCanvas);
-
-    if (!gl) {
-        alert("WebGL 2.0 is not aviable");
-        return;
-    }
-
-    initShader(starVertexShader, starFragmentShader);
-
-    initBuffers(star01);
-    
-    initRendering(colorBackground);
-
-    requestAnimationFrame(drawScene);
-
-}*/

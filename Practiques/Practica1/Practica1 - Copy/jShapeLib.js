@@ -26,7 +26,7 @@ function polyCircle(segments, radius, center, fill)
         "indices" : [0]
     }
     let angleStep = 2 * pi / segments
-    let ratio = getCanvasRatio("myCanvas");
+    let ratio = getCanvasRatio(myCanvas);
     for(i = 0; i<segments; i++)
     {
         let angle = i * angleStep;
@@ -55,7 +55,9 @@ function polyStar(sides, r1, r2, center)
     
     //Make sure center is set as a vector3
     if(center.length == 2) center.push(0);
+    else if(center.length == 0) console.log("Error: missing star center");
 
+    
     sides = clamp(sides, 4, 4096);
     let segments = sides * 2;
     let starPoints = {

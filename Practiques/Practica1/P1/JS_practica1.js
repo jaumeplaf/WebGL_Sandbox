@@ -1,11 +1,10 @@
-
 var gl, program;
 
 var idMyColor, idMySize;
 
 function getWebGLContext() {
 
-  var canvas = document.getElementById("myCanvas");
+  let canvas = document.getElementById("myCanvas");
 
   try {
     return canvas.getContext("webgl2");
@@ -23,24 +22,36 @@ var currentLine = {
     "np" : 0,
     "idBufferVertices": null
 };
+var starArray = [];
 
-function initHandlers() {
+function initHandlers() 
+{
+  let canvas = document.getElementById("myCanvas");
+
   //Mouse click listener
-  var canvas = document.getElementById("myCanvas");
   canvas.addEventListener("mousedown", 
     function(event){
       //Fix click position due to canvas offset 
       let rect = canvas.getBoundingClientRect();
       let tx = 2 * (event.clientX - rect.left) / canvas.width - 1;
       let ty = 2 * (rect.height - (event.clientY - rect.top)) / canvas.height - 1;
+      let clickPos = [tx, ty];
 
+      //Add line point
       currentLine.vertices.push(tx);
       currentLine.vertices.push(ty);
       currentLine.vertices.push(0.0);
       currentLine.np++;
+
+      //Add star
+      let newStar = polyStar(5, 0.1, 0.2, clickPos);
+      newStar.idBufferVertices = gl.createBuffer();
+      newStar.idBufferIndices = gl.createBuffer();
       
-      updateBuffer(currentLine);
-      console.log(event);
+      updateBufferLines(currentLine);
+      updateBuffer(newStar);
+      starArray.push(newStar);
+
       drawScene();
     } 
   );
@@ -70,12 +81,23 @@ function startNewLine() {
   };
   initBuffersPoints(currentLine);
 }
-
-function updateBuffer(model) {
+function updateBufferLines(model) 
+{
   if (model.idBufferVertices) {
     gl.bindBuffer (gl.ARRAY_BUFFER, model.idBufferVertices);
     gl.bufferData (gl.ARRAY_BUFFER, new Float32Array(model.vertices), gl.STATIC_DRAW);
   }
+
+}
+function updateBuffer(model) 
+{
+  gl.bindBuffer (gl.ARRAY_BUFFER, model.idBufferVertices);
+  console.log("Verts: ", new Float32Array(model.vertices));
+  gl.bufferData (gl.ARRAY_BUFFER, new Float32Array(model.vertices), gl.STATIC_DRAW);
+
+  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, model.idBufferIndices);
+  console.log("Indices: ", new Float32Array(model.indices));
+  gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(model.indices), gl.STATIC_DRAW);
 }
 
 function initShaders() {
@@ -127,20 +149,30 @@ var size = 2.; // size of the points
 
 function drawScene() {
   
-  gl.clear(gl.COLOR_BUFFER_BIT);
-  size=10.; 
-  
-  
-  //gl.uniform4f (idMyColor, 1.0, 1.0, 0.0, 1.0 );
+  gl.clear(gl.COLOR_BUFFER_BIT);  
+
   gl.uniform1f (idMySize, size);
   gl.uniform4f (idMyColor, 1.0, 0.0, 0.0, 1.0 );
 
+  //Draw lines
   for (let i = 0; i < lineArray.length; i++) {
     drawLines(lineArray[i]);
   }
   drawLines(currentLine);
+
+  //Draw stars
+  for (let i = 0; i < starArray.length; i++) {
+    drawTriangleFan(starArray[i], true);
+  }
 }
 
+function drawTriangleFan(model) {
+  gl.bindBuffer(gl.ARRAY_BUFFER, model.idBufferVertices);
+  gl.vertexAttribPointer(program.vertexPositionAttribute, 3, gl.FLOAT, false, 0, 0);
+
+  gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, model.idBufferIndices);
+  gl.drawElements(gl.TRIANGLE_FAN, model.indices.length, gl.UNSIGNED_SHORT, 0);
+}
 function initWebGL() {
   
   gl = getWebGLContext();

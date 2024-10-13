@@ -36,9 +36,3 @@ function randPoints(pNum, maxSize, minSize)
   return points;
 }
 
-function getCanvasRatio(canv){
-  let canvas = document.getElementById(canv);
-  let aspectRatio = 1 / (canvas.width / canvas.height);
-  
-  return aspectRatio;
-}

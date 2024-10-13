@@ -97,12 +97,9 @@ function drawTriangleFan(model, useArray)
     gl.bindBuffer(gl.ARRAY_BUFFER, model.idBufferVertices);
     gl.vertexAttribPointer(program.vertexPositionAttribute, 3, gl.FLOAT, false, 0, 0);
     
-    //gl.bindBuffer(gl.ARRAY_BUFFER, model.idBufferCenter);
-    //gl.vertexAttribPointer(program.vertexCenterAttribute, 3, gl.FLOAT, false, 0, 0);
-
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, model.idBufferIndices);
-    if(!useArray) gl.drawElements(gl.TRIANGLE_FAN, 3, gl.UNSIGNED_SHORT, 0);
-    else gl.drawArrays(gl.TRIANGLE_FAN, 0, model.indices.length);
+    if (!useArray) gl.drawElements(gl.TRIANGLE_FAN, model.indices.length, gl.UNSIGNED_SHORT, 0); 
+    else gl.drawArrays(gl.TRIANGLE_FAN, 0, model.vertices.length / 3);
 }
 
 function drawTriangleStrip(model) 

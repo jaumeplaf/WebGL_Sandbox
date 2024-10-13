@@ -16,6 +16,10 @@
       //Vertex shader
 
       in vec3 VertexPosition;
+      in vec3 StarCenter;
+
+      uniform float time;
+      float t = clamp(time, 0.0, 1.0);
       
       void main()  {
 

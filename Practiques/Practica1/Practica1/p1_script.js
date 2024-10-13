@@ -1,3 +1,6 @@
+//TODO:
+//-save star origins in array?, make new buffers for each star?
+
 var gl = null;
 var program;
 
@@ -73,7 +76,7 @@ function initHandlers()
 
             let tx = 2*event.clientX/canvas2.width-1;
             let ty = 2*(canvas2.height-event.clientY)/canvas2.height-1;
-            
+
             pointBuffer.vertices.push(tx);
             pointBuffer.vertices.push(ty);
             pointBuffer.vertices.push(0.0);

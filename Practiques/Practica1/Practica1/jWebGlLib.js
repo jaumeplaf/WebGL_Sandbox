@@ -40,6 +40,9 @@ function initShader(vShader, fShader)
 
     program.vertexPositionAttribute = gl.getAttribLocation( program, "VertexPosition");
     gl.enableVertexAttribArray(program.vertexPositionAttribute);
+
+    program.vertexCenterAttribute = gl.getAttribLocation( program, "StarCenter");
+    gl.enableVertexAttribArray(program.vertexCenterAttribute);
 }
 
 function initBuffers(model) 
@@ -51,6 +54,22 @@ function initBuffers(model)
     model.idBufferIndices = gl.createBuffer ();
     gl.bindBuffer (gl.ELEMENT_ARRAY_BUFFER, model.idBufferIndices);
     gl.bufferData (gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(model.indices), gl.STATIC_DRAW);
+}
+
+function initBuffersCenter(model) 
+{
+    model.idBufferVertices = gl.createBuffer ();
+    gl.bindBuffer (gl.ARRAY_BUFFER, model.idBufferVertices);
+    gl.bufferData (gl.ARRAY_BUFFER, new Float32Array(model.vertices), gl.STATIC_DRAW);
+
+    model.idBufferIndices = gl.createBuffer ();
+    gl.bindBuffer (gl.ELEMENT_ARRAY_BUFFER, model.idBufferIndices);
+    gl.bufferData (gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(model.indices), gl.STATIC_DRAW);
+    
+    //Shape center buffer
+    model.idBufferCenter = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, model.idBufferCenter);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(model.center), gl.STATIC_DRAW);
 }
 
 function initRendering(color) 
@@ -77,6 +96,9 @@ function drawTriangleFan(model, useArray)
 { 
     gl.bindBuffer(gl.ARRAY_BUFFER, model.idBufferVertices);
     gl.vertexAttribPointer(program.vertexPositionAttribute, 3, gl.FLOAT, false, 0, 0);
+    
+    gl.bindBuffer(gl.ARRAY_BUFFER, model.idBufferCenter);
+    gl.vertexAttribPointer(program.vertexCenterAttribute, 3, gl.FLOAT, false, 0, 0);
 
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, model.idBufferIndices);
     if(!useArray) gl.drawElements(gl.TRIANGLE_FAN, 3, gl.UNSIGNED_SHORT, 0);
@@ -100,7 +122,7 @@ function drawLineStrip(model)
     gl.drawArrays(gl.LINE_STRIP, 0, model.np);
 }
 
-function drawPoints(model) 
+function drawLines(model) 
 {
     gl.bindBuffer(gl.ARRAY_BUFFER, model.idBufferVertices);
     gl.vertexAttribPointer(program.vertexPositionAttribute, 3, gl.FLOAT, false, 0, 0);

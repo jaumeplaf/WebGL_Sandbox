@@ -9,8 +9,23 @@
     
     <!-- Link style CSS file -->
     <link rel="stylesheet" href="p1_style.css">
-    
+
     <!-- Shader definitions -->
+
+    <!-- TODO:
+            -Color selector
+            -Randomize H/S/V / saturation / contrast / etc.
+
+            -Randomize vertex position (individual scaling) along v(position-origin)
+            -Randomize uniform scale using v
+
+            -Animate stars on click (fade-in scaling)
+            -Animate stars on idle (small variations on individual scaling)
+
+            if attribute (that BG points don't have)?
+            separate shaders for BG and FG?
+    -->
+
     <script id="solidColorVS" 
           type="x-shader/x-vertex">#version 300 es
       
@@ -54,7 +69,9 @@
     </canvas>
 
     <!-- Control buttons -->
+    <button id="clearSceneButton">Clear</button>
     <button id="newLineButton">New Line</button>
+    
 
     <!-- Load custom WebGL, utilities and shapes libraries -->
     <script src = "jWebGlLib.js"></script>

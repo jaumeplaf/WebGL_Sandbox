@@ -32,7 +32,8 @@
       //Vertex shader
 
       in vec3 VertexPosition;
-      in vec3 StarCenter;
+      //in vec3 StarCenter;
+      out vec3 vColor;
 
       //uniform float time;
       //float t = clamp(time, 0.0, 1.0);
@@ -46,6 +47,7 @@
         //gl_Position = vec4(VertexPosition + direction * starScale, 1.0);
         gl_Position = vec4(VertexPosition, 1.0);
         gl_PointSize = 10.0;
+        vColor = (VertexPosition + 1.0) * 0.5;
 
       }
     </script>
@@ -56,11 +58,12 @@
 
       precision mediump float;
       
+      in vec3 vColor;
       out vec4 fragmentColor;
       
       void main() {
-
-        fragmentColor = vec4(1.0,1.0,1.0,1.0);
+        fragmentColor = vec4(vColor, 1.0);
+        //fragmentColor = vec4(1.0,1.0,1.0,1.0);
         //fragmentColor = vec4(StarCenter, 1.0);
 
       }

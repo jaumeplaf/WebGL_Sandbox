@@ -136,7 +136,8 @@ function initHandlers()
 
                 //Add new star
                 let newStar = polyStar(5 + sidesOffset, 0.025, 0.05, clickPos);
-                initBuffers(newStar);
+                initBuffersCenter(newStar);
+                //initBuffers(newStar);
                 starArray.push(newStar);
 
                 //Add line

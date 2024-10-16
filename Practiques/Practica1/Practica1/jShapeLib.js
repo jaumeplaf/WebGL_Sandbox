@@ -1,5 +1,6 @@
 console.log("Loaded Shapes library");
 
+//Test triangle
 const exampleTriangle = 
 {
     "vertices" : [-0.7, -0.7, 0.0,

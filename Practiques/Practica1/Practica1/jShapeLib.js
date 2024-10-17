@@ -55,7 +55,8 @@ function polyCircle(segments, radius, center, fill)
         let starPoints = {
             "vertices" : [],
             "indices" : [],
-            "vCenter" : []
+            "vCenter" : [],
+            "t" : []
     }
 
     //Generates origin + outer ring points
@@ -74,7 +75,7 @@ function polyCircle(segments, radius, center, fill)
     {
         innerCircle.indices[i] += segments;
     }
-    
+
     for(let i = 0; i < segments; i++) //Merge both arrays in a criss-cross pattern to create star
     {
         let j = 3 * i;
@@ -88,20 +89,24 @@ function polyCircle(segments, radius, center, fill)
             starPoints.indices.push(innerCircle.indices[i]);
             starPoints.vertices.push(innerCircle.vertices[j], innerCircle.vertices[j+1], innerCircle.vertices[j+2]);
         }
-        starPoints.vCenter.push(center[0], center[1], 0)
+        starPoints.vCenter.push(center[0], center[1], 0);
+        starPoints.t.push(0);
     }
     
     //Re-add origin
     starPoints.indices.unshift(0);
     starPoints.vertices.unshift(center[0], center[1], center[2]);
     starPoints.vCenter.push(center[0], center[1], 0)
+    starPoints.t.unshift(0);
+
     //Re-add first point to close shape
     starPoints.indices.push(outerCircle.indices[0]);
     starPoints.vertices.push(outerCircle.vertices[0], outerCircle.vertices[1], outerCircle.vertices[2]);
     starPoints.vCenter.push(center[0], center[1], 0)
+    starPoints.t.push(0);
 
     console.log("Star points: ", starPoints);
     
-   return starPoints;
+    return starPoints;
 
 }

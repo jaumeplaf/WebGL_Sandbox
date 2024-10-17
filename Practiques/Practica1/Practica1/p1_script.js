@@ -21,8 +21,9 @@ var lineArray = [];
 var currentLine = {
     "vertices" : [],
     "np" : 0,
-    "idBufferVertices": null,
-    "vCenter" : []
+    "idBufferVertices": 0,
+    "vCenter" : [],
+    "t" : []
 };
 
 //Initialize WebGL & required components
@@ -52,6 +53,10 @@ function initBuffersPoints(model)
     model.idBufferCenter = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, model.idBufferCenter);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(model.vCenter), gl.STATIC_DRAW);
+
+    model.idBufferT = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, model.idBufferT);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(model.t), gl.STATIC_DRAW);
 }
 
 function startNewLine() 
@@ -66,7 +71,8 @@ function startNewLine()
         "vertices": [],
         "np": 0,
         "idBufferVertices": gl.createBuffer(),
-        "vCenter" : []
+        "vCenter" : [],
+        "t" : []
     };
     initBuffersPoints(currentLine);
 }
@@ -88,6 +94,22 @@ function updateBufferLines(model)
 
         gl.bindBuffer(gl.ARRAY_BUFFER, model.idBufferCenter);
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(model.vCenter), gl.STATIC_DRAW);
+
+        gl.bindBuffer(gl.ARRAY_BUFFER, model.idBufferT);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(model.t), gl.STATIC_DRAW);
+    }
+}
+
+//Asyncronous function to be able to animate multiple stars at once
+async function timeline(model, steps) {
+    for (let i = 0; i < steps; i++) {
+        for (let j = 0; j < model.t.length; j++) {
+            model.t[j] += 1;
+        }
+        updateBufferLines(model);
+        // Wait for the next animation frame
+        await new Promise(resolve => requestAnimationFrame(resolve));
+        //console.log(model.t);
     }
 }
 
@@ -109,6 +131,8 @@ function drawScene()
         drawTriangleFan(starArray[i], true);
     }
 
+    requestAnimationFrame(drawScene);
+
 }
 
 function clearScene() 
@@ -119,7 +143,8 @@ function clearScene()
         "vertices": [],
         "np": 0,
         "idBufferVertices": gl.createBuffer(),
-        "vCenter" : []
+        "vCenter" : [],
+        "t" : []
     };
 
     initBuffersPoints(currentLine);
@@ -148,13 +173,15 @@ function initHandlers()
                 //Add new star
                 let newStar = polyStar(5 + sidesOffset, 0.0125, 0.025, clickPos);
                 initBuffersCenter(newStar);
-                //initBuffers(newStar);
                 starArray.push(newStar);
+                //Animate t from 0 to N
+                timeline(newStar, 100);
 
                 //Add line
                 currentLine.vertices.push(tx, ty, 0.0);
                 currentLine.np++;
-                currentLine.vCenter.push(0.0, 0.0, 0.0);
+                currentLine.vCenter.push(5.0, 0.0, 0.0);
+                currentLine.t.push(0.0);
                 updateBufferLines(currentLine);
 
                 drawScene();

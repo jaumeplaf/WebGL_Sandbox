@@ -44,6 +44,9 @@ function initShader(vShader, fShader)
 
     program.vertexCenterAttribute = gl.getAttribLocation( program, "StarCenter");
     gl.enableVertexAttribArray(program.vertexCenterAttribute);
+
+    program.vertexTimeAttribute = gl.getAttribLocation( program, "TransitionTime");
+    gl.enableVertexAttribArray(program.vertexTimeAttribute);
 }
 
 function initBuffers(model) 
@@ -71,6 +74,10 @@ function initBuffersCenter(model)
     model.idBufferCenter = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, model.idBufferCenter);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(model.vCenter), gl.STATIC_DRAW);
+
+    model.idBufferT = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, model.idBufferT);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(model.t), gl.STATIC_DRAW);
 }
 
 function initRendering(color) 
@@ -101,6 +108,9 @@ function drawTriangleFan(model, useArray)
     gl.bindBuffer(gl.ARRAY_BUFFER, model.idBufferCenter);
     gl.vertexAttribPointer(program.vertexCenterAttribute, 3, gl.FLOAT, false, 0, 0);
 
+    gl.bindBuffer(gl.ARRAY_BUFFER, model.idBufferT);
+    gl.vertexAttribPointer(program.vertexTimeAttribute, 1, gl.FLOAT, false, 0, 0);
+
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, model.idBufferIndices);
     if (!useArray) gl.drawElements(gl.TRIANGLE_FAN, model.indices.length, gl.UNSIGNED_SHORT, 0); 
     else gl.drawArrays(gl.TRIANGLE_FAN, 0, model.vertices.length / 3);
@@ -122,6 +132,8 @@ function drawLineStrip(model)
     gl.vertexAttribPointer(program.vertexPositionAttribute, 3, gl.FLOAT, false, 0, 0);
     gl.bindBuffer(gl.ARRAY_BUFFER, model.idBufferCenter);
     gl.vertexAttribPointer(program.vertexCenterAttribute, 3, gl.FLOAT, false, 0, 0);
+    gl.bindBuffer(gl.ARRAY_BUFFER, model.idBufferT);
+    gl.vertexAttribPointer(program.vertexTimeAttribute, 1, gl.FLOAT, false, 0, 0);
     gl.drawArrays(gl.LINE_STRIP, 0, model.np);
 }
 

@@ -105,7 +105,7 @@ function polyCircle(segments, radius, center, fill)
     starPoints.vCenter.push(center[0], center[1], 0)
     starPoints.t.push(0);
 
-    console.log("Star points: ", starPoints);
+    //console.log("Star points: ", starPoints);
     
     return starPoints;
 

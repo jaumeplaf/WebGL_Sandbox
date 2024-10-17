@@ -120,6 +120,8 @@ function drawLineStrip(model)
 {
     gl.bindBuffer(gl.ARRAY_BUFFER, model.idBufferVertices);
     gl.vertexAttribPointer(program.vertexPositionAttribute, 3, gl.FLOAT, false, 0, 0);
+    gl.bindBuffer(gl.ARRAY_BUFFER, model.idBufferCenter);
+    gl.vertexAttribPointer(program.vertexCenterAttribute, 3, gl.FLOAT, false, 0, 0);
     gl.drawArrays(gl.LINE_STRIP, 0, model.np);
 }
 

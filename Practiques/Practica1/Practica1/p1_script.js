@@ -21,7 +21,8 @@ var lineArray = [];
 var currentLine = {
     "vertices" : [],
     "np" : 0,
-    "idBufferVertices": null
+    "idBufferVertices": null,
+    "vCenter" : []
 };
 
 //Initialize WebGL & required components
@@ -47,6 +48,10 @@ function initBuffersPoints(model)
     model.idBufferVertices = gl.createBuffer ();
     gl.bindBuffer(gl.ARRAY_BUFFER, model.idBufferVertices);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(model.vertices), gl.DYNAMIC_DRAW);
+
+    model.idBufferCenter = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, model.idBufferCenter);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(model.vCenter), gl.STATIC_DRAW);
 }
 
 function startNewLine() 
@@ -60,7 +65,8 @@ function startNewLine()
     currentLine = {
         "vertices": [],
         "np": 0,
-        "idBufferVertices": gl.createBuffer()
+        "idBufferVertices": gl.createBuffer(),
+        "vCenter" : []
     };
     initBuffersPoints(currentLine);
 }
@@ -79,6 +85,9 @@ function updateBufferLines(model)
     if (model.idBufferVertices) {
         gl.bindBuffer(gl.ARRAY_BUFFER, model.idBufferVertices);
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(model.vertices), gl.STATIC_DRAW);
+
+        gl.bindBuffer(gl.ARRAY_BUFFER, model.idBufferCenter);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(model.vCenter), gl.STATIC_DRAW);
     }
 }
 
@@ -86,11 +95,7 @@ function updateBufferLines(model)
 function drawScene() 
 {
     gl.clear(gl.COLOR_BUFFER_BIT);
-    //Draw stars
-    for(let i = 0; i < starArray.length; i++){    
-        drawTriangleFan(starArray[i], true);
-    }
-
+    
     //Draw completed lines
     for (let i = 0; i < lineArray.length; i++) {
         drawLineStrip(lineArray[i]);
@@ -99,6 +104,11 @@ function drawScene()
      if (currentLine.np > 0) {
         drawLineStrip(currentLine);
     }
+    //Draw stars
+    for(let i = 0; i < starArray.length; i++){    
+        drawTriangleFan(starArray[i], true);
+    }
+
 }
 
 function clearScene() 
@@ -108,7 +118,8 @@ function clearScene()
     currentLine = {
         "vertices": [],
         "np": 0,
-        "idBufferVertices": gl.createBuffer()
+        "idBufferVertices": gl.createBuffer(),
+        "vCenter" : []
     };
 
     initBuffersPoints(currentLine);
@@ -135,7 +146,7 @@ function initHandlers()
                 let sidesOffset = Math.trunc(Math.random(tx - ty) * maxSides - 1);
 
                 //Add new star
-                let newStar = polyStar(5 + sidesOffset, 0.025, 0.05, clickPos);
+                let newStar = polyStar(5 + sidesOffset, 0.0125, 0.025, clickPos);
                 initBuffersCenter(newStar);
                 //initBuffers(newStar);
                 starArray.push(newStar);
@@ -143,6 +154,7 @@ function initHandlers()
                 //Add line
                 currentLine.vertices.push(tx, ty, 0.0);
                 currentLine.np++;
+                currentLine.vCenter.push(0.0, 0.0, 0.0);
                 updateBufferLines(currentLine);
 
                 drawScene();

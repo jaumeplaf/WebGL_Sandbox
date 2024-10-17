@@ -109,7 +109,6 @@ async function timeline(model, steps) {
         updateBufferLines(model);
         // Wait for the next animation frame
         await new Promise(resolve => requestAnimationFrame(resolve));
-        //console.log(model.t);
     }
 }
 
@@ -171,11 +170,11 @@ function initHandlers()
                 let sidesOffset = Math.trunc(Math.random(tx - ty) * maxSides - 1);
 
                 //Add new star
-                let newStar = polyStar(5 + sidesOffset, 0.0125, 0.025, clickPos);
+                let newStar = polyStar(5 + sidesOffset, 0.015, 0.03, clickPos);
                 initBuffersCenter(newStar);
                 starArray.push(newStar);
                 //Animate t from 0 to N
-                timeline(newStar, 100);
+                timeline(newStar, 150);
 
                 //Add line
                 currentLine.vertices.push(tx, ty, 0.0);

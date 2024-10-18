@@ -36,6 +36,7 @@
 
       out vec3 fragVertexPosition;
       out vec3 vColor;
+      out float fragSize;
 
       float saturate(float value){
         return clamp(value, 0.0, 1.0);
@@ -47,6 +48,7 @@
 
           gl_PointSize = VertexSize;
           fragVertexPosition = VertexPosition;
+          fragSize = VertexSize;
       
           float t = TransitionTime / 100.0;
           t = saturate(t * tSpeed);
@@ -81,6 +83,7 @@
 
       in vec3 vColor;
       in vec3 fragVertexPosition;
+      in float fragSize;
       out vec4 fragmentColor;
 
       //Control parameters
@@ -100,25 +103,30 @@
       
       void main() {
 
-        //fragmentColor = vec4(vColor, 1.0);
-        //Star color
+        if(fragSize == 0.0){
+          fragmentColor = vec4(vColor, 1.0);
+        }
+        else{
+          //Star color
 
-        //Hue
-        float randomValueX = random(fragVertexPosition.x);
-        float randomValueY = random(fragVertexPosition.y);
-        float randomValueZ = random(fragVertexPosition.z);
+          //Hue
+          float randomValueX = random(fragVertexPosition.x);
+          float randomValueY = random(fragVertexPosition.y);
+          float randomValueZ = random(fragVertexPosition.z);
 
-        //Random mask
-        float randomValue = random(fragVertexPosition.x + fragVertexPosition.y + fragVertexPosition.z);
-        float applyColor = saturate(step(0.5, randomValue));
+          //Random mask
+          float randomValue = random(fragVertexPosition.x + fragVertexPosition.y + fragVertexPosition.z);
+          float applyColor = saturate(step(0.5, randomValue));
 
-        //Color mix
-        float cX = saturate(colorIntensity * applyColor + randomValueX + colorDesaturate);
-        float cY = saturate(colorIntensity * applyColor + randomValueY + colorDesaturate);
-        float cZ = saturate(colorIntensity * applyColor + randomValueZ + colorDesaturate);
+          //Color mix
+          float cX = saturate(colorIntensity * applyColor + randomValueX + colorDesaturate);
+          float cY = saturate(colorIntensity * applyColor + randomValueY + colorDesaturate);
+          float cZ = saturate(colorIntensity * applyColor + randomValueZ + colorDesaturate);
 
-        //Out
-        fragmentColor = vec4(cX, cY, cZ, 1.0);
+          //Out
+          fragmentColor = vec4(cX, cY, cZ, 1.0);
+        }
+        
 
       }
     </script>

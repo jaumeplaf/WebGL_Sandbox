@@ -4,13 +4,30 @@ const mainCanvas = document.getElementById(myCanvas);
 const starVertexShader = 'solidColorVS';
 const starFragmentShader = 'solidColorFS';
 
-//Initialize buttons
+//Initialize buttons (foreground)
 var newLineButton = document.getElementById("newLineButton");
 var clearSceneButton = document.getElementById("clearSceneButton");
 
-//Set color variables
-var colorBackground = [0.0,0.0,0.0,1.0];
-var maxSides = 10;
+//Sliders (background)
+let sliderPointNum = document.getElementById("PointNumber");
+let sliderMaxSize = document.getElementById("MaxSizeStar");
+let pointNumDisp = document.getElementById("PointNumberDisplay");
+let maxSizeDisp = document.getElementById("MaxSizeDisplay");
+
+var pointNumber = parseFloat(sliderPointNum.value);
+var minSizeStar = 0;
+var maxSizeStar = parseFloat(sliderMaxSize.value);
+
+var rPoints = randPoints(pointNumber, minSizeStar, maxSizeStar);
+
+
+
+//Set background variables
+const colorBackground = [0.0,0.0,0.0,1.0];
+
+//Set foreground variables
+let maxSides = 10;
+//Correction to make sure maxSides is actually the right number
 maxSides -= 3;
 
 //Initialize stars and lines arrays
@@ -23,7 +40,8 @@ var currentLine = {
     "np" : 0,
     "idBufferVertices": 0,
     "vCenter" : [],
-    "t" : []
+    "t" : [],
+    "sizes" : []
 };
 
 //Initialize WebGL & required components
@@ -37,26 +55,14 @@ function initWebGL()
     }
     
     initShader(starVertexShader, starFragmentShader);
+    initBuffers(rPoints);
     initRendering(colorBackground);
     initHandlers();
     
     requestAnimationFrame(drawScene);
-}
 
-//Initialize points buffer
-function initBuffersPoints(model) 
-{
-    model.idBufferVertices = gl.createBuffer ();
-    gl.bindBuffer(gl.ARRAY_BUFFER, model.idBufferVertices);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(model.vertices), gl.DYNAMIC_DRAW);
-
-    model.idBufferCenter = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, model.idBufferCenter);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(model.vCenter), gl.STATIC_DRAW);
-
-    model.idBufferT = gl.createBuffer();
-    gl.bindBuffer(gl.ARRAY_BUFFER, model.idBufferT);
-    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(model.t), gl.STATIC_DRAW);
+    pointNumDisp.textContent = "Stars number: " + sliderPointNum.value;
+    maxSizeDisp.textContent = "Max star size: " + sliderMaxSize.value;
 }
 
 function startNewLine() 
@@ -72,9 +78,10 @@ function startNewLine()
         "np": 0,
         "idBufferVertices": gl.createBuffer(),
         "vCenter" : [],
-        "t" : []
+        "t" : [],
+        "sizes" : []
     };
-    initBuffersPoints(currentLine);
+    initBuffers(currentLine);
 }
 
 //Update star buffer
@@ -84,6 +91,8 @@ function updateBuffer(model)
     gl.bufferData (gl.ARRAY_BUFFER, new Float32Array(model.vertices), gl.STATIC_DRAW);
     gl.bindBuffer (gl.ELEMENT_ARRAY_BUFFER, model.idBufferIndices);
     gl.bufferData (gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(model.indices), gl.STATIC_DRAW);
+    gl.bindBuffer (gl.ARRAY_BUFFER, model.idBufferSizes);
+    gl.bufferData (gl.ARRAY_BUFFER, new Uint16Array(model.sizes), gl.STATIC_DRAW);
 }
 
 function updateBufferLines(model) 
@@ -97,6 +106,9 @@ function updateBufferLines(model)
 
         gl.bindBuffer(gl.ARRAY_BUFFER, model.idBufferT);
         gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(model.t), gl.STATIC_DRAW);
+
+        gl.bindBuffer(gl.ARRAY_BUFFER, model.idBufferSizes);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(model.sizes), gl.STATIC_DRAW);
     }
 }
 
@@ -117,6 +129,8 @@ function drawScene()
 {
     gl.clear(gl.COLOR_BUFFER_BIT);
     
+    drawPoints(rPoints);
+
     //Draw completed lines
     for (let i = 0; i < lineArray.length; i++) {
         drawLineStrip(lineArray[i]);
@@ -134,6 +148,21 @@ function drawScene()
 
 }
 
+function updateCanvas() {
+    //Reinitialize buffers with updated points
+    rPoints = randPoints(pointNumber, minSizeStar, maxSizeStar);
+    initBuffers(rPoints);
+
+    clearScene();
+
+    drawScene();
+
+    //Update slider text
+    pointNumDisp.textContent = "Stars number: " + sliderPointNum.value;
+    maxSizeDisp.textContent = "Max star size: " + sliderMaxSize.value;
+}
+
+//Clears foreground
 function clearScene() 
 {
     starArray = [];
@@ -143,10 +172,11 @@ function clearScene()
         "np": 0,
         "idBufferVertices": gl.createBuffer(),
         "vCenter" : [],
-        "t" : []
+        "t" : [],
+        "sizes" : []
     };
 
-    initBuffersPoints(currentLine);
+    initBuffers(currentLine);
 
     drawScene();
 }
@@ -154,7 +184,7 @@ function clearScene()
 //Event listeners
 function initHandlers()
 {
-    initBuffersPoints(currentLine);
+    initBuffers(currentLine);
     //On mouse click
     mainCanvas.addEventListener("mousedown", 
         function(event){ 
@@ -171,16 +201,17 @@ function initHandlers()
 
                 //Add new star
                 let newStar = polyStar(5 + sidesOffset, 0.015, 0.03, clickPos);
-                initBuffersCenter(newStar);
+                initBuffers(newStar);
                 starArray.push(newStar);
                 //Animate t from 0 to N
-                timeline(newStar, 150);
+                timeline(newStar, 100);
 
                 //Add line
                 currentLine.vertices.push(tx, ty, 0.0);
                 currentLine.np++;
                 currentLine.vCenter.push(5.0, 0.0, 0.0);
                 currentLine.t.push(0.0);
+                currentLine.sizes.push(0.0);
                 updateBufferLines(currentLine);
 
                 drawScene();
@@ -215,3 +246,15 @@ function initHandlers()
 
 //Program execution
 initWebGL();
+
+// Update the current slider value (each time you drag the slider handle)
+sliderPointNum.oninput = function() {
+    pointNumber = parseFloat(this.value);
+    updateCanvas();
+  } 
+sliderMaxSize.oninput = function() {
+    maxSizeStar = parseFloat(this.value);
+    updateCanvas();
+} 
+  
+  

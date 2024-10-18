@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+  
+    <meta charset="utf-8">
+    
+    <title> Starline Weaver </title>
+    <link rel="stylesheet" href="style.css">
+    
+    <!-- Shaders -->
+    <script id="myVertexShader" 
+          type="x-shader/x-vertex">#version 300 es
+
+      // Vertex shader
+
+      in vec3 VertexPosition;
+      in float VertexSize;
+      out vec3 fragVertexPosition;
+      
+      void main()  {
+
+        gl_Position = vec4(VertexPosition, 1.0);
+        gl_PointSize = VertexSize;
+        fragVertexPosition = VertexPosition;
+        
+      }
+
+    </script>
+
+    <script id="myFragmentShader" 
+          type="x-shader/x-fragment">#version 300 es
+    
+      // Fragment shader
+
+      precision mediump float;
+      out vec4 fragmentColor;
+      in vec3 fragVertexPosition;
+
+      //Control parameters
+      float colorDesaturate = 0.1;
+      float colorIntensity = 0.8;
+
+      //Declare random float (0-1)
+      float random(float seed)
+      {
+        return fract(sin(seed) * 43758.5453);
+      }
+      
+      //Declare saturate
+      float saturate(float value){
+        return clamp(value, 0.0, 1.0);
+      }
+
+      void main() {
+
+        //Star color
+
+        //Hue
+        float randomValueX = random(fragVertexPosition.x);
+        float randomValueY = random(fragVertexPosition.y);
+        float randomValueZ = random(fragVertexPosition.z);
+
+        //Random mask
+        float randomValue = random(fragVertexPosition.x + fragVertexPosition.y + fragVertexPosition.z);
+        float applyColor = saturate(step(0.5, randomValue));
+
+        //Color mix
+        float cX = saturate(colorIntensity * applyColor + randomValueX + colorDesaturate);
+        float cY = saturate(colorIntensity * applyColor + randomValueY + colorDesaturate);
+        float cZ = saturate(colorIntensity * applyColor + randomValueZ + colorDesaturate);
+
+        //Out
+        fragmentColor = vec4(cX, cY, cZ, 1.0);
+
+      }
+
+    </script>
+  </head>
+
+  <body> 
+
+    <canvas id="myCanvas" width="1905" height="840"></canvas>
+      El Navegador no soporta HTML5
+    </canvas>
+
+    <div class="slidecontainer">
+      <input type="range" min="10" max="6000" value="2000" class="slider" id="PointNumber">
+      <input type="range" min="2" max="10" value="3" class="slider" id="MaxSizeStar">
+    </div>
+    <div class="slidetextcontainer">
+      <span class="value-display" id="PointNumberDisplay">Stars number: </span>
+      <span class="value-display" id="MaxSizeDisplay">Max star size: </span>
+    </div>
+
+    <script src = "script.js"></script>
+    
+  </body>
+  
+</html>

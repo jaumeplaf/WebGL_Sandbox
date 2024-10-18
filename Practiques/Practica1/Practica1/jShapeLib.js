@@ -1,17 +1,5 @@
 console.log("Loaded Shapes library");
 
-//Test triangle
-const exampleTriangle = 
-{
-    "vertices" : [-0.7, -0.7, 0.0,
-                   0.7, -0.7, 0.0,
-                   0.0,  0.7, 0.0,
-                   0.0, -0.9, 0.0],
-  
-    "indices" : [ 0, 1, 2, 3]
-  
-};
-
 function polyCircle(segments, radius, center, fill)
 {
     //Creates the points to display a circle, to display with TRIANGLE_FAN
@@ -56,7 +44,8 @@ function polyCircle(segments, radius, center, fill)
             "vertices" : [],
             "indices" : [],
             "vCenter" : [],
-            "t" : []
+            "t" : [],
+            "sizes" : []
     }
 
     //Generates origin + outer ring points
@@ -91,6 +80,7 @@ function polyCircle(segments, radius, center, fill)
         }
         starPoints.vCenter.push(center[0], center[1], 0);
         starPoints.t.push(0);
+        starPoints.sizes.push(0);
     }
     
     //Re-add origin
@@ -98,14 +88,14 @@ function polyCircle(segments, radius, center, fill)
     starPoints.vertices.unshift(center[0], center[1], center[2]);
     starPoints.vCenter.push(center[0], center[1], 0)
     starPoints.t.unshift(0);
+    starPoints.sizes.push(0);
 
     //Re-add first point to close shape
     starPoints.indices.push(outerCircle.indices[0]);
     starPoints.vertices.push(outerCircle.vertices[0], outerCircle.vertices[1], outerCircle.vertices[2]);
     starPoints.vCenter.push(center[0], center[1], 0)
     starPoints.t.push(0);
-
-    //console.log("Star points: ", starPoints);
+    starPoints.sizes.push(0);
     
     return starPoints;
 

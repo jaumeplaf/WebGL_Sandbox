@@ -11,22 +11,53 @@ canvas
 } 
 
 /* Slider bars style */
-.slidecontainer 
-{
+.wrapper {
     display: flex;
+    align-items: flex-start;
     justify-content: flex-start;
-    align-items: center;
-    width: 350px;
-    margin: 0;
 }
-.slidetextcontainer 
-{
+
+.slider-group {
     display: flex;
-    justify-content: flex-start;
-    align-items: center;
-    width: 400px;
-    margin: 0;
+    flex-direction: column;
+    margin-right: 20px;
 }
+
+.slider {
+    width: 200px;
+}
+
+.value-display {
+    margin-top: 5px;
+}
+
+.button-container {
+    display: flex;
+    flex-direction: row;
+    margin-left: 20px;
+}
+
+.button-container button {
+    margin-right: 10px;
+    background-color: #3f3f3f;
+    color: #ffd0ff;
+    padding: 15px 30px;
+    font-size: 16px;
+    cursor: pointer;
+    margin-right: 10px;
+    border-radius: 25px;
+    box-shadow: none;
+    appearance: none;
+    outline: none;
+    transition: background-color 0.3s ease;
+
+}
+
+
+.button-container button:hover {
+    background-color: #555555;
+}
+
 span{
     margin-top: 0;
     margin-bottom: 0;
@@ -76,7 +107,7 @@ span{
 
 /* Tooltip on hover */
 .slider:hover::after {
-    content: attr(value); /* Display the current value on hover */
+    content: attr(value);
     position: absolute;
     top: -30px;
     left: 50%;
@@ -96,7 +127,4 @@ span{
     font-weight: bold;
     color: #ffd0ff;
     opacity: 0.7;
-  }
-  .value-display:hover{
-    opacity: 1;
   }

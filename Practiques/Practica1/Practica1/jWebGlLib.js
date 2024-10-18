@@ -41,12 +41,15 @@ function initShader(vShader, fShader)
 
     program.vertexPositionAttribute = gl.getAttribLocation( program, "VertexPosition");
     gl.enableVertexAttribArray(program.vertexPositionAttribute);
-
+    //To use in foreground stars and lines
     program.vertexCenterAttribute = gl.getAttribLocation( program, "StarCenter");
     gl.enableVertexAttribArray(program.vertexCenterAttribute);
-
+    //To use in foreground stars only
     program.vertexTimeAttribute = gl.getAttribLocation( program, "TransitionTime");
     gl.enableVertexAttribArray(program.vertexTimeAttribute);
+    //To use in background stars only
+    program.vertexSizeAttribute = gl.getAttribLocation(program, "VertexSize");
+    gl.enableVertexAttribArray(program.vertexSizeAttribute);
 }
 
 function initBuffers(model) 
@@ -58,19 +61,7 @@ function initBuffers(model)
     model.idBufferIndices = gl.createBuffer ();
     gl.bindBuffer (gl.ELEMENT_ARRAY_BUFFER, model.idBufferIndices);
     gl.bufferData (gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(model.indices), gl.STATIC_DRAW);
-}
 
-function initBuffersCenter(model) 
-{
-    model.idBufferVertices = gl.createBuffer ();
-    gl.bindBuffer (gl.ARRAY_BUFFER, model.idBufferVertices);
-    gl.bufferData (gl.ARRAY_BUFFER, new Float32Array(model.vertices), gl.STATIC_DRAW);
-
-    model.idBufferIndices = gl.createBuffer ();
-    gl.bindBuffer (gl.ELEMENT_ARRAY_BUFFER, model.idBufferIndices);
-    gl.bufferData (gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(model.indices), gl.STATIC_DRAW);
-    
-    //Shape center buffer
     model.idBufferCenter = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, model.idBufferCenter);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(model.vCenter), gl.STATIC_DRAW);
@@ -78,6 +69,10 @@ function initBuffersCenter(model)
     model.idBufferT = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, model.idBufferT);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(model.t), gl.STATIC_DRAW);
+
+    model.idBufferSizes = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, model.idBufferSizes);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(model.sizes), gl.STATIC_DRAW);
 }
 
 function initRendering(color) 
@@ -87,19 +82,6 @@ function initRendering(color)
 }
 
 //draw shapes
-
-function drawTriangles(model, useArray) 
-{ 
-    gl.bindBuffer(gl.ARRAY_BUFFER, model.idBufferVertices);
-    gl.vertexAttribPointer(program.vertexPositionAttribute, 3, gl.FLOAT, false, 0, 0);
-    
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, model.idBufferIndices);
-
-    if(!useArray) gl.drawElements(gl.TRIANGLES, 3, gl.UNSIGNED_SHORT, 0);
-    else gl.drawArrays(gl.TRIANGLES, 0, model.indices.length);
-
-}
-
 function drawTriangleFan(model, useArray) 
 { 
     gl.bindBuffer(gl.ARRAY_BUFFER, model.idBufferVertices);
@@ -112,34 +94,47 @@ function drawTriangleFan(model, useArray)
     gl.vertexAttribPointer(program.vertexTimeAttribute, 1, gl.FLOAT, false, 0, 0);
 
     gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, model.idBufferIndices);
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, model.idBufferSizes);
+    gl.vertexAttribPointer(program.vertexSizeAttribute, 1, gl.FLOAT, false, 0, 0);
+
     if (!useArray) gl.drawElements(gl.TRIANGLE_FAN, model.indices.length, gl.UNSIGNED_SHORT, 0); 
     else gl.drawArrays(gl.TRIANGLE_FAN, 0, model.vertices.length / 3);
-}
 
-function drawTriangleStrip(model) 
-{ 
-    gl.bindBuffer(gl.ARRAY_BUFFER, model.idBufferVertices);
-    gl.vertexAttribPointer(program.vertexPositionAttribute, 3, gl.FLOAT, false, 0, 0);
-
-    gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, model.idBufferIndices);
-    if(!useArray) gl.drawElements(gl.TRIANGLE_STRIP, 3, gl.UNSIGNED_SHORT, 0);
-    else gl.drawArrays(gl.TRIANGLE_STRIP, 0, model.indices.length);
 }
 
 function drawLineStrip(model) 
 {
     gl.bindBuffer(gl.ARRAY_BUFFER, model.idBufferVertices);
     gl.vertexAttribPointer(program.vertexPositionAttribute, 3, gl.FLOAT, false, 0, 0);
+
     gl.bindBuffer(gl.ARRAY_BUFFER, model.idBufferCenter);
     gl.vertexAttribPointer(program.vertexCenterAttribute, 3, gl.FLOAT, false, 0, 0);
+
     gl.bindBuffer(gl.ARRAY_BUFFER, model.idBufferT);
     gl.vertexAttribPointer(program.vertexTimeAttribute, 1, gl.FLOAT, false, 0, 0);
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, model.idBufferSizes);
+    gl.vertexAttribPointer(program.vertexSizeAttribute, 1, gl.FLOAT, false, 0, 0);
+    
     gl.drawArrays(gl.LINE_STRIP, 0, model.np);
 }
 
-function drawLines(model) 
-{
+function drawPoints(model) {
+
     gl.bindBuffer(gl.ARRAY_BUFFER, model.idBufferVertices);
     gl.vertexAttribPointer(program.vertexPositionAttribute, 3, gl.FLOAT, false, 0, 0);
-    gl.drawArrays(gl.POINTS, 0, model.np);
-}
+
+    gl.bindBuffer(gl.ARRAY_BUFFER, model.idBufferCenter);
+    gl.vertexAttribPointer(program.vertexCenterAttribute, 3, gl.FLOAT, false, 0, 0);
+
+    
+    gl.bindBuffer(gl.ARRAY_BUFFER, model.idBufferT);
+    gl.vertexAttribPointer(program.vertexTimeAttribute, 1, gl.FLOAT, false, 0, 0);
+  
+    gl.bindBuffer(gl.ARRAY_BUFFER, model.idBufferSizes);
+    gl.vertexAttribPointer(program.vertexSizeAttribute, 1, gl.FLOAT, false, 0, 0);
+  
+    gl.drawArrays(gl.POINTS, 0, model.vertices.length / 3); // Draw points
+    
+  }

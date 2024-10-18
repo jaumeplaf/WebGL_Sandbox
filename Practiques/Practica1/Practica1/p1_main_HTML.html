@@ -16,7 +16,8 @@
       
       //Vertex shader
 
-      //In/Out
+      //Declare inputs and outputs
+
       uniform float sScale;
 
       in vec3 VertexPosition;
@@ -28,40 +29,43 @@
       out vec3 vColor;
       out float fragSize;
 
+      //Declare the saturate() function (free in most modern GPUs)
       float saturate(float value){
         return clamp(value, 0.0, 1.0);
       }
       
+      //Star growth speed
       float tSpeed = 2.0;
-      //float sScale = 1.0;
 
-      void main()  {
+      void main()  
+      {
 
-          gl_PointSize = VertexSize;
-          fragVertexPosition = VertexPosition;
-          fragSize = VertexSize;
-      
-          float t = TransitionTime / 100.0;
-          t = saturate(t * tSpeed);
+        //Set output variables
+        gl_PointSize = VertexSize;
+        fragVertexPosition = VertexPosition;
+        fragSize = VertexSize;
+        
+        //Manipulate transition value
+        float t = TransitionTime / 100.0;
+        t = saturate(t * tSpeed);
 
-          //Calculate final vertex position
-          vec3 dir = VertexPosition - StarCenter;
-          vec3 scaledPos = dir * sScale;
-          vec3 finalPos = scaledPos + StarCenter;
-          
-          //Interpolate between center and final position
-          vec3 transPos = mix(StarCenter, finalPos, t);
+        //Calculate final vertex position
+        vec3 dir = VertexPosition - StarCenter;
+        vec3 scaledPos = dir * sScale;
+        vec3 finalPos = scaledPos + StarCenter;
+        
+        //Interpolate between center and final position
+        vec3 transPos = mix(StarCenter, finalPos, t);
 
-          //Use 5.0 as a Line marker, to exclude vertex scaling
-          if(StarCenter.x == 5.0){
-            gl_Position = vec4(VertexPosition, 1.0);
-            vColor = (VertexPosition + 1.0) * 0.5; 
-          }
-          else {
-           gl_Position = vec4(transPos, 1.0);
-            vColor = (VertexPosition + 1.0) * 0.5; 
-          }
-          
+        //Use 5.0 as a Line marker, to exclude from vertex scaling
+        if(StarCenter.x == 5.0){
+          gl_Position = vec4(VertexPosition, 1.0);
+          vColor = (VertexPosition + 1.0) * 0.5; 
+        }
+        else {
+          gl_Position = vec4(transPos, 1.0);
+          vColor = (VertexPosition + 1.0) * 0.5; 
+        }
 
       }
     </script>
@@ -72,14 +76,15 @@
       
       precision mediump float;
 
+      //Declare inputs and final color
       in vec3 vColor;
       in vec3 fragVertexPosition;
       in float fragSize;
       out vec4 fragmentColor;
 
       //Control parameters
-      float colorDesaturate = 0.5;
-      float colorIntensity = 0.8;
+      float colorDesaturate = 0.5; //Removes saturation from the background stars color
+      float colorIntensity = 0.8; //Acts as a mask to set some stars pure white
 
       //Declare random float (0-1)
       float random(float seed)
@@ -87,17 +92,19 @@
         return fract(sin(seed) * 43758.5453);
       }
       
-      //Declare saturate
+      //Declare the saturate() function (free in most modern GPUs)
       float saturate(float value){
         return clamp(value, 0.0, 1.0);
       }
       
       void main() {
 
+        //Use 0.0 as a Foreground marker, to exclude from randomized color
         if(fragSize == 0.0){
           fragmentColor = vec4(vColor, 1.0);
         }
-        else{
+        else {
+
           //Star color
 
           //Hue
@@ -153,7 +160,7 @@
   </div>
 
     <!-- Load custom WebGL, utilities and shapes libraries -->
-    <script src = "jWebGlLib.js"></script>
+    <script src = "p1_WebGL.js"></script>
     <script src = "jUtilLib.js"></script>
     <script src = "jShapeLib.js"></script>
 

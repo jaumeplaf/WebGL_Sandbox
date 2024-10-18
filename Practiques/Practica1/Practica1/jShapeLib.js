@@ -1,15 +1,22 @@
+//Shape library script, handles the functions responsible for drawing circles and stars
+
 console.log("Loaded Shapes library");
 
 function polyCircle(segments, radius, center, fill)
 {
     //Creates the points to display a circle, to display with TRIANGLE_FAN
     segments = clamp(segments, 2, 4096);
+    //Initialize point array
     let polyPoints = {
         "vertices" : [center[0], center[1], center[2]],
         "indices" : [0]
     }
+    //Set angle step based on segments
     let angleStep = 2 * pi / segments
+    //Set ratio to mantain roundness
     let ratio = getCanvasRatio(myCanvas);
+
+    //Create the circle points
     for(i = 0; i<segments; i++)
     {
         let angle = i * angleStep;
@@ -18,34 +25,36 @@ function polyCircle(segments, radius, center, fill)
         polyPoints.indices.push(i+1);
         polyPoints.vertices.push(x, y, 0);
     }
-    //Duplicates first point to fill last triangle
-    if(fill)
-        {
-            let angle = 0 * angleStep;
-            let x = center[0] + radius * Math.cos(angle) * ratio;
-            let y = center[1] + radius * Math.sin(angle);
-            polyPoints.indices.push(segments+1);
-            polyPoints.vertices.push(x, y, 0);
-        }
-        return polyPoints;
-    }
     
-    function polyStar(sides, r1, r2, center) 
+    //Duplicates first point to fill last triangle if fill==true
+    if(fill)
     {
-        //Creates the points to display a star, to display with TRIANGLE_FAN
-        //This shape function depends on the polyCircle() function
-        
-        //Make sure center is set as a vector3
-        if(center.length == 2) center.push(0);
-        
-        sides = clamp(sides, 4, 4096);
-        let segments = sides * 2;
-        let starPoints = {
-            "vertices" : [],
-            "indices" : [],
-            "vCenter" : [],
-            "t" : [],
-            "sizes" : []
+        let angle = 0 * angleStep;
+        let x = center[0] + radius * Math.cos(angle) * ratio;
+        let y = center[1] + radius * Math.sin(angle);
+        polyPoints.indices.push(segments+1);
+        polyPoints.vertices.push(x, y, 0);
+    }
+
+    return polyPoints;
+}
+    
+function polyStar(sides, r1, r2, center) 
+{
+    //Creates the points to display a star, to display with TRIANGLE_FAN
+    //This shape function depends on the polyCircle() function
+    
+    //Make sure center is set as a vector3
+    if(center.length == 2) center.push(0);
+    
+    sides = clamp(sides, 4, 4096);
+    let segments = sides * 2;
+    let starPoints = {
+        "vertices" : [],
+        "indices" : [],
+        "vCenter" : [],
+        "t" : [],
+        "sizes" : []
     }
 
     //Generates origin + outer ring points
@@ -64,8 +73,9 @@ function polyCircle(segments, radius, center, fill)
     {
         innerCircle.indices[i] += segments;
     }
-
-    for(let i = 0; i < segments; i++) //Merge both arrays in a criss-cross pattern to create star
+    
+    //Merge both arrays in a criss-cross pattern to create the star
+    for(let i = 0; i < segments; i++) 
     {
         let j = 3 * i;
         if(i % 2 == 0) //if even, save outer position
@@ -78,11 +88,12 @@ function polyCircle(segments, radius, center, fill)
             starPoints.indices.push(innerCircle.indices[i]);
             starPoints.vertices.push(innerCircle.vertices[j], innerCircle.vertices[j+1], innerCircle.vertices[j+2]);
         }
+        //Initialize other attributes
         starPoints.vCenter.push(center[0], center[1], 0);
         starPoints.t.push(0);
         starPoints.sizes.push(0);
     }
-    
+
     //Re-add origin
     starPoints.indices.unshift(0);
     starPoints.vertices.unshift(center[0], center[1], center[2]);
@@ -96,7 +107,6 @@ function polyCircle(segments, radius, center, fill)
     starPoints.vCenter.push(center[0], center[1], 0)
     starPoints.t.push(0);
     starPoints.sizes.push(0);
-    
-    return starPoints;
 
+    return starPoints;
 }

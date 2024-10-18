@@ -1,40 +1,38 @@
-//Set canvas and shaders
+//Main script, handles interaction and calls to p1_WebGL.js, jShapeLib.js and jUtilLib.js
+
+//Initialize canvas and shaders
 const myCanvas = 'myCanvas';
 const mainCanvas = document.getElementById(myCanvas);
 const starVertexShader = 'solidColorVS';
 const starFragmentShader = 'solidColorFS';
 
-//Initialize buttons (foreground)
+//Initialize foreground buttons and sliders
 var newLineButton = document.getElementById("newLineButton");
 var clearSceneButton = document.getElementById("clearSceneButton");
+let maxSizeDisp = document.getElementById("MaxSizeDisplay");
+let StarScaleDisp = document.getElementById("StarScaleDisplay");
 
-//Sliders (background)
+//Initialize background sliders
 let sliderPointNum = document.getElementById("PointNumber");
 let sliderMaxSize = document.getElementById("MaxSizeStar");
 let sliderStarScale = document.getElementById("StarScale");
 let pointNumDisp = document.getElementById("PointNumberDisplay");
-let maxSizeDisp = document.getElementById("MaxSizeDisplay");
-let StarScaleDisp = document.getElementById("StarScaleDisplay");
 
-let scaleValue = 1.0;
-
+//Initialize background variables
 var pointNumber = parseFloat(sliderPointNum.value);
 var minSizeStar = 0;
 var maxSizeStar = parseFloat(sliderMaxSize.value);
-var sScale = parseFloat(sliderStarScale.value);
-
 var rPoints = randPoints(pointNumber, minSizeStar, maxSizeStar);
-//Set background variables
 const colorBackground = [0.0,0.0,0.0,1.0];
-//Set foreground variables
-let maxSides = 10;
-//Correction to make sure maxSides is actually the right number
-maxSides -= 3;
 
+//Initialize foreground variables
+let maxSides = 10;
+maxSides -= 3; //Correction to make sure maxSides is actually the right number
+let scaleValue = 1.0; //Initialize star scale value
+var sScale = parseFloat(sliderStarScale.value);
 //Initialize stars and lines arrays
 var starArray = [];
 var lineArray = [];
-
 //Store current line to allow new lines
 var currentLine = {
     "vertices" : [],
@@ -62,6 +60,7 @@ function initWebGL()
     
     requestAnimationFrame(drawScene);
 
+    //Update slider display texts
     pointNumDisp.textContent = "Background stars number: " + sliderPointNum.value;
     maxSizeDisp.textContent = "Background star max size: " + sliderMaxSize.value;
     StarScaleDisp.textContent = "Star scaling: " + sliderStarScale.value;
@@ -83,12 +82,13 @@ function startNewLine()
         "t" : [],
         "sizes" : []
     };
+
     initBuffers(currentLine);
 }
 
-
 //Asyncronous function to be able to animate multiple stars at once
-async function timeline(model, steps) {
+async function timeline(model, steps) 
+{
     for (let i = 0; i < steps; i++) {
         for (let j = 0; j < model.t.length; j++) {
             model.t[j] += 1;
@@ -103,42 +103,44 @@ async function timeline(model, steps) {
 function drawScene() 
 {
     gl.clear(gl.COLOR_BUFFER_BIT);
-    
+
+    //Draw background stars
     drawPoints(rPoints);
 
     //Draw completed lines
     for (let i = 0; i < lineArray.length; i++) {
         drawLineStrip(lineArray[i]);
     }
-     // Draw current line
-     if (currentLine.np > 0) {
+    //Draw current line
+    if (currentLine.np > 0) {
         drawLineStrip(currentLine);
     }
     //Draw stars
     for(let i = 0; i < starArray.length; i++){    
-        drawTriangleFan(starArray[i], true);
+        drawTriangleFan(starArray[i]);
     }
 
     requestAnimationFrame(drawScene);
-
 }
 
-function updateCanvas(updatePoints) {
+function updateCanvas(updatePoints) 
+{
     //Reinitialize buffers with updated points
-    if(updatePoints) rPoints = randPoints(pointNumber, minSizeStar, maxSizeStar);
-    if(updatePoints) initBuffers(rPoints);
-
-    if(updatePoints) clearScene();
+    if(updatePoints){
+        rPoints = randPoints(pointNumber, minSizeStar, maxSizeStar);
+        initBuffers(rPoints);
+        clearScene();
+    } 
 
     drawScene();
 
-    //Update slider text
+    //Update slider display texts
     pointNumDisp.textContent = "Background stars number: " + sliderPointNum.value;
     maxSizeDisp.textContent = "Background star max size: " + sliderMaxSize.value;
     StarScaleDisp.textContent = "Star scaling: " + sliderStarScale.value;
 }
   
-//Updates scale uniform
+//Updates star scale uniform
 function updateScale(newScale)
 {
         scaleValue = newScale;
@@ -193,7 +195,7 @@ function initHandlers()
                 //Add line
                 currentLine.vertices.push(tx, ty, 0.0);
                 currentLine.np++;
-                currentLine.vCenter.push(5.0, 0.0, 0.0);
+                currentLine.vCenter.push(5.0, 0.0, 0.0); //We use 5.0 as a Line marker, to exclude from vertex scaling
                 currentLine.t.push(0.0);
                 currentLine.sizes.push(0.0);
                 updateBuffers(currentLine);
@@ -207,7 +209,8 @@ function initHandlers()
             }
     } 
     ); 
-    // New line keymap 
+
+    //New line keymap 
     document.addEventListener("keydown", function(event) {
         if (event.code === "Space") {
             event.preventDefault();
@@ -219,13 +222,11 @@ function initHandlers()
     newLineButton.addEventListener("click", function() {
         startNewLine();
     });
+
     // Clear scene button
     clearSceneButton.addEventListener("click", function() {
         clearScene();
     });
-
-   
-
 }
 
 //Program execution
@@ -235,11 +236,13 @@ initWebGL();
 sliderPointNum.oninput = function() {
     pointNumber = parseFloat(this.value);
     updateCanvas(true);
-  } 
+} 
+
 sliderMaxSize.oninput = function() {
     maxSizeStar = parseFloat(this.value);
     updateCanvas(true);
 } 
+
 sliderStarScale.oninput = function() {
     sScale = parseFloat(this.value);
     updateScale(sScale);

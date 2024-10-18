@@ -1,3 +1,5 @@
+//Utility library script, handles miscelanious reusable functions
+
 console.log("Loaded Basic Utilities library");
 
 const pi = Math.PI;
@@ -17,9 +19,10 @@ function getCanvasRatio(canv)
     let aspectRatio = 1 / (currCanv.width / currCanv.height);
     return aspectRatio;
 }
+
 function randPoints(pNum, maxSize, minSize)
 {
-  //Spawn pNum points randomly in (-1,-1,-1)->(1,1,1) space
+  //Spawn pNum points randomly in (-1,-1,-1) to (1,1,1) space
   //This function  depends on the remapRange() function
 
   let points = {
@@ -29,6 +32,7 @@ function randPoints(pNum, maxSize, minSize)
     "t" : [],
   }
   
+  //Create random (0 to 1) numbers, remap them to (-1 to 1), and set them to x and y position array. Set a random value (minSize to maxSize) to the sizes array
   for(let i = 0; i < pNum; i++)
   {
     let randX = remapRange(Math.random(), 0, 1, -1, 1);

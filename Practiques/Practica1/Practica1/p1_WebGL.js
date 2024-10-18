@@ -1,3 +1,5 @@
+//WebGL resources script, handles most of the actual shader and buffer functions
+
 console.log("Loaded WebGL2.0 Utilities library");
 
 //Initialize program
@@ -14,6 +16,7 @@ function getWebGLContext(canv)
     return null;
 }
 
+//Initialize, link and use shader
 function initShader(vShader, fShader) 
 {
     var vertexShader = gl.createShader(gl.VERTEX_SHADER);
@@ -29,7 +32,6 @@ function initShader(vShader, fShader)
     gl.attachShader(program, fragmentShader);
 
     gl.linkProgram(program);
-
     gl.useProgram(program);
 
     program.vertexPositionAttribute = gl.getAttribLocation( program, "VertexPosition");
@@ -43,7 +45,7 @@ function initShader(vShader, fShader)
     //To use in background stars only
     program.vertexSizeAttribute = gl.getAttribLocation(program, "VertexSize");
     gl.enableVertexAttribArray(program.vertexSizeAttribute);
-
+    //Foreground star scale uniform
     let scaleLocation = gl.getUniformLocation(program, "sScale");
     gl.uniform1f(scaleLocation, scaleValue);
 }
@@ -94,8 +96,7 @@ function initRendering(color)
     gl.clearColor(color[0], color[1], color[2], color[3]);
 }
 
-//draw shapes
-function drawTriangleFan(model, useArray) 
+function drawTriangleFan(model) 
 { 
     gl.bindBuffer(gl.ARRAY_BUFFER, model.idBufferVertices);
     gl.vertexAttribPointer(program.vertexPositionAttribute, 3, gl.FLOAT, false, 0, 0);
@@ -111,8 +112,7 @@ function drawTriangleFan(model, useArray)
     gl.bindBuffer(gl.ARRAY_BUFFER, model.idBufferSizes);
     gl.vertexAttribPointer(program.vertexSizeAttribute, 1, gl.FLOAT, false, 0, 0);
 
-    if (!useArray) gl.drawElements(gl.TRIANGLE_FAN, model.indices.length, gl.UNSIGNED_SHORT, 0); 
-    else gl.drawArrays(gl.TRIANGLE_FAN, 0, model.vertices.length / 3);
+    gl.drawArrays(gl.TRIANGLE_FAN, 0, model.vertices.length / 3);
 
 }
 
@@ -148,6 +148,6 @@ function drawPoints(model) {
     gl.bindBuffer(gl.ARRAY_BUFFER, model.idBufferSizes);
     gl.vertexAttribPointer(program.vertexSizeAttribute, 1, gl.FLOAT, false, 0, 0);
   
-    gl.drawArrays(gl.POINTS, 0, model.vertices.length / 3); // Draw points
+    gl.drawArrays(gl.POINTS, 0, model.vertices.length / 3);
     
   }

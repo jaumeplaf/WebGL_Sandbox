@@ -11,20 +11,21 @@ var clearSceneButton = document.getElementById("clearSceneButton");
 //Sliders (background)
 let sliderPointNum = document.getElementById("PointNumber");
 let sliderMaxSize = document.getElementById("MaxSizeStar");
+let sliderStarScale = document.getElementById("StarScale");
 let pointNumDisp = document.getElementById("PointNumberDisplay");
 let maxSizeDisp = document.getElementById("MaxSizeDisplay");
+let StarScaleDisp = document.getElementById("StarScaleDisplay");
+
+let scaleValue = 1.0;
 
 var pointNumber = parseFloat(sliderPointNum.value);
 var minSizeStar = 0;
 var maxSizeStar = parseFloat(sliderMaxSize.value);
+var sScale = parseFloat(sliderStarScale.value);
 
 var rPoints = randPoints(pointNumber, minSizeStar, maxSizeStar);
-
-
-
 //Set background variables
 const colorBackground = [0.0,0.0,0.0,1.0];
-
 //Set foreground variables
 let maxSides = 10;
 //Correction to make sure maxSides is actually the right number
@@ -61,8 +62,9 @@ function initWebGL()
     
     requestAnimationFrame(drawScene);
 
-    pointNumDisp.textContent = "Stars number: " + sliderPointNum.value;
-    maxSizeDisp.textContent = "Max star size: " + sliderMaxSize.value;
+    pointNumDisp.textContent = "Background stars number: " + sliderPointNum.value;
+    maxSizeDisp.textContent = "Background star max size: " + sliderMaxSize.value;
+    StarScaleDisp.textContent = "Star scaling: " + sliderStarScale.value;
 }
 
 function startNewLine() 
@@ -84,33 +86,6 @@ function startNewLine()
     initBuffers(currentLine);
 }
 
-//Update star buffer
-function updateBuffer(model) 
-{
-    gl.bindBuffer (gl.ARRAY_BUFFER, model.idBufferVertices);
-    gl.bufferData (gl.ARRAY_BUFFER, new Float32Array(model.vertices), gl.STATIC_DRAW);
-    gl.bindBuffer (gl.ELEMENT_ARRAY_BUFFER, model.idBufferIndices);
-    gl.bufferData (gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(model.indices), gl.STATIC_DRAW);
-    gl.bindBuffer (gl.ARRAY_BUFFER, model.idBufferSizes);
-    gl.bufferData (gl.ARRAY_BUFFER, new Uint16Array(model.sizes), gl.STATIC_DRAW);
-}
-
-function updateBufferLines(model) 
-{
-    if (model.idBufferVertices) {
-        gl.bindBuffer(gl.ARRAY_BUFFER, model.idBufferVertices);
-        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(model.vertices), gl.STATIC_DRAW);
-
-        gl.bindBuffer(gl.ARRAY_BUFFER, model.idBufferCenter);
-        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(model.vCenter), gl.STATIC_DRAW);
-
-        gl.bindBuffer(gl.ARRAY_BUFFER, model.idBufferT);
-        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(model.t), gl.STATIC_DRAW);
-
-        gl.bindBuffer(gl.ARRAY_BUFFER, model.idBufferSizes);
-        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(model.sizes), gl.STATIC_DRAW);
-    }
-}
 
 //Asyncronous function to be able to animate multiple stars at once
 async function timeline(model, steps) {
@@ -118,7 +93,7 @@ async function timeline(model, steps) {
         for (let j = 0; j < model.t.length; j++) {
             model.t[j] += 1;
         }
-        updateBufferLines(model);
+        updateBuffers(model);
         // Wait for the next animation frame
         await new Promise(resolve => requestAnimationFrame(resolve));
     }
@@ -148,18 +123,27 @@ function drawScene()
 
 }
 
-function updateCanvas() {
+function updateCanvas(updatePoints) {
     //Reinitialize buffers with updated points
-    rPoints = randPoints(pointNumber, minSizeStar, maxSizeStar);
-    initBuffers(rPoints);
+    if(updatePoints) rPoints = randPoints(pointNumber, minSizeStar, maxSizeStar);
+    if(updatePoints) initBuffers(rPoints);
 
-    clearScene();
+    if(updatePoints) clearScene();
 
     drawScene();
 
     //Update slider text
-    pointNumDisp.textContent = "Stars number: " + sliderPointNum.value;
-    maxSizeDisp.textContent = "Max star size: " + sliderMaxSize.value;
+    pointNumDisp.textContent = "Background stars number: " + sliderPointNum.value;
+    maxSizeDisp.textContent = "Background star max size: " + sliderMaxSize.value;
+    StarScaleDisp.textContent = "Star scaling: " + sliderStarScale.value;
+}
+  
+//Updates scale uniform
+function updateScale(newScale)
+{
+        scaleValue = newScale;
+        let scaleLocation = gl.getUniformLocation(program, "sScale");
+        gl.uniform1f(scaleLocation, scaleValue);
 }
 
 //Clears foreground
@@ -212,7 +196,7 @@ function initHandlers()
                 currentLine.vCenter.push(5.0, 0.0, 0.0);
                 currentLine.t.push(0.0);
                 currentLine.sizes.push(0.0);
-                updateBufferLines(currentLine);
+                updateBuffers(currentLine);
 
                 drawScene();
 	        }
@@ -250,11 +234,14 @@ initWebGL();
 // Update the current slider value (each time you drag the slider handle)
 sliderPointNum.oninput = function() {
     pointNumber = parseFloat(this.value);
-    updateCanvas();
+    updateCanvas(true);
   } 
 sliderMaxSize.oninput = function() {
     maxSizeStar = parseFloat(this.value);
-    updateCanvas();
+    updateCanvas(true);
 } 
-  
-  
+sliderStarScale.oninput = function() {
+    sScale = parseFloat(this.value);
+    updateScale(sScale);
+    updateCanvas(false);
+} 

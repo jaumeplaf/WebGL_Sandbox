@@ -14,13 +14,6 @@ function getWebGLContext(canv)
     return null;
 }
 
-function getCanvasRatio(canv)
-{
-    let currCanv = document.getElementById(canv);
-    let aspectRatio = 1 / (currCanv.width / currCanv.height);
-    return aspectRatio;
-}
-
 function initShader(vShader, fShader) 
 {
     var vertexShader = gl.createShader(gl.VERTEX_SHADER);
@@ -50,6 +43,9 @@ function initShader(vShader, fShader)
     //To use in background stars only
     program.vertexSizeAttribute = gl.getAttribLocation(program, "VertexSize");
     gl.enableVertexAttribArray(program.vertexSizeAttribute);
+
+    let scaleLocation = gl.getUniformLocation(program, "sScale");
+    gl.uniform1f(scaleLocation, scaleValue);
 }
 
 function initBuffers(model) 
@@ -73,6 +69,23 @@ function initBuffers(model)
     model.idBufferSizes = gl.createBuffer();
     gl.bindBuffer(gl.ARRAY_BUFFER, model.idBufferSizes);
     gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(model.sizes), gl.STATIC_DRAW);
+}
+
+function updateBuffers(model) 
+{
+    if (model.idBufferVertices) {
+        gl.bindBuffer(gl.ARRAY_BUFFER, model.idBufferVertices);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(model.vertices), gl.STATIC_DRAW);
+
+        gl.bindBuffer(gl.ARRAY_BUFFER, model.idBufferCenter);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(model.vCenter), gl.STATIC_DRAW);
+
+        gl.bindBuffer(gl.ARRAY_BUFFER, model.idBufferT);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(model.t), gl.STATIC_DRAW);
+
+        gl.bindBuffer(gl.ARRAY_BUFFER, model.idBufferSizes);
+        gl.bufferData(gl.ARRAY_BUFFER, new Float32Array(model.sizes), gl.STATIC_DRAW);
+    }
 }
 
 function initRendering(color) 

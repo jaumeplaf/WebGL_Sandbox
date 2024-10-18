@@ -11,6 +11,12 @@ function remapRange(value, low1, high1, low2, high2) {
     return low2 + (high2 - low2) * (value - low1) / (high1 - low1);
 }
 
+function getCanvasRatio(canv)
+{
+    let currCanv = document.getElementById(canv);
+    let aspectRatio = 1 / (currCanv.width / currCanv.height);
+    return aspectRatio;
+}
 function randPoints(pNum, maxSize, minSize)
 {
   //Spawn pNum points randomly in (-1,-1,-1)->(1,1,1) space

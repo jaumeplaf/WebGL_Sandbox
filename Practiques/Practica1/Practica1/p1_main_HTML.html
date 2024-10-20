@@ -60,13 +60,12 @@
         //Use 5.0 as a Line marker, to exclude from vertex scaling
         if(StarCenter.x == 5.0){
           gl_Position = vec4(VertexPosition, 1.0);
-          vColor = (VertexPosition + 1.0) * 0.5; 
         }
         else {
           gl_Position = vec4(transPos, 1.0);
-          vColor = (VertexPosition + 1.0) * 0.5; 
         }
-
+        vColor = (VertexPosition + 1.0) * 0.5; 
+    
       }
     </script>
     <script id="solidColorFS" 

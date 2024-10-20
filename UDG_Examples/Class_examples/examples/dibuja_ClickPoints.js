@@ -21,11 +21,11 @@ var CloudPoints = {
     "vertices" : [],
     "np" : 0
 };
-
+/*
 var Lines = {
     "vertices" : [],
     "indices" : []
-};
+};*/
 
 function initHandlers() {
     var canvas     = document.getElementById("myCanvas");
@@ -71,7 +71,7 @@ function initShaders() {
   idMyColor = gl.getUniformLocation (program, "myColor" );
   idMySize = gl.getUniformLocation (program, "mySize" );
 }
-
+/*
 function initBuffers(model) {
   
   model.idBufferVertices = gl.createBuffer ();
@@ -82,7 +82,7 @@ function initBuffers(model) {
   gl.bindBuffer (gl.ELEMENT_ARRAY_BUFFER, model.idBufferIndices);
   gl.bufferData (gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(model.indices), gl.STATIC_DRAW);
   
-}
+}*/
 
 function initBuffersPoints(model) {
   
@@ -94,7 +94,7 @@ function initRendering() {
   gl.clearColor(0.15,0.15,0.15,1.0);
   
 }
-
+/*
 function draw(model) {
   
   gl.bindBuffer(gl.ARRAY_BUFFER, model.idBufferVertices);
@@ -102,7 +102,7 @@ function draw(model) {
 
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, model.idBufferIndices);
   gl.drawElements(gl.POINTS, model.indices.length, gl.UNSIGNED_SHORT, 0);
-}
+}*/
 
 function drawPoints(model) {
   
@@ -120,7 +120,7 @@ function drawScene() {
   size=10.; 
   
   
-  gl.uniform4f (idMyColor, 1.0, 1.0, 0.0, 1.0 );
+  //gl.uniform4f (idMyColor, 1.0, 1.0, 0.0, 1.0 );
   gl.uniform1f (idMySize, size);
   gl.uniform4f (idMyColor, 1.0, 0.0, 0.0, 1.0 );
   drawPoints(CloudPoints);

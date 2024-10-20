@@ -5,7 +5,7 @@
   
     <meta charset="utf-8">
     
-    <title> SpaceTest01 </title>
+    <title> Starline Weaver </title>
     <link rel="stylesheet" href="style.css">
     
     <!-- Shaders -->
@@ -14,7 +14,6 @@
 
       // Vertex shader
 
-      precision mediump float;
       in vec3 VertexPosition;
       in float VertexSize;
       out vec3 fragVertexPosition;
@@ -39,8 +38,8 @@
       in vec3 fragVertexPosition;
 
       //Control parameters
-      float colorDesaturate = 0.7;
-      float colorIntensity = 0.4;
+      float colorDesaturate = 0.1;
+      float colorIntensity = 0.8;
 
       //Declare random float (0-1)
       float random(float seed)
@@ -48,7 +47,7 @@
         return fract(sin(seed) * 43758.5453);
       }
       
-      //Declare saturate to simplify
+      //Declare saturate
       float saturate(float value){
         return clamp(value, 0.0, 1.0);
       }
@@ -65,7 +64,6 @@
         //Random mask
         float randomValue = random(fragVertexPosition.x + fragVertexPosition.y + fragVertexPosition.z);
         float applyColor = saturate(step(0.5, randomValue));
-        //float applyColor = 1.0;
 
         //Color mix
         float cX = saturate(colorIntensity * applyColor + randomValueX + colorDesaturate);

@@ -1,0 +1,171 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+  
+    <meta charset="utf-8">
+    
+    <title> P1 Jaume Pla u1941090</title>
+    
+    <!-- Link style CSS file -->
+    <link rel="stylesheet" href="p1_style.css">
+
+    <!-- Shader definitions -->
+    <script id="solidColorVS" 
+          type="x-shader/x-vertex">#version 300 es
+      
+      //Vertex shader
+
+      //Declare inputs and outputs
+
+      uniform float sScale;
+
+      in vec3 VertexPosition;
+      in vec3 StarCenter;
+      in float TransitionTime;
+      in float VertexSize;
+
+      out vec3 fragVertexPosition;
+      out vec3 vColor;
+      out float fragSize;
+
+      //Declare the saturate() function (free in most modern GPUs)
+      float saturate(float value){
+        return clamp(value, 0.0, 1.0);
+      }
+      
+      //Star growth speed
+      float tSpeed = 2.0;
+
+      void main()  
+      {
+
+        //Set output variables
+        gl_PointSize = VertexSize;
+        fragVertexPosition = VertexPosition;
+        fragSize = VertexSize;
+        
+        //Manipulate transition value
+        float t = TransitionTime / 100.0;
+        t = saturate(t * tSpeed);
+
+        //Calculate final vertex position
+        vec3 dir = VertexPosition - StarCenter;
+        vec3 scaledPos = dir * sScale;
+        vec3 finalPos = scaledPos + StarCenter;
+        
+        //Interpolate between center and final position
+        vec3 transPos = mix(StarCenter, finalPos, t);
+
+        //Use 5.0 as a Line marker, to exclude from vertex scaling
+        if(StarCenter.x == 5.0){
+          gl_Position = vec4(VertexPosition, 1.0);
+        }
+        else {
+          gl_Position = vec4(transPos, 1.0);
+        }
+        vColor = (VertexPosition + 1.0) * 0.5; 
+    
+      }
+    </script>
+    <script id="solidColorFS" 
+          type="x-shader/x-fragment">#version 300 es
+
+      //Fragment shader
+      
+      precision mediump float;
+
+      //Declare inputs and final color
+      in vec3 vColor;
+      in vec3 fragVertexPosition;
+      in float fragSize;
+      out vec4 fragmentColor;
+
+      //Control parameters
+      float colorDesaturate = 0.5; //Removes saturation from the background stars color
+      float colorIntensity = 0.8; //Acts as a mask to set some stars pure white
+
+      //Declare random float (0-1)
+      float random(float seed)
+      {
+        return fract(sin(seed) * 43758.5453);
+      }
+      
+      //Declare the saturate() function (free in most modern GPUs)
+      float saturate(float value){
+        return clamp(value, 0.0, 1.0);
+      }
+      
+      void main() {
+
+        //Use 0.0 as a Foreground marker, to exclude from randomized color
+        if(fragSize == 0.0){
+          fragmentColor = vec4(vColor, 1.0);
+        }
+        else {
+
+          //Star color
+
+          //Hue
+          float randomValueX = random(fragVertexPosition.x);
+          float randomValueY = random(fragVertexPosition.y);
+          float randomValueZ = random(fragVertexPosition.z);
+
+          //Random mask
+          float randomValue = random(fragVertexPosition.x + fragVertexPosition.y + fragVertexPosition.z);
+          float applyColor = saturate(step(0.5, randomValue));
+
+          //Color mix
+          float cX = saturate(colorIntensity * applyColor + randomValueX + colorDesaturate);
+          float cY = saturate(colorIntensity * applyColor + randomValueY + colorDesaturate);
+          float cZ = saturate(colorIntensity * applyColor + randomValueZ + colorDesaturate);
+
+          //Out
+          fragmentColor = vec4(cX, cY, cZ, 1.0);
+        }
+        
+
+      }
+    </script>
+
+  </head>
+
+  <body>
+
+    <canvas id="myCanvas" width="1905" height="840">
+      HTML5 not supported
+    </canvas>
+
+    <div class="wrapper">
+      <div class="slider-group">
+          <input type="range" min="10" max="1000" value="300" class="slider" id="PointNumber">
+          <span class="value-display" id="PointNumberDisplay">Background stars number: </span>
+      </div>
+      <div class="slider-group">
+          <input type="range" min="2" max="6" value="3" class="slider" id="MaxSizeStar">
+          <span class="value-display" id="MaxSizeDisplay">Background star max size: </span>
+      </div>
+      <div class="slider-group">
+        <input type="range" min="0.5" max="2.5" value="1.0" step="0.05" class="slider" id="StarScale">
+        <span class="value-display" id="StarScaleDisplay">Star scaling: </span>
+    </div>
+      <div class="button-container">
+          <!-- Control buttons -->
+          <button id="clearSceneButton">Clear</button>
+          <button id="newLineButton">New Line</button>
+          <span class="value-display" id="tutorialId">Left click: place star <br> Middle click / spacebar: new line</span>
+          <span class="value-display" id="nameId">JAUME PLA FERRIOL - U1941090 - 2024</span>
+      </div>
+  </div>
+
+    <!-- Load custom WebGL, utilities and shapes libraries -->
+    <script src = "p1_WebGL.js"></script>
+    <script src = "jUtilLib.js"></script>
+    <script src = "jShapeLib.js"></script>
+
+    <!-- Load main script -->
+    <script src = "p1_script.js"></script>
+
+  </body>
+
+</html>

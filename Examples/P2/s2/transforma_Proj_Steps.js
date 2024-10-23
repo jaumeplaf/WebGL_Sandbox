@@ -95,7 +95,7 @@ function initPrimitives() {
   initBuffers(exampleSphere);
   
   // make a torus
-  var innerRadius = 0.2; var outerRadius = 0.65; var nSides = 8; var nRings = 16;
+  var innerRadius = 0.1; var outerRadius = 0.8; var nSides = 8; var nRings = 10;
   exampleTorus = makeTorus (innerRadius, outerRadius, nSides, nRings);
   initBuffers(exampleTorus);
 }
@@ -115,17 +115,29 @@ function draw(model) {
 function drawScene() {
   
   gl.clear(gl.COLOR_BUFFER_BIT);
+ // load the projection 
+  setProjection();
 
   var T1 = mat4.create();
   var M = mat4.create(); 
-  // get back the viewer 2 units
-  mat4.fromTranslation(T1,[0.,0,-2.5]);
-  mat4.multiply(M, M, T1);
+  var S = mat4.create ();
+  // scale
+  mat4.fromScaling(S, [0.2,.2,0.2]);
+  // get back the viewer 4 units
+  mat4.fromTranslation(T1,[0, 0,-4]);
+  mat4.multiply(M, T1, S);
   
-  gl.uniformMatrix4fv(program.modelMatrixIndex,false,M);
-  // load the projection 
-  setProjection();
-  draw(exampleTorus); 
+  // make a step only translating
+  for (var i=0; i<5; i++)
+  {
+    // traslate
+    mat4.fromTranslation(T1,[0.5,1,0]);
+    mat4.multiply(M, M, T1);
+    // load matrix
+    gl.uniformMatrix4fv(program.modelMatrixIndex,false,M);
+    // draw
+    draw(exampleCube);
+  }
 }
 
 function initWebGL() {

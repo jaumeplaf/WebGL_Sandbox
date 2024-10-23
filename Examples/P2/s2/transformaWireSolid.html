@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+
+    <meta charset="utf-8">
+    
+    <title> Transforma </title>
+    
+    <style type="text/css">
+      canvas {border: 1px solid black;}
+    </style>
+
+    <script id="myVertexShader" 
+          type="x-shader/x-vertex">#version 300 es
+
+      uniform mat4 modelMatrix;
+	    uniform vec4 u_Translation;
+	    uniform mat4 projectionMatrix;
+      
+      in vec3 VertexPosition;
+      
+      void main()  {
+
+        gl_Position = modelMatrix * vec4 (VertexPosition, 1.0);
+
+      }
+    
+    </script>
+    
+    <script id="myFragmentShader" 
+          type="x-shader/x-fragment">#version 300 es
+
+      precision mediump float;
+      uniform vec4 myColor;
+      out vec4 fragmentColor;
+      
+      void main() {
+
+        fragmentColor =  myColor;
+
+      }
+    
+    </script>
+    
+  </head>
+
+  <body>
+    
+    <canvas id="myCanvas" width="600" height="600">
+      El Navegador no soporta HTML5
+    </canvas>
+
+    <script src = "gl-matrix-min.js"></script>
+    <script src = "primitivasG.js"></script>
+    <script src = "transformaWireSolid.js"></script>
+
+  </body>
+
+</html>

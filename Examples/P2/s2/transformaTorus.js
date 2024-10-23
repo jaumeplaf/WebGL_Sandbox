@@ -51,8 +51,10 @@ function initShaders() {
 
   //uniforms
   program.modelMatrixIndex = gl.getUniformLocation(program, "modelMatrix");
+  program.u_Translation = gl.getUniformLocation(program, 'u_Translation');
   program.projectionMatrixIndex = gl.getUniformLocation(program,"projectionMatrix");
 
+  idMyColor = gl.getUniformLocation (program, "myColor" );
 }
 
 function initBuffers(model) {
@@ -95,7 +97,7 @@ function initPrimitives() {
   initBuffers(exampleSphere);
   
   // make a torus
-  var innerRadius = 0.2; var outerRadius = 0.65; var nSides = 8; var nRings = 16;
+  var innerRadius = 0.2; var outerRadius = 0.8; var nSides = 4; var nRings = 5;
   exampleTorus = makeTorus (innerRadius, outerRadius, nSides, nRings);
   initBuffers(exampleTorus);
 }
@@ -105,9 +107,13 @@ function draw(model) {
   gl.bindBuffer(gl.ARRAY_BUFFER, model.idBufferVertices);
   gl.vertexAttribPointer(program.vertexPositionAttribute, 3, gl.FLOAT, false, 0, 0);
 
+  gl.uniform4f (idMyColor, 0.0, 0.0, 0.0, 1.0 );
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, model.idBufferIndices);
   for (var i = 0; i < model.indices.length; i += 3){
+    gl.uniform4f (idMyColor, 0.0, 0.0, 0.0, 1.0 );
     gl.drawElements (gl.LINE_LOOP, 3, gl.UNSIGNED_SHORT, i*2);
+    gl.uniform4f (idMyColor, 1.0, 0.0, 0.0, 1.0 );
+	  gl.drawElements (gl.TRIANGLES, 3, gl.UNSIGNED_SHORT, i*2);
   }
   
 }
@@ -116,17 +122,52 @@ function drawScene() {
   
   gl.clear(gl.COLOR_BUFFER_BIT);
 
+  // 1. calcula la matriz de transformación
+  //var modelMatrix = mat4.create();
+  //mat4.fromScaling (modelMatrix, [0.5, 0.5, 0.5]); 
+        
+  // 2. establece la matriz modelMatrix en el shader de vértices
+  //gl.uniformMatrix4fv(program.modelMatrixIndex, false, modelMatrix);
+        
+  // ejercicio 3.9 
+  var S = mat4.create ();
   var T1 = mat4.create();
-  var M = mat4.create(); 
-  // get back the viewer 2 units
-  mat4.fromTranslation(T1,[0.,0,-2.5]);
-  mat4.multiply(M, M, T1);
+  var T2 = mat4.create();
+  //var R = mat4.create();
+  var M = mat4.create(); //console.log(M);
+  mat4.fromScaling(S, [0.5,1,0.5]);
+  mat4.fromTranslation(T1,[0.5,0,0]);
+  //mat4.fromRotation(R, Math.PI/4, [0,0,1]);
+  //mat4.multiply(M,S,T1); //console.log(M);
+  document.getElementById("demo").innerHTML = M; 
   
+  //mat4.multiply(M, T1, S);
+  //mat4.multiply(M, T1, R);
+  //mat4.multiply(M, R, T1);
   gl.uniformMatrix4fv(program.modelMatrixIndex,false,M);
-  // load the projection 
-  setProjection();
-  draw(exampleTorus); 
+  
+  
+  
+  // para la matriz de la normal:
+//   var normalMatrix  = mat3.create();
+//   mat3.normalFromMat4 (normalMatrix, modelMatrix);
+//   gl.uniformMatrix3fv(program.normalMatrixIndex, false, normalMatrix);
+
+  // 3. dibuja la primitiva
+//   draw(examplePlane);
+   //draw(exampleCube);
+//   draw(exampleCover);
+//  draw(exampleCone);
+//   draw(exampleCylinder);
+   draw(exampleTorus);
+
+// draw with traslation
+//  gl.uniform4f(program.u_Translation, Tx, Ty, Tz, 0.0);
+//  draw(exampleCube);
+  
 }
+
+// end test
 
 function initWebGL() {
   
@@ -142,7 +183,6 @@ function initWebGL() {
   initRendering();
   
   requestAnimationFrame(drawScene);
-  
 }
 
 initWebGL();

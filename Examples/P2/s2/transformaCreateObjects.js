@@ -1,11 +1,6 @@
 
 var gl, program;
 
-var exampleTorus;
-
-// transformation vector
-var Tx = 0.5, Ty = 0.5, Tz = 0.0;
-
 function getWebGLContext() {
 
   var canvas = document.getElementById("myCanvas");
@@ -49,9 +44,7 @@ function initShaders() {
   program.vertexPositionAttribute = gl.getAttribLocation( program, "VertexPosition");
   gl.enableVertexAttribArray(program.vertexPositionAttribute);
 
-  //uniforms
   program.modelMatrixIndex = gl.getUniformLocation(program, "modelMatrix");
-  program.projectionMatrixIndex = gl.getUniformLocation(program,"projectionMatrix");
 
 }
 
@@ -74,60 +67,95 @@ function initRendering() {
   
 }
 
-function setProjection() {
-    
-  // obtiene la matriz de transformación de la proyección perspectiva
-  var projectionMatrix  = mat4.create();
-  // perspective
-  mat4.perspective(projectionMatrix, Math.PI/4.0, 1.0, 0.1, 100.0);
-  
-  // envía la matriz de transformación de la proyección al shader de vértices
-  gl.uniformMatrix4fv(program.projectionMatrixIndex,false,projectionMatrix);
-}
-
 function initPrimitives() {
 
-  initBuffers(examplePlane);
-  initBuffers(exampleCube);
-  initBuffers(exampleCover);
-  initBuffers(exampleCone);
-  initBuffers(exampleCylinder);
-  initBuffers(exampleSphere);
-  
-  // make a torus
-  var innerRadius = 0.2; var outerRadius = 0.65; var nSides = 8; var nRings = 16;
-  exampleTorus = makeTorus (innerRadius, outerRadius, nSides, nRings);
-  initBuffers(exampleTorus);
+  for (let i = 0; i < objectsScene2.length; i++)
+    initBuffers(objectsScene2[i]);
 }
       
 function draw(model) {
   
+  gl.uniformMatrix4fv(program.modelMatrixIndex, false, model.modelMatrix);
+
   gl.bindBuffer(gl.ARRAY_BUFFER, model.idBufferVertices);
   gl.vertexAttribPointer(program.vertexPositionAttribute, 3, gl.FLOAT, false, 0, 0);
 
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, model.idBufferIndices);
-  for (var i = 0; i < model.indices.length; i += 3){
+  for (var i = 0; i < model.indices.length; i += 3)
     gl.drawElements (gl.LINE_LOOP, 3, gl.UNSIGNED_SHORT, i*2);
-  }
   
 }
 
-function drawScene() {
-  
-  gl.clear(gl.COLOR_BUFFER_BIT);
 
-  var T1 = mat4.create();
-  var M = mat4.create(); 
-  // get back the viewer 2 units
-  mat4.fromTranslation(T1,[0.,0,-2.5]);
-  mat4.multiply(M, M, T1);
-  
-  gl.uniformMatrix4fv(program.modelMatrixIndex,false,M);
-  // load the projection 
-  setProjection();
-  draw(exampleTorus); 
+// Example scene
+objectsScene2 = [];
+
+// dinamic
+var animate = 0;
+function animation (v)
+{
+  animate = v;
 }
 
+// drawscene
+var s = 0;
+function drawScene2()
+{
+    // animate: modificar el s
+    s+=0.001;
+    for (let i = 0; i < objectsScene2.length; i++)
+    {
+        if (animate == 1)
+          objectsScene2[i].animate(s);
+        draw(objectsScene2[i]);    
+    }
+    requestAnimationFrame(drawScene2);
+}
+
+function initHandlers() 
+{
+    var canvas     = document.getElementById("myCanvas");
+    canvas.addEventListener("mousedown", function(event){
+        tx = 2*event.clientX/canvas.width-1;
+        ty = 2*(canvas.height-event.clientY)/canvas.height-1;
+		CreateObject(tx*2,ty*2,0);
+	} );
+}
+
+// create objects
+var t = vec3.create();
+function CreateObject (x,y,z)
+{
+    var cube = new Cube();
+    //cube.setMatrix(Math.random(),Math.random(),Math.random());
+    cube.setMatrix(x, y, z);
+    objectsScene2.push(cube); 
+    initPrimitives();
+}
+
+// compose scene
+function composeScene()
+{
+    var cube = new Cube();
+    cube.setMatrix(1,1,0);
+    objectsScene2.push(cube);
+
+    // 2nd cube
+    var cube = new Cube();
+    cube.setMatrix(-1,1,0);
+    objectsScene2.push(cube);
+
+    // 3rd cube
+    var cube = new Cube();
+    cube.setMatrix(-1,-1,0);
+    objectsScene2.push(cube);
+
+    // 4th cube
+    var cube = new Cube();
+    cube.setMatrix(1,-1,0);
+    objectsScene2.push(cube);
+
+}
 function initWebGL() {
   
   gl = getWebGLContext();
@@ -138,10 +166,11 @@ function initWebGL() {
   }
   
   initShaders();
-  initPrimitives();
   initRendering();
-  
-  requestAnimationFrame(drawScene);
+  initHandlers();
+  //composeScene();
+  initPrimitives();
+  requestAnimationFrame(drawScene2);
   
 }
 

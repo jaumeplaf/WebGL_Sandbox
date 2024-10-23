@@ -95,7 +95,7 @@ function initPrimitives() {
   initBuffers(exampleSphere);
   
   // make a torus
-  var innerRadius = 0.2; var outerRadius = 0.65; var nSides = 8; var nRings = 16;
+  var innerRadius = 0.1; var outerRadius = 0.8; var nSides = 8; var nRings = 10;
   exampleTorus = makeTorus (innerRadius, outerRadius, nSides, nRings);
   initBuffers(exampleTorus);
 }
@@ -119,13 +119,13 @@ function drawScene() {
   var T1 = mat4.create();
   var M = mat4.create(); 
   // get back the viewer 2 units
-  mat4.fromTranslation(T1,[0.,0,-2.5]);
+  mat4.fromTranslation(T1,[0.,0,-2]);
   mat4.multiply(M, M, T1);
   
   gl.uniformMatrix4fv(program.modelMatrixIndex,false,M);
   // load the projection 
   setProjection();
-  draw(exampleTorus); 
+  draw(exampleCube); 
 }
 
 function initWebGL() {

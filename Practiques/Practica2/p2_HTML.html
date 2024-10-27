@@ -20,23 +20,24 @@
       in vec3 VertexPosition;
       
       void main()  {
-
-		    gl_Position = projectionMatrix * modelMatrix * vec4(VertexPosition, 1.0);
-
+        
+        gl_Position = projectionMatrix * modelMatrix * vec4(VertexPosition, 1.0);
+        
       }
-    
+      
     </script>
     
     <script id="myFragmentShader" 
-          type="x-shader/x-fragment">#version 300 es
-
-      precision mediump float;
-
+    type="x-shader/x-fragment">#version 300 es
+    
+    precision mediump float;
+    
+      uniform vec4 baseColor;
       out vec4 fragmentColor;
       
       void main() {
 
-        fragmentColor = vec4(0.0,0.0,0.0,1.0);
+        fragmentColor = baseColor;
 
       }
     
@@ -51,7 +52,7 @@
     </canvas>
 
     <script src = "gl-matrix-min.js"></script>
-    <script src = "primitivasG.js"></script>
+    <script src = "objectClasses.js"></script>
     <script src = "p2_script.js"></script>
 
   </body>

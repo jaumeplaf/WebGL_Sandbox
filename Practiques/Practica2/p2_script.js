@@ -2,6 +2,7 @@ var gl, program;
 
 const canvas = document.getElementById("myCanvas");
 const wireframeToggle = document.getElementById('wireframeToggle');
+const wireframeOpacity = document.getElementById('wireframeOpacityValue');
 const shadingModeSelect = document.getElementById('shadingMode');
 const fogAmountSlider = document.getElementById('fogAmountValue');
 const fogPowerSlider = document.getElementById('fogPowerValue');
@@ -9,9 +10,11 @@ const fogPowerSlider = document.getElementById('fogPowerValue');
 let shadingMode = 2;
 var nearPlane = 0.1;
 var farPlane = 250.0;
+var wireOpacity;
+
 var fogColor =  [0.25, 0.45, 0.7, 1.0];
-var fogAmount = 0.8;
-var fogPower = 0.3;
+var fogAmount;
+var fogPower;
 
 var wireframeIgnoreFog = 0.0;
 
@@ -27,6 +30,12 @@ function linkParameters(glContext){
     requestAnimationFrame(drawScene);
   });
 
+  wireframeOpacity.addEventListener('change', (event) =>{
+    wireOpacity = event.target.value;
+    gl.uniform1f(program.progWireframeOpacity, wireOpacity);
+    requestAnimationFrame(drawScene);
+  });
+  
   //Wireframe ignore fog toggle
   wireframeToggle.addEventListener('change', (event) => {
     if(shadingMode == 0 || shadingMode == 2){
@@ -39,19 +48,19 @@ function linkParameters(glContext){
   fogAmountSlider.addEventListener('change', (event) =>{
     fogAmount = event.target.value;
     gl.uniform1f(program.progFogAmount, fogAmount);
-    console.log(fogAmount);
     requestAnimationFrame(drawScene);
   });
 
   fogPowerSlider.addEventListener('change', (event) =>{
     fogPower = event.target.value;
     gl.uniform1f(program.progFogPower, fogPower);
-    console.log(fogPower);
     requestAnimationFrame(drawScene);
   });
 
+  wireOpacity = wireframeOpacity.value;
   fogAmount = fogAmountSlider.value;
   fogPower = fogPowerSlider.value;
+  gl.uniform1f(program.progWireframeOpacity, wireOpacity);
   gl.uniform1f(program.progFogAmount, fogAmount);
   gl.uniform1f(program.progFogPower, fogPower);
 
@@ -102,15 +111,15 @@ function initShaders() {
   //Uniforms
   program.projectionMatrixIndex = gl.getUniformLocation(program,"projectionMatrix");
   program.modelMatrixIndex = gl.getUniformLocation(program, "modelMatrix");
-  program.customColor = gl.getUniformLocation (program, "baseColor" );
-
+  program.customColor = gl.getUniformLocation (program, "baseColor");
+  
   //Depth based "water medium" fog
-  program.progNearPlane = gl.getUniformLocation (program, "nPlane" );
-  program.progFarPlane = gl.getUniformLocation (program, "fPlane" );
-  program.progFogColor = gl.getUniformLocation (program, "fogColor" );
-  program.progFogAmount = gl.getUniformLocation (program, "fogAmount" );
-  program.progFogPower = gl.getUniformLocation (program, "fogPower" );
-
+  program.progNearPlane = gl.getUniformLocation (program, "nPlane");
+  program.progFarPlane = gl.getUniformLocation (program, "fPlane");
+  program.progFogColor = gl.getUniformLocation (program, "fogColor");
+  program.progFogAmount = gl.getUniformLocation (program, "fogAmount");
+  program.progFogPower = gl.getUniformLocation (program, "fogPower");
+  
   gl.uniform1f (program.progNearPlane, nearPlane);
   gl.uniform1f (program.progFarPlane, farPlane);
   gl.uniform4f (program.progFogColor, fogColor[0], fogColor[1], fogColor[2], fogColor[3]);
@@ -118,8 +127,10 @@ function initShaders() {
   gl.uniform1f (program.progFogPower, fogPower);
   
   //Wireframe parameters
-  program.progWireframeAmount = gl.getUniformLocation (program, "wireframeIgnoreFog" );
+  program.progWireframeAmount = gl.getUniformLocation (program, "wireframeIgnoreFog");
+  program.progWireframeOpacity = gl.getUniformLocation (program, "wireOpacity");
   gl.uniform1f (program.progWireframeAmount, wireframeIgnoreFog);
+  gl.uniform1f (program.progWireframeOpacity, wireOpacity);
 }
 
 function initBuffers(model) {
@@ -173,7 +184,9 @@ function draw(model, baseColor, lineColor) {
 
   switch(shadingMode){
     case 0: //Wireframe
+      wireOpacity = wireframeOpacity.value;
       gl.uniform4f (program.customColor, lineColor[0], lineColor[1], lineColor[2], 1.0 );
+      gl.uniform1f (program.progWireframeOpacity, wireOpacity);
       gl.uniform1f (program.progWireframeAmount, wireframeIgnoreFog);
 
       for (var i = 0; i < model.indices.length; i += 3){
@@ -183,6 +196,7 @@ function draw(model, baseColor, lineColor) {
 
     case 1: //Color
       wireframeIgnoreFog = 0.0;
+      gl.uniform1f (program.progWireframeOpacity, 2.0);
       gl.uniform1f(program.progWireframeAmount, wireframeIgnoreFog);
       gl.uniform4f (program.customColor, baseColor[0], baseColor[1], baseColor[2], 1.0 );
 
@@ -192,12 +206,15 @@ function draw(model, baseColor, lineColor) {
     case 2: //Color+Wireframe
       gl.polygonOffset(1.0, 1.0);
       gl.uniform4f (program.customColor, baseColor[0], baseColor[1], baseColor[2], 1.0 );
+      gl.uniform1f (program.progWireframeOpacity, 2.0);
       gl.uniform1f (program.progWireframeAmount, 0.0);
 
       gl.drawElements(gl.TRIANGLES, model.indices.length, gl.UNSIGNED_SHORT, 0);
       
       gl.polygonOffset(0.0, 0.0);
       gl.uniform4f (program.customColor, lineColor[0], lineColor[1], lineColor[2], 1.0 );
+      wireOpacity = wireframeOpacity.value;
+      gl.uniform1f (program.progWireframeOpacity, wireOpacity);
       gl.uniform1f (program.progWireframeAmount, wireframeIgnoreFog);
 
       for (var i = 0; i < model.indices.length; i += 3){
@@ -207,6 +224,7 @@ function draw(model, baseColor, lineColor) {
 
     case 3: //Normal
       wireframeIgnoreFog = 0.0;
+      gl.uniform1f (program.progWireframeOpacity, 2.0);
       gl.uniform1f(program.progWireframeAmount, wireframeIgnoreFog);
       gl.uniform4f (program.customColor, 0.0, 0.0, 1.0, 1.0 );
 

@@ -111,9 +111,11 @@ function initShaders() {
   //Uniforms
   program.projectionMatrixIndex = gl.getUniformLocation(program,"projectionMatrix");
   program.modelMatrixIndex = gl.getUniformLocation(program, "modelMatrix");
+
   program.customColor = gl.getUniformLocation (program, "baseColor");
+  program.customLineColor = gl.getUniformLocation (program, "lineColor");
   
-  //Depth based "water medium" fog
+  //Depth based "water medium" fog parameters
   program.progNearPlane = gl.getUniformLocation (program, "nPlane");
   program.progFarPlane = gl.getUniformLocation (program, "fPlane");
   program.progFogColor = gl.getUniformLocation (program, "fogColor");
@@ -129,6 +131,7 @@ function initShaders() {
   //Wireframe parameters
   program.progWireframeAmount = gl.getUniformLocation (program, "wireframeIgnoreFog");
   program.progWireframeOpacity = gl.getUniformLocation (program, "wireOpacity");
+
   gl.uniform1f (program.progWireframeAmount, wireframeIgnoreFog);
   gl.uniform1f (program.progWireframeOpacity, wireOpacity);
 }
@@ -176,7 +179,7 @@ function initPrimitives()
     initBuffers(sphere01);
 }
 
-function draw(model, baseColor, lineColor) {
+function draw(model, bColor, lColor) {
   gl.bindBuffer(gl.ARRAY_BUFFER, model.idBufferVertices);
   gl.vertexAttribPointer(program.vertexPositionAttribute, 3, gl.FLOAT, false, 0, 0);
   
@@ -185,7 +188,8 @@ function draw(model, baseColor, lineColor) {
   switch(shadingMode){
     case 0: //Wireframe
       wireOpacity = wireframeOpacity.value;
-      gl.uniform4f (program.customColor, lineColor[0], lineColor[1], lineColor[2], 1.0 );
+      gl.uniform4f (program.customColor, fogColor[0], fogColor[1], fogColor[2], 1.0 );
+      gl.uniform4f (program.customLineColor, lColor[0], lColor[1], lColor[2], 1.0 );
       gl.uniform1f (program.progWireframeOpacity, wireOpacity);
       gl.uniform1f (program.progWireframeAmount, wireframeIgnoreFog);
 
@@ -198,21 +202,24 @@ function draw(model, baseColor, lineColor) {
       wireframeIgnoreFog = 0.0;
       gl.uniform1f (program.progWireframeOpacity, 2.0);
       gl.uniform1f(program.progWireframeAmount, wireframeIgnoreFog);
-      gl.uniform4f (program.customColor, baseColor[0], baseColor[1], baseColor[2], 1.0 );
+      gl.uniform4f (program.customColor, bColor[0], bColor[1], bColor[2], 1.0 );
+      gl.uniform4f (program.customLineColor, lColor[0], lColor[1], lColor[2], 1.0 );
 
       gl.drawElements(gl.TRIANGLES, model.indices.length, gl.UNSIGNED_SHORT, 0);
     break;
 
     case 2: //Color+Wireframe
       gl.polygonOffset(1.0, 1.0);
-      gl.uniform4f (program.customColor, baseColor[0], baseColor[1], baseColor[2], 1.0 );
+      gl.uniform4f (program.customColor, bColor[0], bColor[1], bColor[2], 1.0 );
+      gl.uniform4f (program.customLineColor, lColor[0], lColor[1], lColor[2], 1.0 );
       gl.uniform1f (program.progWireframeOpacity, 2.0);
       gl.uniform1f (program.progWireframeAmount, 0.0);
 
       gl.drawElements(gl.TRIANGLES, model.indices.length, gl.UNSIGNED_SHORT, 0);
       
       gl.polygonOffset(0.0, 0.0);
-      gl.uniform4f (program.customColor, lineColor[0], lineColor[1], lineColor[2], 1.0 );
+      gl.uniform4f (program.customColor, bColor[0], bColor[1], bColor[2], 1.0 );
+      gl.uniform4f (program.customLineColor, lColor[0], lColor[1], lColor[2], 1.0 );
       wireOpacity = wireframeOpacity.value;
       gl.uniform1f (program.progWireframeOpacity, wireOpacity);
       gl.uniform1f (program.progWireframeAmount, wireframeIgnoreFog);
@@ -281,22 +288,24 @@ function drawScene() {
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
   setProjection();
 
-  cube01.setMatrix(-1.0, 1.0, -5.0, 1.0);
-  gl.uniformMatrix4fv(program.modelMatrixIndex, false, cube01.modelMatrixIndex);
-  draw(cube01, cube01.baseColor, cube01.lineColor);
-  
-  cube01.setMatrix(1.0, 1.0, -50.0, 1.0);
-  gl.uniformMatrix4fv(program.modelMatrixIndex, false, cube01.modelMatrixIndex);
-  draw(cube01, cube01.baseColor, cube01.lineColor);
-  
-  cube01.setMatrix(2.0, 2.0, -10.0, 1.0);
-  gl.uniformMatrix4fv(program.modelMatrixIndex, false, cube01.modelMatrixIndex);
-  draw(cube01, cube01.baseColor, cube01.lineColor);
-  
-  cube01.setMatrix(1.0, -1.0, -3, 1.0);
-  gl.uniformMatrix4fv(program.modelMatrixIndex, false, cube01.modelMatrixIndex);
-  draw(cube01, cube01.baseColor, cube01.lineColor);
-
+  for(let i = 2; i < 34; i++){
+    let offset = 2.5;
+    cube01.setMatrix(-1.0 , 1.0, - offset * i, 1.0);
+    gl.uniformMatrix4fv(program.modelMatrixIndex, false, cube01.modelMatrixIndex);
+    draw(cube01, cube01.baseColor, cube01.lineColor);
+    
+    cube01.setMatrix(-1.0, -1.0, - offset * i, 1.0);
+    gl.uniformMatrix4fv(program.modelMatrixIndex, false, cube01.modelMatrixIndex);
+    draw(cube01, cube01.baseColor, cube01.lineColor);
+    
+    cube01.setMatrix(1.0, -1.0, - offset * i, 1.0);
+    gl.uniformMatrix4fv(program.modelMatrixIndex, false, cube01.modelMatrixIndex);
+    draw(cube01, cube01.baseColor, cube01.lineColor);
+    
+    sphere01.setMatrix(1.0, 1.0, - offset * i, 0.6);
+    gl.uniformMatrix4fv(program.modelMatrixIndex, false, sphere01.modelMatrixIndex);
+    draw(sphere01, sphere01.baseColor, sphere01.lineColor);
+  }
 }
 
 function initWebGL() {

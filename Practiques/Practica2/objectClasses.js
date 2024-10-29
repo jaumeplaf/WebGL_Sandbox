@@ -5,13 +5,14 @@ class newObject {
     this.lineColor = [0,0,0];
     this.vertices = [];
     this.indices = [];
-    
   }
+
   initializeObject(model)
   {
     this.vertices = model.vertices;
     this.indices = model.indices;
   }
+
   setMatrix(tx, ty, tz, uniformS)
   {
     //Initilaize ModelView, translation, scale matrix 
@@ -24,6 +25,7 @@ class newObject {
     mat4.multiply(M, T, S);
     this.modelMatrixIndex = M;
   }
+  
   animate(s, axis)
   {
     let R = mat4.create();

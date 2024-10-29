@@ -1,4 +1,9 @@
 var gl, program;
+var nearPlane = 0.1;
+var farPlane = 100.0;
+var mediumColor =  [0.25, 0.45, 0.7, 1.0];
+var mediumAmount = 1.0;
+var mediumPower = 0.2;
 
 //Declare primitives
 var cube01 = new newObject();
@@ -54,6 +59,19 @@ function initShaders() {
   program.projectionMatrixIndex = gl.getUniformLocation(program,"projectionMatrix");
   program.modelMatrixIndex = gl.getUniformLocation(program, "modelMatrix");
   program.customColor = gl.getUniformLocation (program, "baseColor" );
+
+  //Depth based water medium
+  program.progNearPlane = gl.getUniformLocation (program, "nPlane" );
+  program.progFarPlane = gl.getUniformLocation (program, "fPlane" );
+  program.progMediumColor = gl.getUniformLocation (program, "mediumColor" );
+  program.progMediumAmount = gl.getUniformLocation (program, "mediumAmount" );
+  program.progMediumPower = gl.getUniformLocation (program, "mediumPower" );
+  
+  gl.uniform1f (program.progNearPlane, nearPlane);
+  gl.uniform1f (program.progFarPlane, farPlane);
+  gl.uniform4f (program.progMediumColor, mediumColor[0], mediumColor[1], mediumColor[2], mediumColor[3]);
+  gl.uniform1f (program.progMediumAmount, mediumAmount);
+  gl.uniform1f (program.progMediumPower, mediumPower);
   
 }
 
@@ -71,7 +89,7 @@ function initBuffers(model) {
 
 function initRendering() {
   
-  gl.clearColor(0.0,0.5,0.8,1.0);
+  gl.clearColor(mediumColor[0], mediumColor[1], mediumColor[2], mediumColor[3]);
   gl.lineWidth(1.5);
   gl.enable(gl.DEPTH_TEST);
   //Fix Z-fighting
@@ -86,7 +104,7 @@ function setProjection() {
   var projectionMatrix  = mat4.create();
   
   //Perspective (out, FOVy, aspect, near, far)
-  mat4.perspective(projectionMatrix, Math.PI/4.0, 1.0, 0.1, 1000.0);
+  mat4.perspective(projectionMatrix, Math.PI/4, 1.0, nearPlane, farPlane);
   
   //Send transformation matrix to vertex shader (location, transpose, value)
   gl.uniformMatrix4fv(program.projectionMatrixIndex, false, projectionMatrix);
@@ -170,19 +188,12 @@ function drawScene() {
 
   //Draw with only flat color
   cube02.setBaseColor([1,0,0]);
-  cube02.setMatrix(1.0, 1.0, -5.0, 1.0);
+  cube02.setMatrix(1.0, 1.0, -50.0, 1.0);
   gl.uniformMatrix4fv(program.modelMatrixIndex, false, cube02.modelMatrixIndex);
   drawFlatColor(cube02, cube02.baseColor);
 
-  //Draw with both flat color and wireframe
-  cube03.setBaseColor([0,1,0]);
-  cube03.setLineColor([0,0,0]);
-  cube03.setMatrix(-1.0, -1.0, -5.0, 1.0);
-  gl.uniformMatrix4fv(program.modelMatrixIndex, false, cube03.modelMatrixIndex);
-  drawFlatWireframe(cube03, cube03.baseColor, cube03.lineColor);
-
   sphere01.setBaseColor([1,1,0]);
-  sphere01.setMatrix(1.0, -1.0, -5.0, 0.75);
+  sphere01.setMatrix(1.0, -1.0, -2.0, 0.75);
   gl.uniformMatrix4fv(program.modelMatrixIndex, false, sphere01.modelMatrixIndex);
   drawFlatWireframe(sphere01, sphere01.baseColor, sphere01.lineColor);
 

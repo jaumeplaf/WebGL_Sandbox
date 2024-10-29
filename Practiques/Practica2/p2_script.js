@@ -1,4 +1,8 @@
 var gl, program;
+const canvas = document.getElementById("myCanvas");
+const wireframeToggle = document.getElementById('wireframeToggle');
+const shadingModeSelect = document.getElementById('shadingMode');
+let shadingMode = 2;
 
 var nearPlane = 0.1;
 var farPlane = 100.0;
@@ -12,16 +16,32 @@ var wireframeIgnoreFog = 0.0;
 var cube01 = new newObject();
 var sphere01 = new newObject();
 
+//Link HTML parameters
+function linkParameters(glContext){
+  //Shading mode select
+  shadingModeSelect.addEventListener('change', (event) => {
+    shadingMode = parseInt(event.target.value);
+    requestAnimationFrame(drawScene);
+  });
+
+  //Wireframe ignore fog toggle
+  wireframeToggle.addEventListener('change', (event) => {
+    if(shadingMode == 0 || shadingMode == 2){
+      wireframeIgnoreFog = event.target.checked ? 1.0 : 0.0;
+      gl.uniform1f(program.progWireframeAmount, wireframeIgnoreFog);
+    }
+    requestAnimationFrame(drawScene);
+  });
+}
+
 function getWebGLContext() {
-  
-  var canvas = document.getElementById("myCanvas");
   
   try {
     return canvas.getContext("webgl2");
   }
   catch(e) {
   }
-  
+
   return null;
   
 }
@@ -122,24 +142,59 @@ function initPrimitives()
     initBuffers(sphere01);
 }
 
-function draw(model) {
-  
+function draw(model, baseColor, lineColor) {
   gl.bindBuffer(gl.ARRAY_BUFFER, model.idBufferVertices);
   gl.vertexAttribPointer(program.vertexPositionAttribute, 3, gl.FLOAT, false, 0, 0);
   
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, model.idBufferIndices);
 
-  gl.drawElements(gl.TRIANGLES, model.indices.length, gl.UNSIGNED_SHORT, 0);
-  
-  for (var i = 0; i < model.indices.length; i += 3){
-    gl.drawElements (gl.LINE_LOOP, 3, gl.UNSIGNED_SHORT, i*2);
+  switch(shadingMode){
+    case 0: //Wireframe
+      gl.uniform4f (program.customColor, lineColor[0], lineColor[1], lineColor[2], 1.0 );
+      gl.uniform1f (program.progWireframeAmount, wireframeIgnoreFog);
+
+      for (var i = 0; i < model.indices.length; i += 3){
+        gl.drawElements (gl.LINE_LOOP, 3, gl.UNSIGNED_SHORT, i*2);
+      }
+    break;
+
+    case 1: //Color
+      wireframeIgnoreFog = 0.0;
+      gl.uniform1f(program.progWireframeAmount, wireframeIgnoreFog);
+      gl.uniform4f (program.customColor, baseColor[0], baseColor[1], baseColor[2], 1.0 );
+
+      gl.drawElements(gl.TRIANGLES, model.indices.length, gl.UNSIGNED_SHORT, 0);
+    break;
+
+    case 2: //Color+Wireframe
+      gl.polygonOffset(1.0, 1.0);
+      gl.uniform4f (program.customColor, baseColor[0], baseColor[1], baseColor[2], 1.0 );
+      gl.uniform1f (program.progWireframeAmount, 0.0);
+
+      gl.drawElements(gl.TRIANGLES, model.indices.length, gl.UNSIGNED_SHORT, 0);
+      
+      gl.polygonOffset(0.0, 0.0);
+      gl.uniform4f (program.customColor, lineColor[0], lineColor[1], lineColor[2], 1.0 );
+      gl.uniform1f (program.progWireframeAmount, wireframeIgnoreFog);
+
+      for (var i = 0; i < model.indices.length; i += 3){
+        gl.drawElements (gl.LINE_LOOP, 3, gl.UNSIGNED_SHORT, i*2);
+      }
+    break;
+
+    case 3: //Normal
+      wireframeIgnoreFog = 0.0;
+      gl.uniform1f(program.progWireframeAmount, wireframeIgnoreFog);
+      gl.uniform4f (program.customColor, 0.0, 0.0, 1.0, 1.0 );
+
+      gl.drawElements(gl.TRIANGLES, model.indices.length, gl.UNSIGNED_SHORT, 0);
+    break;
   }
 }
 function drawFlatColor(model, baseColor) {
   
   gl.bindBuffer(gl.ARRAY_BUFFER, model.idBufferVertices);
   gl.vertexAttribPointer(program.vertexPositionAttribute, 3, gl.FLOAT, false, 0, 0);
-  
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, model.idBufferIndices);
   
   gl.uniform4f (program.customColor, baseColor[0], baseColor[1], baseColor[2], 1.0 );
@@ -149,11 +204,9 @@ function drawWireframe(model, lineColor) {
   
   gl.bindBuffer(gl.ARRAY_BUFFER, model.idBufferVertices);
   gl.vertexAttribPointer(program.vertexPositionAttribute, 3, gl.FLOAT, false, 0, 0);
-  
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, model.idBufferIndices);
   
   gl.uniform4f (program.customColor, lineColor[0], lineColor[1], lineColor[2], 1.0 );
-  //Make wireframe ignore fog
   wireframeIgnoreFog = 1.0;
   gl.uniform1f (program.progWireframeAmount, wireframeIgnoreFog);
   for (var i = 0; i < model.indices.length; i += 3){
@@ -189,20 +242,19 @@ function drawScene() {
 
   cube01.setMatrix(-1.0, 1.0, -5.0, 1.0);
   gl.uniformMatrix4fv(program.modelMatrixIndex, false, cube01.modelMatrixIndex);
-  drawFlatWireframe(cube01, cube01.baseColor, cube01.lineColor);
+  draw(cube01, cube01.baseColor, cube01.lineColor);
   
   cube01.setMatrix(1.0, 1.0, -50.0, 1.0);
   gl.uniformMatrix4fv(program.modelMatrixIndex, false, cube01.modelMatrixIndex);
-  drawFlatWireframe(cube01, cube01.baseColor, cube01.lineColor);
+  draw(cube01, cube01.baseColor, cube01.lineColor);
   
   cube01.setMatrix(2.0, 2.0, -10.0, 1.0);
   gl.uniformMatrix4fv(program.modelMatrixIndex, false, cube01.modelMatrixIndex);
-  drawFlatWireframe(cube01, cube01.baseColor, cube01.lineColor);
+  draw(cube01, cube01.baseColor, cube01.lineColor);
   
   cube01.setMatrix(1.0, -1.0, -3, 1.0);
-  cube01.setBaseColor([1.0, 0.0, 0.0, 1.0]);
   gl.uniformMatrix4fv(program.modelMatrixIndex, false, cube01.modelMatrixIndex);
-  drawFlatWireframe(cube01, cube01.baseColor, cube01.lineColor);
+  draw(cube01, cube01.baseColor, cube01.lineColor);
 
 }
 
@@ -218,6 +270,8 @@ function initWebGL() {
   initShaders();
   initPrimitives();
   initRendering();
+
+  linkParameters(gl);
   
   requestAnimationFrame(drawScene);
   

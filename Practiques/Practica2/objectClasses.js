@@ -35,11 +35,9 @@ class newObject {
     }
     setBaseColor(newBaseColor){
       this.baseColor = newBaseColor;
-      console.log(this.baseColor);
     }
     setLineColor(newLineColor){
       this.lineColor = newLineColor;
-      console.log(this.lineColor);
     }
   }
 

@@ -72,15 +72,30 @@
       }
     
     </script>
-    
+    <link rel="stylesheet" href="p2_style.css">
   </head>
 
   <body>
-
-    <canvas id="myCanvas" width="850" height="850">
-      El Navegador no soporta HTML5
-    </canvas>
-
+    <div id="container">
+      <canvas id="myCanvas" width="850" height="850">
+        El Navegador no soporta HTML5
+      </canvas>
+      <div id="menu">
+          <label for="shadingMode">Shading Mode:</label>
+          <select id="shadingMode">
+              <option value="0">Wireframe</option>
+              <option value="1">Color</option>
+              <option selected value="2">Color+Wireframe</option>
+              <option value="3">Normal</option>
+          </select>
+          
+          <label for="wireframeToggle">Wireframe Ignore Fog:</label>
+          <input type="checkbox" id="wireframeToggle">
+          
+          <!-- Additional options can be added here -->
+      </div>
+  </div>
+  
     <script src = "gl-matrix-min.js"></script>
     <script src = "objectClasses.js"></script>
     <script src = "p2_script.js"></script>

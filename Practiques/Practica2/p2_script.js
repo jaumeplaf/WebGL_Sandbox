@@ -1,11 +1,14 @@
 var gl, program;
+
 const canvas = document.getElementById("myCanvas");
 const wireframeToggle = document.getElementById('wireframeToggle');
 const shadingModeSelect = document.getElementById('shadingMode');
-let shadingMode = 2;
+const fogAmountSlider = document.getElementById('fogAmountValue');
+const fogPowerSlider = document.getElementById('fogPowerValue');
 
+let shadingMode = 2;
 var nearPlane = 0.1;
-var farPlane = 100.0;
+var farPlane = 250.0;
 var fogColor =  [0.25, 0.45, 0.7, 1.0];
 var fogAmount = 0.8;
 var fogPower = 0.3;
@@ -32,6 +35,26 @@ function linkParameters(glContext){
     }
     requestAnimationFrame(drawScene);
   });
+
+  fogAmountSlider.addEventListener('change', (event) =>{
+    fogAmount = event.target.value;
+    gl.uniform1f(program.progFogAmount, fogAmount);
+    console.log(fogAmount);
+    requestAnimationFrame(drawScene);
+  });
+
+  fogPowerSlider.addEventListener('change', (event) =>{
+    fogPower = event.target.value;
+    gl.uniform1f(program.progFogPower, fogPower);
+    console.log(fogPower);
+    requestAnimationFrame(drawScene);
+  });
+
+  fogAmount = fogAmountSlider.value;
+  fogPower = fogPowerSlider.value;
+  gl.uniform1f(program.progFogAmount, fogAmount);
+  gl.uniform1f(program.progFogPower, fogPower);
+
 }
 
 function getWebGLContext() {

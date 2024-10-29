@@ -32,25 +32,22 @@
     
       precision mediump float;
       
-      //Base color, post process
-      
       uniform vec4 baseColor;
-      uniform vec4 mediumColor;
+      uniform vec4 fogColor;
 
       out vec4 fragmentColor;
+
+      uniform float wireframeIgnoreFog;
       
+      //Water medium parameters
       uniform float nPlane;
       uniform float fPlane;
-
-      uniform float mediumAmount;
-      uniform float mediumPower;
+      uniform float fogAmount;
+      uniform float fogPower;
 
       float saturate(float value){
         return clamp(value, 0.0, 1.0);
       }
-
-      float fogStrenght = 1.0;
-      float fogPower = 0.2;
 
       float linearDepth(float depth){
         float z = depth * 2.0 - 1.0;
@@ -58,13 +55,19 @@
       }
 
       void main() {
-
-        float depth = linearDepth(gl_FragCoord.z) / fPlane;
-        float correctedDepth = saturate(pow(depth * mediumAmount, mediumPower));
-        vec4 vDepth = vec4(vec3(correctedDepth), 1.0);
-        vec4 fogColor = baseColor + vDepth * mediumColor;
-
-        fragmentColor = mix(baseColor, mediumColor, correctedDepth);
+        if(wireframeIgnoreFog == 1.0)
+        {
+          fragmentColor = baseColor;
+        }
+        else
+        {
+          float depth = linearDepth(gl_FragCoord.z) / fPlane;
+          float correctedDepth = saturate(pow(depth * fogAmount, fogPower));
+          vec4 vDepth = vec4(vec3(correctedDepth), 1.0);
+          vec4 fogColor = baseColor + vDepth * fogColor;
+  
+          fragmentColor = mix(baseColor, fogColor, correctedDepth);
+        }
 
       }
     

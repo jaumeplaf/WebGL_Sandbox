@@ -1,14 +1,15 @@
 var gl, program;
+
 var nearPlane = 0.1;
 var farPlane = 100.0;
-var mediumColor =  [0.25, 0.45, 0.7, 1.0];
-var mediumAmount = 1.0;
-var mediumPower = 0.2;
+var fogColor =  [0.25, 0.45, 0.7, 1.0];
+var fogAmount = 0.8;
+var fogPower = 0.3;
+
+var wireframeIgnoreFog = 0.0;
 
 //Declare primitives
 var cube01 = new newObject();
-var cube02 = new newObject();
-var cube03 = new newObject();
 var sphere01 = new newObject();
 
 function getWebGLContext() {
@@ -60,19 +61,22 @@ function initShaders() {
   program.modelMatrixIndex = gl.getUniformLocation(program, "modelMatrix");
   program.customColor = gl.getUniformLocation (program, "baseColor" );
 
-  //Depth based water medium
+  //Depth based "water medium" fog
   program.progNearPlane = gl.getUniformLocation (program, "nPlane" );
   program.progFarPlane = gl.getUniformLocation (program, "fPlane" );
-  program.progMediumColor = gl.getUniformLocation (program, "mediumColor" );
-  program.progMediumAmount = gl.getUniformLocation (program, "mediumAmount" );
-  program.progMediumPower = gl.getUniformLocation (program, "mediumPower" );
-  
+  program.progFogColor = gl.getUniformLocation (program, "fogColor" );
+  program.progFogAmount = gl.getUniformLocation (program, "fogAmount" );
+  program.progFogPower = gl.getUniformLocation (program, "fogPower" );
+
   gl.uniform1f (program.progNearPlane, nearPlane);
   gl.uniform1f (program.progFarPlane, farPlane);
-  gl.uniform4f (program.progMediumColor, mediumColor[0], mediumColor[1], mediumColor[2], mediumColor[3]);
-  gl.uniform1f (program.progMediumAmount, mediumAmount);
-  gl.uniform1f (program.progMediumPower, mediumPower);
+  gl.uniform4f (program.progFogColor, fogColor[0], fogColor[1], fogColor[2], fogColor[3]);
+  gl.uniform1f (program.progFogAmount, fogAmount);
+  gl.uniform1f (program.progFogPower, fogPower);
   
+  //Wireframe parameters
+  program.progWireframeAmount = gl.getUniformLocation (program, "wireframeIgnoreFog" );
+  gl.uniform1f (program.progWireframeAmount, wireframeIgnoreFog);
 }
 
 function initBuffers(model) {
@@ -89,7 +93,7 @@ function initBuffers(model) {
 
 function initRendering() {
   
-  gl.clearColor(mediumColor[0], mediumColor[1], mediumColor[2], mediumColor[3]);
+  gl.clearColor(fogColor[0], fogColor[1], fogColor[2], fogColor[3]);
   gl.lineWidth(1.5);
   gl.enable(gl.DEPTH_TEST);
   //Fix Z-fighting
@@ -114,10 +118,6 @@ function initPrimitives()
 {  
     cube01.initializeObject(baseCube);
     initBuffers(cube01);
-    cube02.initializeObject(baseCube);
-    initBuffers(cube02);
-    cube03.initializeObject(baseCube);
-    initBuffers(cube03);
     sphere01.initializeObject(baseSphere);
     initBuffers(sphere01);
 }
@@ -153,7 +153,9 @@ function drawWireframe(model, lineColor) {
   gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, model.idBufferIndices);
   
   gl.uniform4f (program.customColor, lineColor[0], lineColor[1], lineColor[2], 1.0 );
-
+  //Make wireframe ignore fog
+  wireframeIgnoreFog = 1.0;
+  gl.uniform1f (program.progWireframeAmount, wireframeIgnoreFog);
   for (var i = 0; i < model.indices.length; i += 3){
     gl.drawElements (gl.LINE_LOOP, 3, gl.UNSIGNED_SHORT, i*2);
   }
@@ -166,10 +168,15 @@ function drawFlatWireframe(model, baseColor, lineColor) {
 
   gl.polygonOffset(1.0, 1.0);
   gl.uniform4f (program.customColor, baseColor[0], baseColor[1], baseColor[2], 1.0 );
+  gl.uniform1f (program.progWireframeAmount, 0.0);
+  //Draw base
   gl.drawElements(gl.TRIANGLES, model.indices.length, gl.UNSIGNED_SHORT, 0);
   
   gl.polygonOffset(0.0, 0.0);
   gl.uniform4f (program.customColor, lineColor[0], lineColor[1], lineColor[2], 1.0 );
+  //Make wireframe ignore fog
+  gl.uniform1f (program.progWireframeAmount, wireframeIgnoreFog);
+  //Draw wireframe
   for (var i = 0; i < model.indices.length; i += 3){
     gl.drawElements (gl.LINE_LOOP, 3, gl.UNSIGNED_SHORT, i*2);
   }
@@ -180,22 +187,22 @@ function drawScene() {
   gl.clear(gl.COLOR_BUFFER_BIT | gl.DEPTH_BUFFER_BIT);
   setProjection();
 
-  //Draw with only wireframe
-  cube01.setLineColor([0.0, 0.0, 0.0]);
   cube01.setMatrix(-1.0, 1.0, -5.0, 1.0);
   gl.uniformMatrix4fv(program.modelMatrixIndex, false, cube01.modelMatrixIndex);
-  drawWireframe(cube01, cube01.lineColor);
-
-  //Draw with only flat color
-  cube02.setBaseColor([1,0,0]);
-  cube02.setMatrix(1.0, 1.0, -50.0, 1.0);
-  gl.uniformMatrix4fv(program.modelMatrixIndex, false, cube02.modelMatrixIndex);
-  drawFlatColor(cube02, cube02.baseColor);
-
-  sphere01.setBaseColor([1,1,0]);
-  sphere01.setMatrix(1.0, -1.0, -2.0, 0.75);
-  gl.uniformMatrix4fv(program.modelMatrixIndex, false, sphere01.modelMatrixIndex);
-  drawFlatWireframe(sphere01, sphere01.baseColor, sphere01.lineColor);
+  drawFlatWireframe(cube01, cube01.baseColor, cube01.lineColor);
+  
+  cube01.setMatrix(1.0, 1.0, -50.0, 1.0);
+  gl.uniformMatrix4fv(program.modelMatrixIndex, false, cube01.modelMatrixIndex);
+  drawFlatWireframe(cube01, cube01.baseColor, cube01.lineColor);
+  
+  cube01.setMatrix(2.0, 2.0, -10.0, 1.0);
+  gl.uniformMatrix4fv(program.modelMatrixIndex, false, cube01.modelMatrixIndex);
+  drawFlatWireframe(cube01, cube01.baseColor, cube01.lineColor);
+  
+  cube01.setMatrix(1.0, -1.0, -3, 1.0);
+  cube01.setBaseColor([1.0, 0.0, 0.0, 1.0]);
+  gl.uniformMatrix4fv(program.modelMatrixIndex, false, cube01.modelMatrixIndex);
+  drawFlatWireframe(cube01, cube01.baseColor, cube01.lineColor);
 
 }
 

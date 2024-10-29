@@ -1,7 +1,7 @@
 class newObject {
   constructor(){
     this.modelMatrixIndex = mat4.create();
-    this.baseColor = [1,1,1];
+    this.baseColor = [1,0,0];
     this.lineColor = [0,0,0];
     this.vertices = [];
     this.indices = [];

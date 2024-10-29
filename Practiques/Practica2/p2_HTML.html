@@ -65,7 +65,7 @@
         vec4 vDepth = vec4(vec3(correctedDepth), 1.0);
         vec4 fogFinalColorAdd = baseColor + vDepth * fogColor;
 
-        //TODO: This gives us the world normal visualization
+        //TODO: This gives us the world normal visualization (AFFECTED BY FOGAMOUNT AND FOGPOWER)
         vec4 fogFinalColor = mix(vPos, fogColor, correctedDepth);
 
         //Good final color

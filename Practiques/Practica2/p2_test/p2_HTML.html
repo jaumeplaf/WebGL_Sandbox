@@ -34,21 +34,25 @@
     
       precision mediump float;
       
+      in vec4 vPos;
+      out vec4 fragmentColor;
+
+      uniform float shadingMode;
+
       uniform vec4 baseColor;
       uniform vec4 lineColor;
       uniform vec4 fogColor;
 
-      in vec4 vPos;
-      out vec4 fragmentColor;
-
       uniform float wireframeIgnoreFog;
       uniform float wireOpacity;
-      
+
       //Fog parameters
       uniform float nPlane;
       uniform float fPlane;
       uniform float fogAmount;
       uniform float fogPower;
+      
+      
 
       float saturate(float value){
         return clamp(value, 0.0, 1.0);
@@ -66,13 +70,27 @@
         vec4 fogFinalColorAdd = baseColor + vDepth * fogColor;
 
         //TODO: This gives us the world normal visualization (AFFECTED BY FOGAMOUNT AND FOGPOWER)
-        vec4 fogFinalColor = mix(vPos, fogColor, correctedDepth);
+        //vec4 fogFinalColor = mix(vPos, fogColor, correctedDepth);
 
         //Good final color
-        //vec4 fogFinalColor = mix(baseColor, fogColor, correctedDepth);
+        vec4 fogFinalColor = mix(baseColor, fogColor, correctedDepth);
         
         vec4 fogLineColor = mix(lineColor, fogColor, correctedDepth);
 
+        if(shadingMode == 3.0){
+          if(wireOpacity == 2.0){ //Not wireframe
+            fogFinalColor = mix(vPos, fogColor, correctedDepth);
+          }
+          
+          else{
+            if(wireframeIgnoreFog == 1.0){ 
+                fragmentColor = mix(fogColor, lineColor, wireOpacity);
+            }
+            else{
+              fragmentColor = mix(fogFinalColor, fogLineColor, wireOpacity);
+            }
+          }
+        }
         if(wireOpacity == 2.0){ //Not wireframe
             
             fragmentColor = fogFinalColor;
@@ -104,7 +122,7 @@
               <option value="0">Wireframe</option>
               <option value="1">Color</option>
               <option selected value="2">Color+Wireframe</option>
-              <option value="3">Normal</option>
+              <option value="3">World Normal</option>
           </select>
           
           <label for="wireframeToggle">Wireframe Ignore Fog:</label>
@@ -119,7 +137,7 @@
           </div>
           <div class="slidercontainer">
             <label for="fogPowerValue">Fog power:</label>
-            <input type="range" min="0.05" max="5.0" value="0.35" step="0.01" class="slider" id="fogPowerValue">
+            <input type="range" min="0.05" max="2.0" value="0.35" step="0.01" class="slider" id="fogPowerValue">
           </div>
       </div>
   </div>

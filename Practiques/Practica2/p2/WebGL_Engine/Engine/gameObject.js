@@ -76,7 +76,6 @@ class ObjectCollection
     constructor(camera)
     {
         this.sharedShaderGroup = [];
-        this.camera = camera;
         this.shader = null;
     }
 

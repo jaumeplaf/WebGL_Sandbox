@@ -1,9 +1,9 @@
 class Camera {
-    constructor(nearPlane = 0.1, farPlane = 250.0, fov = 4) 
+    constructor(inNearPlane, inFarPlane, inFov) 
     {
-        this.nearPlane = nearPlane;
-        this.farPlane = farPlane;
-        this.fov = fov;
+        this.nearPlane = inNearPlane;
+        this.farPlane = inFarPlane;
+        this.fov = inFov;
         this.projectionMatrix = mat4.create();
         
         this.initProjectionMatrix();

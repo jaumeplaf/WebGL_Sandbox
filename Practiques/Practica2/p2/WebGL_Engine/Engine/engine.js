@@ -20,11 +20,11 @@ function initWebGL()
     gl = getWebGLContext();
     
     if (!gl) {
-      alert("WebGL 2.0 no está disponible");
+      alert("WebGL 2.0 is not aviable");
       return;
     }
-
     initRendering();
 }
 
+//Initiate WebGL2.0 API
 initWebGL();

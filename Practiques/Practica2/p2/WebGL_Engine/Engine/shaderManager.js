@@ -48,14 +48,28 @@ class Shader
 
     initializeUniforms()
     {
+        
         this.program.vertexPositionAttribute = this.gl.getAttribLocation(this.program, "VertexPosition");
         this.gl.enableVertexAttribArray(this.program.vertexPositionAttribute);
         
         //Uniforms
-        this.program.projectionMatrixIndex = this.gl.getUniformLocation(this.program, "projectionMatrix");
         this.program.modelMatrixIndex = this.gl.getUniformLocation(this.program, "modelMatrix");
+        this.program.projectionMatrixIndex = this.gl.getUniformLocation(this.program, "projectionMatrix");
         
-        // Add additional uniform initializations here as needed
+        this.program.progShadingMode = gl.getUniformLocation (this.program, "shadingMode");
+        this.program.progWireframeOpacity = this.gl.getUniformLocation(this.program, "wireframeOpacity");
+        
+        this.program.progBaseColor = gl.getUniformLocation (this.program, "baseColor");
+        this.program.progLineColor = gl.getUniformLocation (this.program, "lineColor");
+
+        //Fog parameters
+        this.program.progFogColor = this.gl.getUniformLocation(this.program, "fogColor");
+        this.program.progFogAmount = this.gl.getUniformLocation(this.program, "fogAmount");
+        this.program.progFogPower = this.gl.getUniformLocation(this.program, "fogPower");
+        this.program.progWirefraneIgnoreFog = this.gl.getUniformLocation(this.program, "wireframeIgnoreFog");
+        
+        this.program.progNearPlane = gl.getUniformLocation (this.program, "nPlane");
+        this.program.progFarPlane = gl.getUniformLocation (this.program, "fPlane");
     }
 
     setProjection(projectionMatrix)

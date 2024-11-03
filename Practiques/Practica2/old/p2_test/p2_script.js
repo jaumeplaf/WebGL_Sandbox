@@ -28,6 +28,14 @@ function linkParameters(glContext){
   shadingModeSelect.addEventListener('change', (event) => {
     shadingMode = parseInt(event.target.value);
     requestAnimationFrame(drawScene);
+    /*
+      // Show wireframe opacity only for values 0 and 2
+      if (shadingMode === "0" || shadingMode === "2") {
+          wireframeOpacity.style.display = "block";
+      } else {
+          wireframeOpacity.style.display = "none";
+      }
+    */
   });
 
   wireframeOpacity.addEventListener('change', (event) =>{

@@ -32,7 +32,7 @@ function drawModel(model)
       gl.uniform4f (program.progBaseColor, bColor[0], bColor[1], bColor[2], 1.0 );
       gl.uniform4f (program.progLineColor, lColor[0], lColor[1], lColor[2], 1.0 );
       gl.uniform1f (program.progWireframeOpacity, inWireframeOpacity.value);
-      gl.uniform1f (program.progWirefraneIgnoreFog, inWireframeIgnoreFog.value);
+      gl.uniform1f (program.progWireframeIgnoreFog, inWireframeIgnoreFog.value);
 
       for (var i = 0; i < model.indices.length; i += 3){
         gl.drawElements (gl.LINE_LOOP, 3, gl.UNSIGNED_SHORT, i*2);
@@ -41,7 +41,7 @@ function drawModel(model)
 
     case 1: //Color
       gl.uniform1f (program.progWireframeOpacity, 2.0);
-      gl.uniform1f (program.progWirefraneIgnoreFog, 0.0);
+      gl.uniform1f (program.progWireframeIgnoreFog, 0.0);
       gl.uniform4f (program.progBaseColor, bColor[0], bColor[1], bColor[2], 1.0 );
       gl.uniform4f (program.progLineColor, lColor[0], lColor[1], lColor[2], 1.0 );
 
@@ -53,7 +53,7 @@ function drawModel(model)
       gl.uniform4f (program.progBaseColor, bColor[0], bColor[1], bColor[2], 1.0 );
       gl.uniform4f (program.progLineColor, lColor[0], lColor[1], lColor[2], 1.0 );
       gl.uniform1f (program.progWireframeOpacity, 2.0);
-      gl.uniform1f (program.progWirefraneIgnoreFog, 0.0);
+      gl.uniform1f (program.progWireframeIgnoreFog, 0.0);
 
       gl.drawElements(gl.TRIANGLES, model.indices.length, gl.UNSIGNED_SHORT, 0);
       
@@ -61,7 +61,7 @@ function drawModel(model)
       gl.uniform4f (program.progBaseColor, bColor[0], bColor[1], bColor[2], 1.0 );
       gl.uniform4f (program.progLineColor, lColor[0], lColor[1], lColor[2], 1.0 );
       gl.uniform1f (program.progWireframeOpacity, wireframeOpacity.value);
-      gl.uniform1f (program.progWirefraneIgnoreFog, inWireframeIgnoreFog.value);
+      gl.uniform1f (program.progWireframeIgnoreFog, inWireframeIgnoreFog.value);
 
       for (var i = 0; i < model.indices.length; i += 3){
         gl.drawElements (gl.LINE_LOOP, 3, gl.UNSIGNED_SHORT, i*2);
@@ -70,7 +70,7 @@ function drawModel(model)
 
     case 3: //Normal
       gl.uniform1f (program.progWireframeOpacity, 2.0);
-      gl.uniform1f (program.progWirefraneIgnoreFog, 0.0);
+      gl.uniform1f (program.progWireframeIgnoreFog, 0.0);
       gl.uniform4f (program.progBaseColor, 0.0, 0.0, 1.0, 1.0 );
 
       gl.drawElements(gl.TRIANGLES, model.indices.length, gl.UNSIGNED_SHORT, 0);

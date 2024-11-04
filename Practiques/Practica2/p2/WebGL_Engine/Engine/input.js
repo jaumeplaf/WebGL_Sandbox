@@ -56,8 +56,8 @@ function updateUniforms(inputParam, inProgram)
   gl.uniform4f(inProgram.progFogColor, inputParam.fogColor[0], inputParam.fogColor[1],inputParam.fogColor[2],inputParam.fogColor[3]);
   gl.uniform1f(inProgram.progFogAmount, inputParam.fogAmount);
   gl.uniform1f(inProgram.progFogPower, inputParam.fogPower);  
-  gl.uniform1f(inProgram.progWirefraneIgnoreFog, inputParam.wireframeIgnoreFog);
-  
+  gl.uniform1f(inProgram.progWireframeIgnoreFog, inputParam.wireframeIgnoreFog);
+
   gl.uniform1f(inProgram.progNearPlane, inputParam.nearPlane);
   gl.uniform1f(inProgram.progFarPlane, inputParam.farPlane);  
 

@@ -18,7 +18,8 @@
       
       out vec4 vPos;
       
-      void main()  {
+      void main()
+      {
         
         gl_Position = projectionMatrix * modelMatrix * vec4(VertexPosition, 1.0);
         vPos = vec4(VertexPosition, 0.0);
@@ -53,16 +54,19 @@
       
       
 
-      float saturate(float value){
+      float saturate(float value)
+      {
         return clamp(value, 0.0, 1.0);
       }
 
-      float linearDepth(float depth){
+      float linearDepth(float depth)
+      {
         float z = depth * 2.0 - 1.0;
         return (2.0 * nPlane * fPlane) / (fPlane + nPlane - z * (fPlane - nPlane));
       }
 
-      void main() {
+      void main() 
+      {
         float depth = linearDepth(gl_FragCoord.z) / fPlane;
         float correctedDepth = saturate(pow(depth * fogAmount, fogPower));
         vec4 vDepth = vec4(vec3(correctedDepth), 1.0);
@@ -73,6 +77,7 @@
 
         //Good final color
         vec4 fogFinalColor = mix(baseColor, fogColor, correctedDepth);
+        //vec4 fogFinalColor = vec4(vec3(wireframeIgnoreFog),1.0);
         
         vec4 fogLineColor = mix(lineColor, fogColor, correctedDepth);
 

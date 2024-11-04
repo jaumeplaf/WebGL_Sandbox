@@ -66,8 +66,7 @@ class Shader
         this.program.progFogColor = this.gl.getUniformLocation(this.program, "fogColor");
         this.program.progFogAmount = this.gl.getUniformLocation(this.program, "fogAmount");
         this.program.progFogPower = this.gl.getUniformLocation(this.program, "fogPower");
-        this.program.progWirefraneIgnoreFog = this.gl.getUniformLocation(this.program, "wireframeIgnoreFog");
-        
+        this.program.progWireframeIgnoreFog = this.gl.getUniformLocation(this.program, "wireframeIgnoreFog");
         this.program.progNearPlane = gl.getUniformLocation (this.program, "nPlane");
         this.program.progFarPlane = gl.getUniformLocation (this.program, "fPlane");
     }

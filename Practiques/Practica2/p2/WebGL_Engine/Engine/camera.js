@@ -19,3 +19,6 @@ class Camera {
         return this.projectionMatrix;
     }
 }
+
+//projections->viewing->model->viewport
+//

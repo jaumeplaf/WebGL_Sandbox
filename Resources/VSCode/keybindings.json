@@ -1,0 +1,25 @@
+// Place your key bindings in this file to override the defaults
+[
+    {
+        "key": "f11",
+        "command": "extension.multiCommand.execute",
+        "args": {
+            "sequence": [
+                "workbench.action.toggleZenMode",
+                "workbench.action.toggleEditorWidths"
+            ]
+        },
+        "when": "editorTextFocus && !inZenMode"
+    },
+    {
+        "key": "f11",
+        "command": "extension.multiCommand.execute",
+        "args": {
+            "sequence": [
+                "workbench.action.toggleEditorWidths",
+                "workbench.action.toggleZenMode"
+            ]
+        },
+        "when": "editorTextFocus && inZenMode"
+    }
+]

@@ -1,30 +1,31 @@
-var canvas = null;
-var gl = null;
+window.canvas = null;
+window.gl = null;
 
-function getWebGLContext() 
+function getWebGLContext()
 {
-    canvas = document.getElementById("wglCanvas");
-  
+    window.canvas = document.getElementById("wglCanvas");
+
     try {
-      return canvas.getContext('webgl2');
+        return window.canvas.getContext('webgl2');
+    } 
+
+    catch (e) {
     }
-    catch(e) {
-    }
-  
+
     return null;
-  
 }
 
-function initWebGL() 
+function initWebGL()
 {
-    gl = getWebGLContext();
-    
-    if (!gl) {
-      alert("WebGL 2.0 is not aviable");
-      return;
+    window.gl = getWebGLContext();
+
+    if (!window.gl) {
+        alert("WebGL 2.0 is not available");
+        return;
     }
+    
     initRendering();
 }
 
-//Initiate WebGL2.0 API
+// Initiate WebGL 2.0 API
 initWebGL();

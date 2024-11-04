@@ -4,7 +4,6 @@ class GameObject
   {
     this.modelMatrixIndex = mat4.create();
     this.baseColor = [1,0,0];
-    this.lineColor = [0,0,0];
     this.vertices = [];
     this.indices = [];
     this.shader = null;
@@ -20,13 +19,13 @@ class GameObject
 
   initBuffers() {
 
-    this.idBufferVertices = gl.createBuffer ();
-    gl.bindBuffer (gl.ARRAY_BUFFER, this.idBufferVertices);
-    gl.bufferData (gl.ARRAY_BUFFER, new Float32Array(this.vertices), gl.STATIC_DRAW);
+    this.idBufferVertices = window.gl.createBuffer ();
+    window.gl.bindBuffer (window.gl.ARRAY_BUFFER, this.idBufferVertices);
+    window.gl.bufferData (window.gl.ARRAY_BUFFER, new Float32Array(this.vertices), window.gl.STATIC_DRAW);
     
-    this.idBufferIndices = gl.createBuffer ();
-    gl.bindBuffer (gl.ELEMENT_ARRAY_BUFFER, this.idBufferIndices);
-    gl.bufferData (gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(this.indices), gl.STATIC_DRAW);
+    this.idBufferIndices = window.gl.createBuffer ();
+    window.gl.bindBuffer (window.gl.ELEMENT_ARRAY_BUFFER, this.idBufferIndices);
+    window.gl.bufferData (window.gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(this.indices), window.gl.STATIC_DRAW);
     
   }    
 
@@ -43,7 +42,7 @@ class GameObject
 
     this.modelMatrixIndex = M;
 
-    //gl.uniformMatrix4fv(this.shader.modelMatrixIndex, false, this.modelMatrixIndex);
+    //window.gl.uniformMatrix4fv(this.shader.modelMatrixIndex, false, this.modelMatrixIndex);
 
   }
   
@@ -60,13 +59,8 @@ class GameObject
     this.baseColor = newBaseColor;
   }
 
-  setLineColor(newLineColor)
-  {
-    this.lineColor = newLineColor;
-  }
-
-  draw(){
-    drawModel(this);
+  draw(inInput){
+    drawModel(inInput, this);
   }
 
 }
@@ -89,12 +83,12 @@ class ObjectCollection
         this.sharedShaderGroup.push(model);
     }
 
-    draw()
+    draw(inInput)
     {
       for(let object of this.sharedShaderGroup)
       {
           this.shader.setModelMatrix(object.modelMatrixIndex);
-          object.draw();
+          object.draw(inInput);
       }
     }
 }

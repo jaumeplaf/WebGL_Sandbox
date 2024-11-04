@@ -2,23 +2,22 @@ class Shader
 {
     constructor(vsSource, fsSource) 
     {
-        this.gl = gl;
         this.program = this.compileAndLinkShaders(document.getElementById(vsSource).text, document.getElementById(fsSource).text);
         this.initializeUniforms();
     }
 
     compileAndLinkShaders(vertexSource, fragmentSource) 
     {
-        const vertexShader = this.newShader(this.gl.VERTEX_SHADER, vertexSource);
-        const fragmentShader = this.newShader(this.gl.FRAGMENT_SHADER, fragmentSource);
-        const newProgram = this.gl.createProgram();
+        const vertexShader = this.newShader(window.gl.VERTEX_SHADER, vertexSource);
+        const fragmentShader = this.newShader(window.gl.FRAGMENT_SHADER, fragmentSource);
+        const newProgram = window.gl.createProgram();
 
-        this.gl.attachShader(newProgram, vertexShader);
-        this.gl.attachShader(newProgram, fragmentShader);
-        this.gl.linkProgram(newProgram);
+        window.gl.attachShader(newProgram, vertexShader);
+        window.gl.attachShader(newProgram, fragmentShader);
+        window.gl.linkProgram(newProgram);
 
-        if (!this.gl.getProgramParameter(newProgram, this.gl.LINK_STATUS)) {
-            console.error("Error linking program:", this.gl.getProgramInfoLog(newProgram));
+        if (!window.gl.getProgramParameter(newProgram, window.gl.LINK_STATUS)) {
+            console.error("Error linking program:", window.gl.getProgramInfoLog(newProgram));
             return null;
         }
 
@@ -27,12 +26,12 @@ class Shader
 
     newShader(type, source) 
     {
-        const shader = this.gl.createShader(type);
-        this.gl.shaderSource(shader, source);
-        this.gl.compileShader(shader);
+        const shader = window.gl.createShader(type);
+        window.gl.shaderSource(shader, source);
+        window.gl.compileShader(shader);
 
-        if (!this.gl.getShaderParameter(shader, this.gl.COMPILE_STATUS)) {
-            console.error("Error compiling shader:", this.gl.getShaderInfoLog(shader));
+        if (!window.gl.getShaderParameter(shader, window.gl.COMPILE_STATUS)) {
+            console.error("Error compiling shader:", window.gl.getShaderInfoLog(shader));
             return null;
         }
 
@@ -42,42 +41,42 @@ class Shader
     use() 
     {
         if (this.program) {
-            this.gl.useProgram(this.program);
+            window.gl.useProgram(this.program);
         }
     }
 
     initializeUniforms()
     {
         
-        this.program.vertexPositionAttribute = this.gl.getAttribLocation(this.program, "VertexPosition");
-        this.gl.enableVertexAttribArray(this.program.vertexPositionAttribute);
+        this.program.vertexPositionAttribute = window.gl.getAttribLocation(this.program, "VertexPosition");
+        window.gl.enableVertexAttribArray(this.program.vertexPositionAttribute);
         
         //Uniforms
-        this.program.modelMatrixIndex = this.gl.getUniformLocation(this.program, "modelMatrix");
-        this.program.projectionMatrixIndex = this.gl.getUniformLocation(this.program, "projectionMatrix");
+        this.program.modelMatrixIndex = window.gl.getUniformLocation(this.program, "modelMatrix");
+        this.program.projectionMatrixIndex = window.gl.getUniformLocation(this.program, "projectionMatrix");
         
-        this.program.progShadingMode = gl.getUniformLocation (this.program, "shadingMode");
-        this.program.progWireframeOpacity = this.gl.getUniformLocation(this.program, "wireframeOpacity");
+        this.program.progShadingMode = window.gl.getUniformLocation(this.program, "shadingMode");
+        this.program.progIsLine = window.gl.getUniformLocation(this.program, "isLine");
+        this.program.progWireframeOpacity = window.gl.getUniformLocation(this.program, "wireframeOpacity");
         
-        this.program.progBaseColor = gl.getUniformLocation (this.program, "baseColor");
-        this.program.progLineColor = gl.getUniformLocation (this.program, "lineColor");
+        this.program.progBaseColor = window.gl.getUniformLocation (this.program, "baseColor");
 
         //Fog parameters
-        this.program.progFogColor = this.gl.getUniformLocation(this.program, "fogColor");
-        this.program.progFogAmount = this.gl.getUniformLocation(this.program, "fogAmount");
-        this.program.progFogPower = this.gl.getUniformLocation(this.program, "fogPower");
-        this.program.progWireframeIgnoreFog = this.gl.getUniformLocation(this.program, "wireframeIgnoreFog");
-        this.program.progNearPlane = gl.getUniformLocation (this.program, "nPlane");
-        this.program.progFarPlane = gl.getUniformLocation (this.program, "fPlane");
+        this.program.progFogColor = window.gl.getUniformLocation(this.program, "fogColor");
+        this.program.progFogAmount = window.gl.getUniformLocation(this.program, "fogAmount");
+        this.program.progFogPower = window.gl.getUniformLocation(this.program, "fogPower");
+        this.program.progWireframeIgnoreFog = window.gl.getUniformLocation(this.program, "wireframeIgnoreFog");
+        this.program.progNearPlane = window.gl.getUniformLocation(this.program, "nPlane");
+        this.program.progFarPlane = window.gl.getUniformLocation(this.program, "fPlane");
     }
 
     setProjection(projectionMatrix)
     {
-        this.gl.uniformMatrix4fv(this.program.projectionMatrixIndex, false, projectionMatrix);
+        window.gl.uniformMatrix4fv(this.program.projectionMatrixIndex, false, projectionMatrix);
     }
 
     setModelMatrix(matrix)
     {
-        this.gl.uniformMatrix4fv(this.program.modelMatrixIndex, false, matrix);
+        window.gl.uniformMatrix4fv(this.program.modelMatrixIndex, false, matrix);
     }
 }

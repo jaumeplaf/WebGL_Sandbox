@@ -4,32 +4,25 @@ precision mediump float;
 
 in vec4 vPos;
 out vec4 fragmentColor;
-
 uniform float shadingMode;
-
+uniform float isLine;
 uniform vec4 baseColor;
-uniform vec4 lineColor;
 uniform vec4 fogColor;
-
 uniform float wireframeIgnoreFog;
-uniform float wireOpacity;
-
-//Fog parameters
+uniform float wireframeOpacity;
 uniform float nPlane;
 uniform float fPlane;
 uniform float fogAmount;
 uniform float fogPower;
-
-
 
 float saturate(float value)
 {
     return clamp(value, 0.0, 1.0);
 }
 
-float linearDepth(float depth)
+float linearDepth(float inDepth)
 {
-    float z = depth * 2.0 - 1.0;
+    float z = inDepth * 2.0 - 1.0;
     return (2.0 * nPlane * fPlane) / (fPlane + nPlane - z * (fPlane - nPlane));
 }
 
@@ -38,41 +31,64 @@ void main()
     float depth = linearDepth(gl_FragCoord.z) / fPlane;
     float correctedDepth = saturate(pow(depth * fogAmount, fogPower));
     vec4 vDepth = vec4(vec3(correctedDepth), 1.0);
-    vec4 fogFinalColorAdd = baseColor + vDepth * fogColor;
 
-    //TODO: This gives us the world normal visualization (AFFECTED BY FOGAMOUNT AND FOGPOWER)
-    //vec4 fogFinalColor = mix(vPos, fogColor, correctedDepth);
+    //vec4 fogFinalColorAdd = baseColor + vDepth * fogColor;
+    vec4 fogFlatColor = mix(baseColor, fogColor, correctedDepth);
+    vec4 fogWorldNormal = mix(vPos, fogColor, correctedDepth);
+    vec4 wireframeBaseColor = vec4(0.0, 0.0, 0.0, 1.0);
+    vec4 wireframeFogColor = mix(wireframeBaseColor, fogFlatColor, correctedDepth);
+    vec4 undefinedError = vec4(1.0, 0.0, 1.0, 1.0);
 
-    //Good final color
-    vec4 fogFinalColor = mix(baseColor, fogColor, correctedDepth);
-
-    vec4 fogLineColor = mix(lineColor, fogColor, correctedDepth);
-
-    if(shadingMode == 3.0){
-        if(wireOpacity == 2.0){ //Not wireframe
-        fogFinalColor = mix(vPos, fogColor, correctedDepth);
+    if(shadingMode == 0.0) //Wireframe
+    {
+        if(isLine == 1.0){
+            if(wireframeIgnoreFog == 1.0){
+                fragmentColor = mix(fogColor, wireframeBaseColor, wireframeOpacity);
+            }
+            else{
+                fragmentColor = mix(fogColor, mix(wireframeBaseColor, fogColor, correctedDepth), wireframeOpacity);
+            }
         }
-        
+        else fragmentColor = undefinedError;
+    }
+    else if(shadingMode == 1.0) //Color
+    {
+        fragmentColor = fogFlatColor;
+    }
+    else if(shadingMode == 2.0) //Color+Wireframe
+    {
+        if(isLine == 1.0){
+            if(wireframeIgnoreFog == 1.0){
+                fragmentColor = mix(fogFlatColor, wireframeBaseColor, wireframeOpacity);
+            }
+            else{
+                fragmentColor = mix(fogFlatColor, wireframeFogColor, wireframeOpacity);
+            }
+        }
         else{
-        if(wireframeIgnoreFog == 1.0){ 
-            fragmentColor = mix(fogColor, lineColor, wireOpacity);
-        }
-        else{
-            fragmentColor = mix(fogFinalColor, fogLineColor, wireOpacity);
-        }
+            fragmentColor = fogFlatColor;
         }
     }
-    if(wireOpacity == 2.0){ //Not wireframe
-        
-        fragmentColor = fogFinalColor;
+    else if(shadingMode == 3.0) //World normal
+    {
+        fragmentColor = fogWorldNormal;
     }
-
-    else{
-        if(wireframeIgnoreFog == 1.0){ 
-            fragmentColor = mix(fogColor, lineColor, wireOpacity);
+    else if(shadingMode == 4.0) //World normal+Wireframe
+    {
+        if(isLine == 1.0){
+            if(wireframeIgnoreFog == 1.0){
+                fragmentColor = mix(fogWorldNormal, wireframeBaseColor, wireframeOpacity);
+            }
+            else{
+                fragmentColor = mix(fogWorldNormal, mix(wireframeBaseColor, fogWorldNormal, correctedDepth), wireframeOpacity);
+            }
         }
         else{
-        fragmentColor = mix(fogFinalColor, fogLineColor, wireOpacity);
+            fragmentColor = fogWorldNormal;
         }
+    }
+    else //Undefined
+    {
+        fragmentColor = undefinedError;
     }
 }

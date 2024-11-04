@@ -26,5 +26,5 @@ function remapRangeNormalized(value, low1, high1) {
 
 function getCanvasRatio(inCanvas)
 {
-    return  1 / (inCanvas.width / inCanvas.height);
+    return  1 / (inCanvas.height / inCanvas.width);
 }

@@ -15,8 +15,9 @@ class Scene
     {
         this.collections.push(inCollection);
     }
-    
-    updateDeltaTime(){
+
+    updateDeltaTime()
+    {
         this.currentTime = performance.now();
         this.deltaTime = (this.currentTime - this.previousTime) / 1000;
         this.previousTime = this.currentTime;
@@ -31,8 +32,8 @@ class Scene
         window.gl.clear(window.gl.COLOR_BUFFER_BIT | window.gl.DEPTH_BUFFER_BIT);
         
         this.updateDeltaTime();
-        updateFpsCounter(this.deltaTime);
-        
+        updateFpsCounter(this.deltaTime, 4);
+
         for(let collection of this.collections){
             collection.update(this.deltaTime);
             collection.shader.use();

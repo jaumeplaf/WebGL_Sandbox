@@ -20,10 +20,8 @@
       
       void main()
       {
-        
           gl_Position = projectionMatrix * modelMatrix * vec4(VertexPosition, 1.0);
-          vPos = vec4(VertexPosition, 0.0);
-        
+          vPos =  vec4(VertexPosition, 1.0);
       }
       
     </script>
@@ -100,11 +98,11 @@
                 fragmentColor = fogFlatColor;
             }
         }
-        else if(shadingMode == 3.0) //World normal
+        else if(shadingMode == 3.0) //World normal (PLACEHOLDER)
         {
             fragmentColor = fogWorldNormal;
         }
-        else if(shadingMode == 4.0) //World normal+Wireframe
+        else if(shadingMode == 4.0) //World normal+Wireframe (PLACEHOLDER)
         {
             if(isLine == 1.0){
                 if(wireframeIgnoreFog == 1.0){

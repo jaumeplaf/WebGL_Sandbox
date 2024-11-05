@@ -23,7 +23,7 @@ cube01.initializeObject(exampleCube, masterShader01);
 sphere01.initializeObject(exampleSphere, masterShader01);
 
 //Add object instances to draw
-cube01.setMatrix(-1, 1, -5, 1);
+cube01.setMatrix(-1, -1, -5, 1);
 cube01.setAnimation(0.25, [0,1,1]);
 gameObjects01.add(cube01);
 

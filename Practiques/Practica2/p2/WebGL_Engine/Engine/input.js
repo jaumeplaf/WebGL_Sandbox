@@ -77,3 +77,18 @@ class InputParameters
 
   }
 }
+
+function loadOBJ() 
+{
+  console.log("Load obj")
+}
+
+function loadJSON()
+{
+  console.log("Load JSON")
+}
+
+function loadGLTF()
+{
+  console.log("Load GLTF");
+}

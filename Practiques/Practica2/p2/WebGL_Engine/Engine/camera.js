@@ -11,7 +11,7 @@ class Camera {
 
     initProjectionMatrix() 
     {
-        mat4.perspective(this.projectionMatrix, Math.PI / this.fov, 1.0, this.nearPlane, this.farPlane);
+        mat4.perspective(this.projectionMatrix, Math.PI / this.fov, getCanvasRatio(window.canvas), this.nearPlane, this.farPlane);
     }
 
     getProjection() 

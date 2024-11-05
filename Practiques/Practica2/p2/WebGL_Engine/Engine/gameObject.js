@@ -7,6 +7,8 @@ class GameObject
     this.vertices = [];
     this.indices = [];
     this.shader = null;
+    this.timeScale = 1;
+    this.axis = [0,0,1];
   }
 
   initializeObject(model, inShader)
@@ -46,11 +48,16 @@ class GameObject
 
   }
   
-  animate(s, axis)
+  setAnimation(speed, axis){
+    this.timeScale = speed ;
+    this.axis = axis;
+  }
+
+  animate(angle, axis)
   {
     let R = mat4.create();
       //Set rotation matrix (out, rad, axis)
-      mat4.fromRotation(R, s, axis);
+      mat4.fromRotation(R, angle, axis);
       mat4.multiply(this.modelMatrixIndex, this.modelMatrixIndex, R);
   }
 
@@ -89,6 +96,11 @@ class ObjectCollection
       {
           this.shader.setModelMatrix(object.modelMatrixIndex);
           object.draw(inInput);
+      }
+    }
+    update(time){
+      for(let object of this.sharedShaderGroup){
+        object.animate(time * object.timeScale, object.axis);
       }
     }
 }

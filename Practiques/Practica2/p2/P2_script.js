@@ -23,12 +23,13 @@ cube01.initializeObject(exampleCube, masterShader01);
 sphere01.initializeObject(exampleSphere, masterShader01);
 
 //Add object instances to draw
-
 cube01.setMatrix(-1, 1, -5, 1);
+cube01.setAnimation(0.25, [0,1,1]);
 gameObjects01.add(cube01);
 
-sphere01.setMatrix(1, 1, -15, 1);
+sphere01.setMatrix(5, 1, -25, 1);
+sphere01.setAnimation(1, [-1,0,-0.5]);
 gameObjects01.add(sphere01);
 
-//Initialize draw calls
-requestAnimationFrame(() => P2.drawScene());
+//let angle = 0;
+P2.drawScene();

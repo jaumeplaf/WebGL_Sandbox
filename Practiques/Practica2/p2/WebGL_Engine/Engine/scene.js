@@ -5,13 +5,23 @@ class Scene
         this.collections = [];
         this.camera = inCamera;
         this.input = new InputParameters(this.camera);
+        this.previousTime = performance.now();
+        this.currentTime;
+        this.deltaTime;
         initializeEventListeners(this, this.input);
     }
+
     addCollection(inCollection)
     {
         this.collections.push(inCollection);
     }
     
+    updateDeltaTime(){
+        this.currentTime = performance.now();
+        this.deltaTime = (this.currentTime - this.previousTime) / 1000;
+        this.previousTime = this.currentTime;
+    }
+
      drawScene()
     {
         //We need to use "requestAnimationFrame(() => scene.drawScene())" instead of "requestAnimationFrame(scene.drawScene)" to have access to "this", and it's properties
@@ -20,11 +30,16 @@ class Scene
         
         window.gl.clear(window.gl.COLOR_BUFFER_BIT | window.gl.DEPTH_BUFFER_BIT);
         
+        this.updateDeltaTime();
+        
         for(let collection of this.collections){
+            collection.update(this.deltaTime);
             collection.shader.use();
             updateUniforms(this.input, collection.shader.program);
             collection.shader.setProjection(this.camera.getProjection());
             collection.draw(this.input);
+            
         }
+        requestAnimationFrame(() => P2.drawScene())
     }
 }

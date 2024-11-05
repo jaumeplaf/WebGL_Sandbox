@@ -81,3 +81,11 @@ body, html {
 .indent{
   padding-left: 15px;
 }
+
+.UI_counter{
+  padding-bottom: 10px;
+}
+
+.counter{
+  color: red;
+}

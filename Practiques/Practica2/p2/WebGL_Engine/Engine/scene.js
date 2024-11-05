@@ -31,6 +31,7 @@ class Scene
         window.gl.clear(window.gl.COLOR_BUFFER_BIT | window.gl.DEPTH_BUFFER_BIT);
         
         this.updateDeltaTime();
+        updateFpsCounter(this.deltaTime);
         
         for(let collection of this.collections){
             collection.update(this.deltaTime);

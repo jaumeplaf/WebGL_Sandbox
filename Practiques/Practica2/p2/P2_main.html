@@ -127,11 +127,15 @@
     </head>
 
     <body>
-    <div id="container">
-        <canvas id="wglCanvas" width="1450" height="850">
-        HTML5 not supported
-        </canvas>
-        <div id="menu">
+        <div id="container">
+            <canvas id="wglCanvas" width="1450" height="850">
+                HTML5 not supported
+            </canvas>
+            <div id="menu">
+                <div class = "UI_counter">
+                    <span>fps: </span><span class ="counter" id="fpsCounter">"fps" </span><br>
+                    <span>frame time: </span><span class="counter" id ="frameTime">"frame time" </span><br>
+                </div>
             <!-- Shading mode controls -->
             <label for="shadingMode">Shading Mode:</label>
             <div class="indent">
@@ -174,6 +178,7 @@
   <script src = "WebGL_Engine/Resources/primitivasG.js"></script>
   <!-- Load engine scripts -->
   <script src = "WebGL_Engine/Engine/input.js"></script>
+  <script src = "WebGL_Engine/Engine/ui.js"></script>
   <script src = "WebGL_Engine/Engine/renderer.js"></script>
   <script src = "WebGL_Engine/Engine/engine.js"></script>
   <script src = "WebGL_Engine/Engine/utils.js"></script>

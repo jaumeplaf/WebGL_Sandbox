@@ -12,6 +12,7 @@ class Shader
         const fragmentShader = this.newShader(window.gl.FRAGMENT_SHADER, fragmentSource);
         const newProgram = window.gl.createProgram();
 
+        //
         window.gl.attachShader(newProgram, vertexShader);
         window.gl.attachShader(newProgram, fragmentShader);
         window.gl.linkProgram(newProgram);

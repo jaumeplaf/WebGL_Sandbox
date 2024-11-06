@@ -28,3 +28,8 @@ function getCanvasRatio(inCanvas)
 {
     return  1 / (inCanvas.height / inCanvas.width);
 }
+
+function parseJSON()
+{
+    console.log("Parse JSON file");
+}

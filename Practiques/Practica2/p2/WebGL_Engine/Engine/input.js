@@ -81,11 +81,15 @@ class InputParameters
 function loadOBJ() 
 {
   console.log("Load obj")
+  //example objToJSON
 }
 
 function loadJSON()
 {
   console.log("Load JSON")
+  //python server? no need, see solution 2
+  //objToJSON -> save JSON -> link in HTML 
+  //Parse JSON
 }
 
 function loadGLTF()

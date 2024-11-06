@@ -32,15 +32,16 @@ class Scene
         window.gl.clear(window.gl.COLOR_BUFFER_BIT | window.gl.DEPTH_BUFFER_BIT);
         
         this.updateDeltaTime();
-        updateFpsCounter(this.deltaTime, 4);
+        updateFpsCounter(this.deltaTime, 2);
 
         for(let collection of this.collections){
             collection.update(this.deltaTime);
+
             collection.shader.use();
             updateUniforms(this.input, collection.shader.program);
             collection.shader.setProjection(this.camera.getProjection());
+
             collection.draw(this.input);
-            
         }
         requestAnimationFrame(() => P2.drawScene())
     }

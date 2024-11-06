@@ -6,6 +6,8 @@ class GameObject
     this.baseColor = [1,0,0];
     this.vertices = [];
     this.indices = [];
+    //change primitivasG.js for primitivasGN.js
+    //this.normals = [];
     this.shader = null;
     this.timeScale = 1;
     this.axis = [0,0,1];

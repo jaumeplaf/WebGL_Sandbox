@@ -6,6 +6,7 @@ let fps = 0.0;
 
 function updateFpsCounter(deltaTime, precision)
 {
+    deltaTime = deltaTime * 1000;
     let frameFps = 1000/deltaTime;
     
     outFps.textContent = frameFps.toFixed(precision) + " fps";

@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+  
+    <meta charset="utf-8">
+    
+    <title> Sombreado Gouraud </title>
+    
+    <style>
+      canvas {border: 1px solid black;}
+    </style>
+    
+    <script id="myVertexShader" 
+          type="x-shader/x-vertex">#version 300 es
+      
+      uniform   mat4 projectionMatrix;
+      uniform   mat4 modelViewMatrix;
+      uniform   mat3 normalMatrix;
+      
+      in vec3 VertexPosition;
+      in vec3 VertexNormal;
+      out vec3 N; 
+
+      struct MaterialData {
+        vec3 Ka;       // Ambiente
+        vec3 Kd;       // Difusa
+        vec3 Ks;       // Especular
+        float alpha;   // Brillo
+      };
+      uniform MaterialData Material;
+      
+      void main()  {
+      
+        N          = normalize(normalMatrix * VertexNormal);
+        //N          = normalize(VertexNormal);
+        vec4 ecPosition = modelViewMatrix * vec4(VertexPosition,1.0);
+        vec3 ec         = vec3(ecPosition);
+        
+        gl_Position     = projectionMatrix * ecPosition;
+      
+      }
+
+    </script>
+    
+    <script id="myFragmentShader" 
+          type="x-shader/x-fragment">#version 300 es
+      
+      precision mediump float;
+      
+      //in  vec3 colorOut;
+      in vec3 N;
+      out vec4 fragmentColor;
+
+      void main() {
+      
+        fragmentColor = vec4(N,1.0);
+      
+      }
+      
+    </script>
+    
+  </head>
+  
+  <body>
+    
+    <button>Plano</button> 
+    <button>Cubo</button> 
+    <button>Tapa</button> 
+    <button>Cono</button> 
+    <button>Cilindro</button> 
+    <button>Esfera</button> 
+    <button>Toro</button> 
+    
+    <br>
+    <strong>La: </strong><input type="color" name="La" value="#ffffff">
+    <strong>Ld: </strong><input type="color" name="Ld" value="#ffffff">
+    <strong>Ls: </strong><input type="color" name="Ls" value="#ffffff"><br>
+    
+    <canvas id="myCanvas" width="600" height="600">
+      El Navegador no soporta HTML5
+    </canvas>
+    
+    <script src="gl-matrix-min.js"></script>
+    <script src="materiales.js"></script>
+    <script src="primitivasGN.js"></script>
+    <script src="iluminacion.js"></script>
+
+  </body>
+  
+</html>

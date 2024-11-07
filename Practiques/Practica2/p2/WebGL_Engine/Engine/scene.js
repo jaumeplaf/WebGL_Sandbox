@@ -9,7 +9,8 @@ class Scene
         this.previousTime = performance.now();
         this.currentTime;
         this.deltaTime;
-        initializeEventListeners(this, this.input);
+        
+        this.input.initializeEventListeners(this);
     }
 
     addCollection(inCollection)
@@ -33,24 +34,31 @@ class Scene
 
      drawScene()
     {
-        //We need to use "requestAnimationFrame(() => scene.drawScene())" instead of "requestAnimationFrame(scene.drawScene)" to have access to "this", and it's properties
-
+        //TODO: fix (returning NaN), make it so it only triggers while key is pressed!
+        //this.camera.updateCameraPosition();
+        
+        
         window.gl.clearColor(this.input.fogColor[0], this.input.fogColor[1], this.input.fogColor[2], this.input.fogColor[3]);
         
         window.gl.clear(window.gl.COLOR_BUFFER_BIT | window.gl.DEPTH_BUFFER_BIT);
         
         this.updateDeltaTime();
         updateFpsCounter(this.deltaTime, 2);
-
+        
         for(let collection of this.collections){
             collection.update(this.deltaTime);
-
+            
             collection.shader.use();
-            updateUniforms(this.input, collection.shader.program);
-            collection.shader.setProjection(this.camera.getProjection());
-
+            
+            this.input.updateUniforms(collection.shader.program);
+            collection.shader.setProjection(this.camera.getProjectionMatrix());
+            collection.shader.setView(this.camera.getViewMatrix());
+            
             collection.draw(this.input);
         }
+
+        //We need to use "requestAnimationFrame(() => scene.drawScene())" instead of "requestAnimationFrame(scene.drawScene)" to have access to "this", and it's properties
         requestAnimationFrame(() => P2.drawScene())
     }
+
 }

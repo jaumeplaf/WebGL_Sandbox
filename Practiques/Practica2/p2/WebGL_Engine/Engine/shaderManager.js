@@ -55,6 +55,7 @@ class Shader
         //Uniforms
         this.program.modelMatrixIndex = window.gl.getUniformLocation(this.program, "modelMatrix");
         this.program.projectionMatrixIndex = window.gl.getUniformLocation(this.program, "projectionMatrix");
+        this.program.viewMatrixIndex = window.gl.getUniformLocation(this.program, "viewMatrix");
         
         this.program.progShadingMode = window.gl.getUniformLocation(this.program, "shadingMode");
         this.program.progIsLine = window.gl.getUniformLocation(this.program, "isLine");
@@ -74,6 +75,11 @@ class Shader
     setProjection(projectionMatrix)
     {
         window.gl.uniformMatrix4fv(this.program.projectionMatrixIndex, false, projectionMatrix);
+    }
+
+    setView(viewMatrix)
+    {
+        window.gl.uniformMatrix4fv(this.program.viewMatrixIndex, false, viewMatrix);
     }
 
     setModelMatrix(matrix)

@@ -1,5 +1,5 @@
 //Initialize HTML inputs
-
+const inFov = document.getElementById('fov');
 const inShadingMode = document.getElementById('shadingMode');
 const inWireframeIgnoreFog = document.getElementById('wireframeIgnoreFog');
 const inWireframeOpacity = document.getElementById('wireframeOpacity');
@@ -9,28 +9,35 @@ const inFogPower = document.getElementById('fogPower');
 
 function initializeEventListeners(inScene, inputParam)
 {
+  inFov.addEventListener('input', (event) => {
+    inputParam.fov = event.target.value;
+    console.log(inputParam.fov);
+    inScene.updateFov(inputParam.fov);
+    requestAnimationFrame(() => inScene.drawScene());
+  });
+
   //Shading mode select
   inShadingMode.addEventListener('change', (event) => {
     inputParam.shadingMode = parseInt(event.target.value);
     requestAnimationFrame(() => inScene.drawScene());
   });
   
-  inWireframeOpacity.addEventListener('change', (event) =>{
+  inWireframeOpacity.addEventListener('input', (event) =>{
     inputParam.wireframeOpacity = event.target.value;
     requestAnimationFrame(() => inScene.drawScene());
   });
   
-  inFogColor.addEventListener('change', (event) =>{
+  inFogColor.addEventListener('input', (event) =>{
     inputParam.fogColor = hexToRgba(event.target.value, 1.0) ;
     requestAnimationFrame(() => inScene.drawScene());
   });
 
-  inFogAmount.addEventListener('change', (event) =>{
+  inFogAmount.addEventListener('input', (event) =>{
     inputParam.fogAmount = event.target.value;
     requestAnimationFrame(() => inScene.drawScene());
   });
   
-  inFogPower.addEventListener('change', (event) =>{
+  inFogPower.addEventListener('input', (event) =>{
     inputParam.fogPower = event.target.value;
     requestAnimationFrame(() => inScene.drawScene());
   });
@@ -64,6 +71,7 @@ class InputParameters
 { 
   constructor(inCamera)
   {
+    this.fov = degToRad(inFov.value);
     this.shadingMode = parseInt(inShadingMode.value);
     this.wireframeOpacity = inWireframeOpacity.value;
 
@@ -74,9 +82,9 @@ class InputParameters
 
     this.nearPlane = inCamera.nearPlane;
     this.farPlane = inCamera.farPlane;
-
   }
 }
+
 
 function loadOBJ() 
 {

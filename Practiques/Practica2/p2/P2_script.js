@@ -1,5 +1,5 @@
 //Initialize camera
-const camera01 = new Camera(0.1, 250.0, 4.0);
+const camera01 = new Camera(0.1, 250.0);
 
 //Initialize shaders. Shaders must be declared in the HTML document and have an ID
 const masterShader01 = new Shader("VS01", "FS01");
@@ -23,6 +23,7 @@ cube01.initializeObject(exampleCube, masterShader01);
 sphere01.initializeObject(exampleSphere, masterShader01);
 
 //Add object instances to draw
+//TODO: right now it's instancing a single instance per gameObject, should be re-instancable
 cube01.setMatrix(-1, -1, -5, 1);
 cube01.setAnimation(0.25, [0,1,1]);
 gameObjects01.add(cube01);

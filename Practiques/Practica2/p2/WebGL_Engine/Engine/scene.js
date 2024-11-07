@@ -4,6 +4,7 @@ class Scene
     {
         this.collections = [];
         this.camera = inCamera;
+        this.fov;
         this.input = new InputParameters(this.camera);
         this.previousTime = performance.now();
         this.currentTime;
@@ -21,6 +22,13 @@ class Scene
         this.currentTime = performance.now();
         this.deltaTime = (this.currentTime - this.previousTime) / 1000;
         this.previousTime = this.currentTime;
+    }
+
+    updateFov(newFov)
+    {
+        this.camera.fov = degToRad(newFov);
+        this.camera.setProjectionMatrix();
+        updateFovDisplay(newFov);
     }
 
      drawScene()

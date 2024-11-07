@@ -1,19 +1,21 @@
 class Camera {
-    constructor(inNearPlane, inFarPlane, inFov) 
+    constructor(inNearPlane, inFarPlane) 
     {
         //type: fps, editor ...
         //this.type = inType;
         this.nearPlane = inNearPlane;
         this.farPlane = inFarPlane;
-        this.fov = inFov;
+        this.fov = degToRad(inFov.value);
+        console.log("INITIAL FOV: " + this.fov);
         this.projectionMatrix = mat4.create();
         
-        this.initProjectionMatrix();
+        this.setProjectionMatrix();
+        updateFovDisplay(inFov.value);
     }
 
-    initProjectionMatrix() 
+    setProjectionMatrix() 
     {
-        mat4.perspective(this.projectionMatrix, Math.PI / this.fov, getCanvasRatio(window.canvas), this.nearPlane, this.farPlane);
+        mat4.perspective(this.projectionMatrix, this.fov, getCanvasRatio(window.canvas), this.nearPlane, this.farPlane);
     }
 
     getProjection() 
@@ -28,6 +30,10 @@ class Camera {
 //mat4.lookAt(out, p, c, up)
 //move eye -> modify perspective?
 //move eye + center -> move camera through space
+//
+//Shader -> gl_Position = projection * view * model * vec4(position, 1.0) 
+//
+//MVP matrix -> mults apply from the end, so it's PVM
 //
 //examples-> mueveLaCamara.js / html
 //

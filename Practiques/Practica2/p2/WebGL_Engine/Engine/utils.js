@@ -29,7 +29,17 @@ function getCanvasRatio(inCanvas)
     return  1 / (inCanvas.height / inCanvas.width);
 }
 
+function degToRad(degrees)
+{
+  return degrees * (Math.PI/180);
+}
+
+function radToDeg(radians) {
+    return radians * (180 / Math.PI);
+}
+
 function parseJSON()
 {
+    //TODO?
     console.log("Parse JSON file");
 }

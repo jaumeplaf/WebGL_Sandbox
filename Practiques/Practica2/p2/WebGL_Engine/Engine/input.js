@@ -14,6 +14,8 @@ class InputParameters
 
     this.nearPlane = inCamera.nearPlane;
     this.farPlane = inCamera.farPlane;
+
+    //this.mouseLock = false;
   }
 
   updateUniforms(inProgram)
@@ -36,27 +38,43 @@ class InputParameters
   {
     //Keyboard
     window.addEventListener('keydown', (event) => {
-      if(event.key === 'w' || event.key === 'W') inScene.camera.moveForward = true;
-      if(event.key === 'a' || event.key === 'A') inScene.camera.moveLeft = true;
-      if(event.key === 's' || event.key === 'S') inScene.camera.moveBack = true;
-      if(event.key === 'd' || event.key === 'D') inScene.camera.moveRight = true;
+      if(event.key === 'w' || event.key === 'W') inScene.player.moveForward = true;
+      if(event.key === 'a' || event.key === 'A') inScene.player.moveLeft = true;
+      if(event.key === 's' || event.key === 'S') inScene.player.moveBack = true;
+      if(event.key === 'd' || event.key === 'D') inScene.player.moveRight = true;
     });
 
     window.addEventListener('keyup', (event) => {
-      if(event.key === 'w' || event.key === 'W') inScene.camera.moveForward = false;
-      if(event.key === 'a' || event.key === 'A') inScene.camera.moveLeft = false;
-      if(event.key === 's' || event.key === 'S') inScene.camera.moveBack = false;
-      if(event.key === 'd' || event.key === 'D') inScene.camera.moveRight = false;
+      if(event.key === 'w' || event.key === 'W') inScene.player.moveForward = false;
+      if(event.key === 'a' || event.key === 'A') inScene.player.moveLeft = false;
+      if(event.key === 's' || event.key === 'S') inScene.player.moveBack = false;
+      if(event.key === 'd' || event.key === 'D') inScene.player.moveRight = false;
     });
 
-
     //Mouse
+    // Assuming canvas is your rendering canvas element
+    canvas.addEventListener('click', () => {
+      canvas.requestPointerLock();
+      //this.mouseLock = true;
+
+    });
+
+    document.addEventListener('mousemove', (event) => {
+      if (document.pointerLockElement === canvas) {
+          const sensitivity = 0.002; // Adjust sensitivity to control how fast the camera moves
+          let deltaX = event.movementX; // Movement along X axis
+          let deltaY = event.movementY; // Movement along Y axis
+  
+          // Modify camera's target position to "look" left/right and up/down
+          inScene.player.camera.rotateView(deltaX * sensitivity, deltaY * sensitivity);
+      }
+  });
 
     //UI
     inFov.addEventListener('input', (event) => {
-      this.fov = event.target.value;
-      inScene.updateFov(this.fov);
-      requestAnimationFrame(() => inScene.drawScene());
+    this.fov = event.target.value;
+    inScene.player.updateFov(this.fov);
+    requestAnimationFrame(() =>  inScene.drawScene());
     });
   
     //Shading mode select

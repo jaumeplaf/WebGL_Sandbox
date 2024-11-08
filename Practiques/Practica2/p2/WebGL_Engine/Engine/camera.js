@@ -1,4 +1,5 @@
-class Camera {
+class Camera 
+{
     constructor(inNearPlane, inFarPlane) 
     {
         //type: fps, editor ...
@@ -8,14 +9,8 @@ class Camera {
         this.target = [0,0,-1];
         this.up = [0,1,0];
 
-        
-        this.moveForward = false;
-        this.moveLeft = false;
-        this.moveBack = false;
-        this.moveRight = false;
-
-        this.walkSpeed = 0.0001;
-        this.aimSpeed = 0.1;
+        this.yaw = Math.PI //X rotation
+        this.pitch = 0 //Y rotation
 
         this.nearPlane = inNearPlane;
         this.farPlane = inFarPlane;
@@ -23,8 +18,14 @@ class Camera {
         this.projectionMatrix = mat4.create();
         this.viewMatrix = mat4.create();
         
+        this.initializeCamera();
+    }
+
+    initializeCamera()
+    {
         this.setProjectionMatrix();
         this.setViewMatrix(this.position, this.target, this.up);
+
         updateFovDisplay(inFov.value);
     }
 
@@ -48,60 +49,67 @@ class Camera {
         return this.viewMatrix;
     }
 
-    setWalkSpeed(newSpeed)
-    {
-        this.walkSpeed = newSpeed;
-    }
-
-    setAimSpeed(newSpeed)
-    {
-        this.aimSpeed = newSpeed;
-    }
-
     getDirectionVectors()
     {
-        this.forwardVec = vec3.normalize([], vec3.fromValues([], this.target, this.position));
-        this.rightVec = vec3.normalize([], vec3.cross([], this.forwardVec, this.up));
+        let forw = vec3.subtract([], this.target, this.position);
+        this.forwardVec = vec3.normalize([], forw);
+        let righ = vec3.cross([], this.forwardVec, this.up)
+        this.rightVec = vec3.normalize([], righ);
     }
 
-    updateCameraPosition()
+    rotateView(deltaYaw, deltaPitch)
+    {
+      // Update yaw and pitch by delta
+      this.yaw -= deltaYaw;
+      this.pitch -= deltaPitch;
+
+      // Clamp pitch to avoid flipping (around 90 degrees up/down)
+      const maxPitch = Math.PI / 2 - 0.01;
+      this.pitch = Math.max(-maxPitch, Math.min(maxPitch, this.pitch));
+
+      // Calculate new forward direction from yaw and pitch
+      let newForward = vec3.fromValues(
+          Math.cos(this.pitch) * Math.sin(this.yaw),
+          Math.sin(this.pitch),
+          Math.cos(this.pitch) * Math.cos(this.yaw)
+      );
+
+      vec3.add(this.target, this.position, newForward);
+
+      this.setViewMatrix();
+    }
+
+    updateCameraPosition(inPlayer)
     {
         this.getDirectionVectors();
+
         console.log("POSITION " + this.position);
         console.log("FORW " + this.forwardVec);
         console.log("RIGHT " + this.rightVec);
         
-        if(this.moveForward){
-            this.position[0] += this.forwardVec[0] * this.walkSpeed;
-            this.position[1] += this.forwardVec[1] * this.walkSpeed;
-            this.position[2] += this.forwardVec[2] * this.walkSpeed;
-            this.target[0] += this.forwardVec[0] * this.walkSpeed;
-            this.target[1] += this.forwardVec[1] * this.walkSpeed;
-            this.target[2] += this.forwardVec[2] * this.walkSpeed;
+        if(inPlayer.moveForward && !inPlayer.moveBack){
+            this.position[0] += this.forwardVec[0] * inPlayer.walkSpeed;
+            this.position[2] += this.forwardVec[2] * inPlayer.walkSpeed;
+            this.target[0] += this.forwardVec[0] * inPlayer.walkSpeed;
+            this.target[2] += this.forwardVec[2] * inPlayer.walkSpeed;
         }
-        if(this.moveBack){
-            this.position[0] -= this.forwardVec[0] * this.walkSpeed;
-            this.position[1] -= this.forwardVec[1] * this.walkSpeed;
-            this.position[2] -= this.forwardVec[2] * this.walkSpeed;
-            this.target[0] -= this.forwardVec[0] * this.walkSpeed;
-            this.target[1] -= this.forwardVec[1] * this.walkSpeed;
-            this.target[2] -= this.forwardVec[2] * this.walkSpeed;
+        if(inPlayer.moveBack){
+            this.position[0] -= this.forwardVec[0] * inPlayer.walkSpeed;
+            this.position[2] -= this.forwardVec[2] * inPlayer.walkSpeed;
+            this.target[0] -= this.forwardVec[0] * inPlayer.walkSpeed;
+            this.target[2] -= this.forwardVec[2] * inPlayer.walkSpeed;
         }
-        if(this.moveLeft){
-            this.position[0] -= this.rightVec[0] * this.walkSpeed;
-            this.position[1] -= this.rightVec[1] * this.walkSpeed;
-            this.position[2] -= this.rightVec[2] * this.walkSpeed;
-            this.target[0] -= this.rightVec[0] * this.walkSpeed;
-            this.target[1] -= this.rightVec[1] * this.walkSpeed;
-            this.target[2] -= this.rightVec[2] * this.walkSpeed;
+        if(inPlayer.moveLeft){
+            this.position[0] -= this.rightVec[0] * inPlayer.walkSpeed;
+            this.position[2] -= this.rightVec[2] * inPlayer.walkSpeed;
+            this.target[0] -= this.rightVec[0] * inPlayer.walkSpeed;
+            this.target[2] -= this.rightVec[2] * inPlayer.walkSpeed;
         }
-        if(this.moveRight){
-            this.position[0] += this.rightVec[0] * this.walkSpeed;
-            this.position[1] += this.rightVec[1] * this.walkSpeed;
-            this.position[2] += this.rightVec[2] * this.walkSpeed;
-            this.target[0] += this.rightVec[0] * this.walkSpeed;
-            this.target[1] += this.rightVec[1] * this.walkSpeed;
-            this.target[2] += this.rightVec[2] * this.walkSpeed;
+        if(inPlayer.moveRight){
+            this.position[0] += this.rightVec[0] * inPlayer.walkSpeed;
+            this.position[2] += this.rightVec[2] * inPlayer.walkSpeed;
+            this.target[0] += this.rightVec[0] * inPlayer.walkSpeed;
+            this.target[2] += this.rightVec[2] * inPlayer.walkSpeed;
         }
 
         this.setViewMatrix();
@@ -118,11 +126,11 @@ class Camera {
 //
 //Implement:
     //fpsCam:
-        //wasd (hold)-> movement
+        //wasd (hold)-> movement DONE
         //ctrl (hold) -> float down
         //space (hold) -> float up
         //shift (hold) -> sprint
-        //mouse -> view
+        //mouse -> view DONE
     //editorCam:
         //lAlt + lMouse drag: pan around, AKA move eye in a "sphere" around center/at
         //lAlt + 

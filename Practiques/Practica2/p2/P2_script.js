@@ -1,11 +1,14 @@
 //Initialize camera
 const camera01 = new Camera(0.1, 250.0);
 
+//Initialize player
+const player01 = new Player(camera01);
+
 //Initialize shaders. Shaders must be declared in the HTML document and have an ID
 const masterShader01 = new Shader("VS01", "FS01");
 
 //Initialize scene  
-const P2 = new Scene(camera01);
+const P2 = new Scene(camera01, player01);
 
 
 //Initialize GameObject collections, for "batch drawing" (TBI) objects with shared shader
@@ -33,4 +36,6 @@ sphere01.setAnimation(1, [-1,0,-0.5]);
 gameObjects01.add(sphere01);
 
 //let angle = 0;
-P2.drawScene();
+window.onload = function(){
+    P2.drawScene();
+}

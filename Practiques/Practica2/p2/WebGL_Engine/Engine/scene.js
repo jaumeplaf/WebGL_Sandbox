@@ -1,10 +1,11 @@
 class Scene
 {
-    constructor(inCamera)
+    constructor(inCamera, inPlayer)
     {
         this.collections = [];
         this.camera = inCamera;
         this.fov;
+        this.player = inPlayer;
         this.input = new InputParameters(this.camera);
         this.previousTime = performance.now();
         this.currentTime;
@@ -18,6 +19,8 @@ class Scene
         this.collections.push(inCollection);
     }
 
+    //TODO: fix delta time infinity scaling
+
     updateDeltaTime()
     {
         this.currentTime = performance.now();
@@ -25,18 +28,10 @@ class Scene
         this.previousTime = this.currentTime;
     }
 
-    updateFov(newFov)
-    {
-        this.camera.fov = degToRad(newFov);
-        this.camera.setProjectionMatrix();
-        updateFovDisplay(newFov);
-    }
-
      drawScene()
     {
-        //TODO: fix (returning NaN), make it so it only triggers while key is pressed!
-        //this.camera.updateCameraPosition();
-        
+
+        this.player.moveCamera();
         
         window.gl.clearColor(this.input.fogColor[0], this.input.fogColor[1], this.input.fogColor[2], this.input.fogColor[3]);
         

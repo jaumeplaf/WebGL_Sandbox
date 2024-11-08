@@ -31,3 +31,8 @@ function updateFovDisplay(fov)
 {
     outFov.textContent = fov + "º";
 }
+
+//https://tweakpane.github.io/docs/getting-started/
+//https://github.com/dataarts/dat.gui
+//https://openrndr.org/
+//https://github.com/jnmaloney/WebGui -> CORS??

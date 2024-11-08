@@ -3,20 +3,45 @@ class Player
     constructor(inCamera)
     {
         this.camera = inCamera;
-        this.walkSpeed = .25;
-        this.walkSpeed *= 0.1;
-        this.aimSpeed = 0.1;
+        this.speedMult = 0.1;
+        this.speedDelta = 1;
+        this.walkSpeed = 1;
+        this.floatSpeed = 1;
+        this.aimSpeed = 1;
                 
         this.moveForward = false;
         this.moveLeft = false;
         this.moveBack = false;
         this.moveRight = false;
+        this.moveUp = false;
+        this.moveDown = false;
 
+    }
+
+    //TODO: fix this function. event triggering for mouse up and down simultaniously?
+    //make it fixed steps
+    updateSpeed(add)
+    {   
+        if(add && this.speedDelta < 10){
+            this.speedDelta++;
+        }
+        else if(this.speedDelta > 1){
+            this.speedDelta-- && this.speedDelta < 0.1;
+        }
+        this.walkSpeed = this.speedMult * this.speedDelta;
+        this.floatSpeed = this.speedMult * this.speedDelta * 0.5;
+
+        console.log("Walk: " + this.speedMult + ", Float: " + this.floatSpeed);
     }
 
     setWalkSpeed(newSpeed)
     {
         this.walkSpeed = newSpeed;
+    }
+
+    setFloatSpeed(newSpeed)
+    {
+        this.floatSpeed = newSpeed;
     }
 
     setAimSpeed(newSpeed)
@@ -39,9 +64,17 @@ class Player
         }
     }
 
+    isFloating()
+    {
+        if(this.moveUp || this.moveDown)
+        {
+            return true
+        }
+    }
+
     moveCamera()
     {
-        if(this.isMoving()){
+        if(this.isMoving() || this.isFloating()){
             this.camera.updateCameraPosition(this);
         }
     }

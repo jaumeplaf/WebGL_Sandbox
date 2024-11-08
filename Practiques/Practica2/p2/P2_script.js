@@ -22,19 +22,27 @@ P2.addCollection(gameObjects01);
 
 let cube01 = new GameObject();
 let sphere01 = new GameObject();
+let plane01 = new GameObject();
 cube01.initializeObject(exampleCube, masterShader01);
 sphere01.initializeObject(exampleSphere, masterShader01);
+plane01.initializeObject(examplePlane, masterShader01);
 
 //Add object instances to draw
 //TODO: right now it's instancing a single instance per gameObject, should be re-instancable
 cube01.setMatrix(-1, -1, -5, 1);
 cube01.setAnimation(0.25, [0,1,1]);
+cube01.setBaseColor([1,1,1]);
 gameObjects01.add(cube01);
 
 sphere01.setMatrix(5, 1, -25, 1);
 sphere01.setAnimation(1, [-1,0,-0.5]);
+sphere01.setBaseColor([1,1,1]);
 gameObjects01.add(sphere01);
 
+plane01.setMatrix(0, -2, -25, 1000);
+plane01.setAnimation(0, [-0,0,0]);
+plane01.setBaseColor([0.7,0.7,0.7]);
+gameObjects01.add(plane01);
 //let angle = 0;
 window.onload = function(){
     P2.drawScene();

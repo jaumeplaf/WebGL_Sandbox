@@ -53,8 +53,11 @@ class Camera
     {
         let forw = vec3.subtract([], this.target, this.position);
         this.forwardVec = vec3.normalize([], forw);
+
         let righ = vec3.cross([], this.forwardVec, this.up)
         this.rightVec = vec3.normalize([], righ);
+
+        this.upVec =  vec3.normalize([], this.up);
     }
 
     rotateView(deltaYaw, deltaPitch)
@@ -82,10 +85,6 @@ class Camera
     updateCameraPosition(inPlayer)
     {
         this.getDirectionVectors();
-
-        console.log("POSITION " + this.position);
-        console.log("FORW " + this.forwardVec);
-        console.log("RIGHT " + this.rightVec);
         
         if(inPlayer.moveForward && !inPlayer.moveBack){
             this.position[0] += this.forwardVec[0] * inPlayer.walkSpeed;
@@ -105,11 +104,19 @@ class Camera
             this.target[0] -= this.rightVec[0] * inPlayer.walkSpeed;
             this.target[2] -= this.rightVec[2] * inPlayer.walkSpeed;
         }
-        if(inPlayer.moveRight){
+        if(inPlayer.moveRight && !inPlayer.moveLeft){
             this.position[0] += this.rightVec[0] * inPlayer.walkSpeed;
             this.position[2] += this.rightVec[2] * inPlayer.walkSpeed;
             this.target[0] += this.rightVec[0] * inPlayer.walkSpeed;
             this.target[2] += this.rightVec[2] * inPlayer.walkSpeed;
+        }
+        if(inPlayer.moveUp && !inPlayer.moveDown){
+            this.position[1] += this.upVec[1] * inPlayer.floatSpeed;
+            this.target[1] += this.upVec[1] * inPlayer.floatSpeed;
+        }
+        if(inPlayer.moveDown){
+            this.position[1] -= this.upVec[1] * inPlayer.floatSpeed;
+            this.target[1] -= this.upVec[1] * inPlayer.floatSpeed;
         }
 
         this.setViewMatrix();

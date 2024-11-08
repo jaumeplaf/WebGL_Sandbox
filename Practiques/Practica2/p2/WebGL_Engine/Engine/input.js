@@ -1,17 +1,29 @@
+let keyForward = 'w';
+let keyLeft = 'a';
+let keyBackward = 's';
+let keyRight = 'd';
+let keyUp = ' ';
+let keyDown = 'q';
+let keyWireframe = '1';
+let keyBaseColor = '2';
+let keyColorWireframe = '3';
+let keyNormal = '4';
+let keyNormalWireframe = '5';
 
 class InputParameters
 { 
   constructor(inCamera)
   {
-    this.fov = degToRad(inFov.value);
+    this.mouseLock = false;
+
     this.shadingMode = parseInt(inShadingMode.value);
     this.wireframeOpacity = inWireframeOpacity.value;
-    
     this.fogColor = hexToRgba(inFogColor.value, 1.0);
     this.fogAmount = inFogAmount.value;
     this.fogPower = inFogPower.value;
     this.wireframeIgnoreFog = inWireframeIgnoreFog.checked ? 1.0 : 0.0;
-
+    
+    this.fov = degToRad(inFov.value);
     this.nearPlane = inCamera.nearPlane;
     this.farPlane = inCamera.farPlane;
 
@@ -38,32 +50,59 @@ class InputParameters
   {
     //Keyboard
     window.addEventListener('keydown', (event) => {
-      if(event.key === 'w' || event.key === 'W') inScene.player.moveForward = true;
-      if(event.key === 'a' || event.key === 'A') inScene.player.moveLeft = true;
-      if(event.key === 's' || event.key === 'S') inScene.player.moveBack = true;
-      if(event.key === 'd' || event.key === 'D') inScene.player.moveRight = true;
+
+      let key = event.key.toLowerCase();
+
+      if (key === keyForward) inScene.player.moveForward = true;
+      if (key === keyLeft) inScene.player.moveLeft = true;
+      if (key === keyBackward) inScene.player.moveBack = true;
+      if (key === keyRight) inScene.player.moveRight = true;
+      if (key === keyUp) inScene.player.moveUp = true;
+      if (key === keyDown) inScene.player.moveDown = true;
+
+      if(key === keyWireframe || key === keyBaseColor || key === keyColorWireframe || key === keyNormal || key === keyNormalWireframe)
+      {
+        this.shadingMode = parseInt(key) - 1;
+        requestAnimationFrame(() => inScene.drawScene());
+      }
     });
 
     window.addEventListener('keyup', (event) => {
-      if(event.key === 'w' || event.key === 'W') inScene.player.moveForward = false;
-      if(event.key === 'a' || event.key === 'A') inScene.player.moveLeft = false;
-      if(event.key === 's' || event.key === 'S') inScene.player.moveBack = false;
-      if(event.key === 'd' || event.key === 'D') inScene.player.moveRight = false;
+
+      let key = event.key.toLowerCase();
+
+      if (key === keyForward) inScene.player.moveForward = false;
+      if (key === keyLeft) inScene.player.moveLeft = false;
+      if (key === keyBackward) inScene.player.moveBack = false;
+      if (key === keyRight) inScene.player.moveRight = false;
+      if (key === keyUp) inScene.player.moveUp = false;
+      if (key === keyDown) inScene.player.moveDown = false;
     });
 
     //Mouse
     // Assuming canvas is your rendering canvas element
     canvas.addEventListener('click', () => {
       canvas.requestPointerLock();
-      //this.mouseLock = true;
+      this.mouseLock = true;
+    });
 
+    canvas.addEventListener('wheel', (event) => {
+      if(this.mouseLock){
+        let addSpeed = 0.1;
+        if(event.deltaY < 0){ //SpeedUp
+          inScene.player.updateSpeed(true);
+        }
+        else if(event.deltaY > 0){ //SpeedUp
+          inScene.player.updateSpeed(false);
+        }
+      }
     });
 
     document.addEventListener('mousemove', (event) => {
       if (document.pointerLockElement === canvas) {
-          const sensitivity = 0.002; // Adjust sensitivity to control how fast the camera moves
-          let deltaX = event.movementX; // Movement along X axis
-          let deltaY = event.movementY; // Movement along Y axis
+          let sensitivity =  0.002;
+          let deltaX = event.movementX;
+          let deltaY = event.movementY;
   
           // Modify camera's target position to "look" left/right and up/down
           inScene.player.camera.rotateView(deltaX * sensitivity, deltaY * sensitivity);

@@ -45,6 +45,10 @@ plane01.setBaseColor([0.7,0.7,0.7]);
 gameObjects01.add(plane01);
 
 
+//TODO: JSON load example, works (returns vertices array), but gives errors (I think this will get fixed adding "var name = {")
+let fish01 = baseFish01;
+console.log(fish01.vertices);
+
 window.onload = function(){
     P2.drawScene();
 }

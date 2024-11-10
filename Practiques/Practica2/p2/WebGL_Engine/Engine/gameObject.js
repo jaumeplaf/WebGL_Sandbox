@@ -4,10 +4,12 @@ class GameObject
   {
     this.modelMatrixIndex = mat4.create();
     this.baseColor = [1,0,0];
+    
     this.vertices = [];
     this.indices = [];
-    //change primitivasG.js for primitivasGN.js
-    //this.normals = [];
+    this.normals = [];
+    this.colors = [];
+    
     this.shader = null;
     this.timeScale = 1;
     this.axis = [0,0,1];

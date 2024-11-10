@@ -2,7 +2,8 @@
 var gl, program;
 var myTorus;
 var myZeta = 0.0, myPhi = Math.PI/2.0, radius = 1.4, fovy = 1.4;
-var selectedPrimitive = exampleOBJ;
+//var selectedPrimitive = exampleOBJ;
+var selectedPrimitive = baseFish01;
 
 function getWebGLContext() {
 
@@ -94,6 +95,7 @@ function initPrimitives() {
   myTorus = makeTorus(0.4, 1.0, 8, 12);
   initBuffers(myTorus);
   initBuffers(exampleOBJ);
+  initBuffers(baseFish01);
   initBuffers(arbreOBJ);
   
 }

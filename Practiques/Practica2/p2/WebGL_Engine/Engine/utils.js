@@ -38,6 +38,41 @@ function radToDeg(radians) {
     return radians * (180 / Math.PI);
 }
 
+function generateGrid(divisions, size) {
+    let model = {
+        vertices: [],
+        indices: []
+    };
+    
+    let halfSize = size / 2;
+    let step = size / divisions;
+
+    // Generate vertices
+    for (let i = 0; i <= divisions; i++) {
+        for (let j = 0; j <= divisions; j++) {
+            let x = -halfSize + j * step;
+            let z = halfSize - i * step;
+            model.vertices.push(x, 0, z);  // y=0 for a flat grid
+        }
+    }
+
+    // Generate indices
+    for (let i = 0; i < divisions; i++) {
+        for (let j = 0; j < divisions; j++) {
+            let topLeft = i * (divisions + 1) + j;
+            let topRight = topLeft + 1;
+            let bottomLeft = topLeft + (divisions + 1);
+            let bottomRight = bottomLeft + 1;
+
+            // Two triangles per grid cell
+            model.indices.push(topLeft, bottomLeft, topRight);    // First triangle
+            model.indices.push(topRight, bottomLeft, bottomRight); // Second triangle
+        }
+    }
+
+    return model;
+}
+
 function parseJSON()
 {
     //TODO?

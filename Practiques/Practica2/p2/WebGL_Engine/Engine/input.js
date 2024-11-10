@@ -9,6 +9,7 @@ let keyBaseColor = '2';
 let keyColorWireframe = '3';
 let keyNormal = '4';
 let keyNormalWireframe = '5';
+let keySprint = 'shift';
 
 class InputParameters
 { 
@@ -53,12 +54,13 @@ class InputParameters
 
       let key = event.key.toLowerCase();
 
-      if (key === keyForward) inScene.player.moveForward = true;
-      if (key === keyLeft) inScene.player.moveLeft = true;
-      if (key === keyBackward) inScene.player.moveBack = true;
-      if (key === keyRight) inScene.player.moveRight = true;
-      if (key === keyUp) inScene.player.moveUp = true;
-      if (key === keyDown) inScene.player.moveDown = true;
+      if(key === keyForward) inScene.player.moveForward = true;
+      if(key === keyLeft) inScene.player.moveLeft = true;
+      if(key === keyBackward) inScene.player.moveBack = true;
+      if(key === keyRight) inScene.player.moveRight = true;
+      if(key === keyUp) inScene.player.moveUp = true;
+      if(key === keyDown) inScene.player.moveDown = true;
+      if(key === keySprint) inScene.player.sprint = true;
 
       if(key === keyWireframe || key === keyBaseColor || key === keyColorWireframe || key === keyNormal || key === keyNormalWireframe)
       {
@@ -71,12 +73,13 @@ class InputParameters
 
       let key = event.key.toLowerCase();
 
-      if (key === keyForward) inScene.player.moveForward = false;
-      if (key === keyLeft) inScene.player.moveLeft = false;
-      if (key === keyBackward) inScene.player.moveBack = false;
-      if (key === keyRight) inScene.player.moveRight = false;
-      if (key === keyUp) inScene.player.moveUp = false;
-      if (key === keyDown) inScene.player.moveDown = false;
+      if(key === keyForward) inScene.player.moveForward = false;
+      if(key === keyLeft) inScene.player.moveLeft = false;
+      if(key === keyBackward) inScene.player.moveBack = false;
+      if(key === keyRight) inScene.player.moveRight = false;
+      if(key === keyUp) inScene.player.moveUp = false;
+      if(key === keyDown) inScene.player.moveDown = false;
+      if(key === keySprint) inScene.player.sprint = false;
     });
 
     //Mouse
@@ -88,11 +91,10 @@ class InputParameters
 
     canvas.addEventListener('wheel', (event) => {
       if(this.mouseLock){
-        let addSpeed = 0.1;
         if(event.deltaY < 0){ //SpeedUp
           inScene.player.updateSpeed(true);
         }
-        else if(event.deltaY > 0){ //SpeedUp
+        else if(event.deltaY > 0){ //SpeedDown
           inScene.player.updateSpeed(false);
         }
       }

@@ -3,11 +3,18 @@ class Player
     constructor(inCamera)
     {
         this.camera = inCamera;
-        this.speedMult = 0.1;
-        this.speedDelta = 1;
-        this.walkSpeed = 1;
+
+        this.speedMult = 0.015;
+        this.speedDelta = 3; // 1-10 speed steps
+        this.sprint = false;
+        this.sprintMult = 3;
+
+        this.walkSpeed = this.speedMult * this.speedDelta;
         this.floatSpeed = 1;
         this.aimSpeed = 1;
+
+        this.currSpeed = this.walkSpeed;
+        this.currFloat = this.floatSpeed;
                 
         this.moveForward = false;
         this.moveLeft = false;
@@ -15,7 +22,6 @@ class Player
         this.moveRight = false;
         this.moveUp = false;
         this.moveDown = false;
-
     }
 
     //TODO: fix this function. event triggering for mouse up and down simultaniously?
@@ -28,10 +34,9 @@ class Player
         else if(this.speedDelta > 1){
             this.speedDelta-- && this.speedDelta < 0.1;
         }
+        
         this.walkSpeed = this.speedMult * this.speedDelta;
         this.floatSpeed = this.speedMult * this.speedDelta * 0.5;
-
-        console.log("Walk: " + this.speedMult + ", Float: " + this.floatSpeed);
     }
 
     setWalkSpeed(newSpeed)

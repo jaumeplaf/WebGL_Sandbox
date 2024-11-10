@@ -12,6 +12,13 @@ class Camera
         this.yaw = Math.PI //X rotation
         this.pitch = 0 //Y rotation
 
+        this.floor = 1;
+        this.ceiling = 50;
+        this.maxDist = 50;
+        this.dist = this.getDistance();
+        this.nextPosition;
+        this.nextDist;
+
         this.nearPlane = inNearPlane;
         this.farPlane = inFarPlane;
         this.fov = degToRad(inFov.value);
@@ -82,41 +89,85 @@ class Camera
       this.setViewMatrix();
     }
 
+    getDistance()
+    {
+        this.dist = vec3.length(vec3.subtract([], [0,0,0], this.position));
+    }
+
+    getNextDistance(inPlayer, positive)
+    {
+        //Unreliable, can get stuck on corners using "&& this.getNextDistance(inPlayer, true) < this.maxDist"
+        this.getDirectionVectors();
+        if(positive){
+            this.nextPosition = [
+                this.position[0] + this.forwardVec[0] * inPlayer.walkSpeed,
+                this.position[1],
+                this.position[2] + this.forwardVec[2] * inPlayer.walkSpeed
+            ];
+        }
+        else{
+            this.nextPosition = [
+                this.position[0] - this.forwardVec[0] * inPlayer.walkSpeed,
+                this.position[1],
+                this.position[2] - this.forwardVec[2] * inPlayer.walkSpeed
+                ];
+        }
+
+        console.log("Dist: " + this.dist + ", Next dist: " + this.nextDist);
+        return this.nextDist = vec3.length(vec3.subtract([], [0,0,0], this.nextPosition));
+    }
+
+    getSprint(inPlayer)
+    {
+        if(inPlayer.sprint) {
+            inPlayer.currSpeed = inPlayer.sprintMult * inPlayer.walkSpeed;
+            inPlayer.currFloat = inPlayer.sprintMult * inPlayer.floatSpeed;
+        }
+        else{
+            inPlayer.currSpeed = inPlayer.walkSpeed;
+            inPlayer.currFloat = inPlayer.floatSpeed;
+        }
+    }
+
     updateCameraPosition(inPlayer)
     {
         this.getDirectionVectors();
-        
+        //this.getDistance();
+        this.getSprint(inPlayer);
+
+        console.log("Walk: " + inPlayer.walkSpeed + ", Float: " + inPlayer.floatSpeed);
+
         if(inPlayer.moveForward && !inPlayer.moveBack){
-            this.position[0] += this.forwardVec[0] * inPlayer.walkSpeed;
-            this.position[2] += this.forwardVec[2] * inPlayer.walkSpeed;
-            this.target[0] += this.forwardVec[0] * inPlayer.walkSpeed;
-            this.target[2] += this.forwardVec[2] * inPlayer.walkSpeed;
+            this.position[0] += this.forwardVec[0] * inPlayer.currSpeed;
+            this.position[2] += this.forwardVec[2] * inPlayer.currSpeed;
+            this.target[0] += this.forwardVec[0] * inPlayer.currSpeed;
+            this.target[2] += this.forwardVec[2] * inPlayer.currSpeed;
         }
         if(inPlayer.moveBack){
-            this.position[0] -= this.forwardVec[0] * inPlayer.walkSpeed;
-            this.position[2] -= this.forwardVec[2] * inPlayer.walkSpeed;
-            this.target[0] -= this.forwardVec[0] * inPlayer.walkSpeed;
-            this.target[2] -= this.forwardVec[2] * inPlayer.walkSpeed;
+            this.position[0] -= this.forwardVec[0] * inPlayer.currSpeed;
+            this.position[2] -= this.forwardVec[2] * inPlayer.currSpeed;
+            this.target[0] -= this.forwardVec[0] * inPlayer.currSpeed;
+            this.target[2] -= this.forwardVec[2] * inPlayer.currSpeed;
         }
         if(inPlayer.moveLeft){
-            this.position[0] -= this.rightVec[0] * inPlayer.walkSpeed;
-            this.position[2] -= this.rightVec[2] * inPlayer.walkSpeed;
-            this.target[0] -= this.rightVec[0] * inPlayer.walkSpeed;
-            this.target[2] -= this.rightVec[2] * inPlayer.walkSpeed;
+            this.position[0] -= this.rightVec[0] * inPlayer.currSpeed;
+            this.position[2] -= this.rightVec[2] * inPlayer.currSpeed;
+            this.target[0] -= this.rightVec[0] * inPlayer.currSpeed;
+            this.target[2] -= this.rightVec[2] * inPlayer.currSpeed;
         }
         if(inPlayer.moveRight && !inPlayer.moveLeft){
-            this.position[0] += this.rightVec[0] * inPlayer.walkSpeed;
-            this.position[2] += this.rightVec[2] * inPlayer.walkSpeed;
-            this.target[0] += this.rightVec[0] * inPlayer.walkSpeed;
-            this.target[2] += this.rightVec[2] * inPlayer.walkSpeed;
+            this.position[0] += this.rightVec[0] * inPlayer.currSpeed;
+            this.position[2] += this.rightVec[2] * inPlayer.currSpeed;
+            this.target[0] += this.rightVec[0] * inPlayer.currSpeed;
+            this.target[2] += this.rightVec[2] * inPlayer.currSpeed;
         }
-        if(inPlayer.moveUp && !inPlayer.moveDown){
-            this.position[1] += this.upVec[1] * inPlayer.floatSpeed;
-            this.target[1] += this.upVec[1] * inPlayer.floatSpeed;
+        if(inPlayer.moveUp && !inPlayer.moveDown && this.position[1] <= this.ceiling){
+            this.position[1] += this.upVec[1] * inPlayer.currFloat;
+            this.target[1] += this.upVec[1] * inPlayer.currFloat;
         }
-        if(inPlayer.moveDown){
-            this.position[1] -= this.upVec[1] * inPlayer.floatSpeed;
-            this.target[1] -= this.upVec[1] * inPlayer.floatSpeed;
+        if(inPlayer.moveDown && this.position[1] >= this.floor){
+            this.position[1] -= this.upVec[1] * inPlayer.currFloat;
+            this.target[1] -= this.upVec[1] * inPlayer.currFloat;
         }
 
         this.setViewMatrix();
@@ -133,12 +184,8 @@ class Camera
 //
 //Implement:
     //fpsCam:
-        //wasd (hold)-> movement DONE
-        //ctrl (hold) -> float down
-        //space (hold) -> float up
         //shift (hold) -> sprint
-        //mouse -> view DONE
     //editorCam:
         //lAlt + lMouse drag: pan around, AKA move eye in a "sphere" around center/at
-        //lAlt + 
+        //lAlt + [...]
         //

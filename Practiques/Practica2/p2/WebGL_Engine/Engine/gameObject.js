@@ -54,7 +54,7 @@ class GameObject
     this.timeScale = speed ;
     this.axis = axis;
   }
-
+ //TODO: port to shder
   animate(angle, axis)
   {
     let R = mat4.create();

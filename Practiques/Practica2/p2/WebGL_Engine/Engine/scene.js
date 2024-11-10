@@ -10,8 +10,31 @@ class Scene
         this.previousTime = performance.now();
         this.currentTime;
         this.deltaTime;
+
+        this.baseGrid;
+        this.baseGridModel;
+        this.baseGridShader;
+
+        //this.initializeGrid();
         
         this.input.initializeEventListeners(this);
+    }
+
+    //TODO: fix
+    initializeGrid()
+    {
+        this.baseGridShader = new Shader("VS01", "FS01");
+        this.baseGridModel = generateGrid(10, .1);
+
+        this.baseGrid = new GameObject();
+        //this.baseGrid.initializeObject(this.baseGridModel, this.baseGridShader);
+        this.baseGrid.initializeObject(examplePlane, this.baseGridShader);
+
+        this.baseGrid.setMatrix(0, -2, -25, 1);
+        this.baseGrid.setAnimation(0, [-0,0,0]);
+        this.baseGrid.setBaseColor([0.7,0.7,0.7]);
+
+        console.log(this.baseGridModel);
     }
 
     addCollection(inCollection)
@@ -40,6 +63,15 @@ class Scene
         this.updateDeltaTime();
         updateFpsCounter(this.deltaTime, 2);
         
+        /*
+        this.baseGrid.shader.use();
+        this.baseGrid.animate(this.deltaTime * this.baseGrid.timeScale, this.baseGrid.axis)
+        this.input.updateUniforms(this.baseGrid.shader);
+        this.baseGrid.shader.setProjection(this.camera.getProjectionMatrix());
+        this.baseGrid.shader.setView(this.camera.getViewMatrix());
+        this.baseGrid.draw(this.input);
+        */
+
         for(let collection of this.collections){
             collection.update(this.deltaTime);
             

@@ -39,11 +39,12 @@ sphere01.setAnimation(1, [-1,0,-0.5]);
 sphere01.setBaseColor([1,1,1]);
 gameObjects01.add(sphere01);
 
-plane01.setMatrix(0, -2, -25, 1000);
+plane01.setMatrix(0, -2, -25, 100);
 plane01.setAnimation(0, [-0,0,0]);
 plane01.setBaseColor([0.7,0.7,0.7]);
 gameObjects01.add(plane01);
-//let angle = 0;
+
+
 window.onload = function(){
     P2.drawScene();
 }

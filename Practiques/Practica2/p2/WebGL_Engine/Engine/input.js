@@ -67,6 +67,8 @@ class InputParameters
         this.shadingMode = parseInt(key) - 1;
         requestAnimationFrame(() => inScene.drawScene());
       }
+
+      //console.log("Keys: " + key);
     });
 
     window.addEventListener('keyup', (event) => {
@@ -83,7 +85,6 @@ class InputParameters
     });
 
     //Mouse
-    // Assuming canvas is your rendering canvas element
     canvas.addEventListener('click', () => {
       canvas.requestPointerLock();
       this.mouseLock = true;
@@ -100,11 +101,15 @@ class InputParameters
       }
     });
 
+
+    //TODO: not working with trackpad, when you move it loses input?
     document.addEventListener('mousemove', (event) => {
       if (document.pointerLockElement === canvas) {
           let sensitivity =  0.002;
           let deltaX = event.movementX;
           let deltaY = event.movementY;
+
+          //console.log("Mouse X: " + deltaX + ", Y: " + deltaY);
   
           // Modify camera's target position to "look" left/right and up/down
           inScene.player.camera.rotateView(deltaX * sensitivity, deltaY * sensitivity);
@@ -152,26 +157,4 @@ class InputParameters
       requestAnimationFrame(() => inScene.drawScene());
     });
   }
-}
-
-
-//External object load
-
-function loadOBJ() 
-{
-  console.log("Load obj")
-  //example objToJSON
-}
-
-function loadJSON()
-{
-  console.log("Load JSON")
-  //python server? no need, see solution 2
-  //objToJSON -> save JSON -> link in HTML 
-  //Parse JSON
-}
-
-function loadGLTF()
-{
-  console.log("Load GLTF");
 }

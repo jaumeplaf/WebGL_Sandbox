@@ -4,13 +4,13 @@ class Player
     {
         this.camera = inCamera;
 
-        this.speedMult = 0.015;
+        this.speedMult = 0.0175;
         this.speedDelta = 3; // 1-10 speed steps
         this.sprint = false;
         this.sprintMult = 3;
 
         this.walkSpeed = this.speedMult * this.speedDelta;
-        this.floatSpeed = 1;
+        this.floatSpeed = this.speedMult * this.speedDelta;
         this.aimSpeed = 1;
 
         this.currSpeed = this.walkSpeed;

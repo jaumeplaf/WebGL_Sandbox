@@ -34,7 +34,7 @@ class Scene
         this.baseGrid.setAnimation(0, [-0,0,0]);
         this.baseGrid.setBaseColor([0.7,0.7,0.7]);
 
-        console.log(this.baseGridModel);
+        //console.log(this.baseGridModel);
     }
 
     addCollection(inCollection)

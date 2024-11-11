@@ -1,5 +1,5 @@
 //Initialize camera
-const camera01 = new Camera(0.1, 250.0);
+const camera01 = new Camera(0.1, 1000.0);
 
 //Initialize player
 const player01 = new Player(camera01);
@@ -23,9 +23,21 @@ P2.addCollection(gameObjects01);
 let cube01 = new GameObject();
 let sphere01 = new GameObject();
 let plane01 = new GameObject();
-cube01.initializeObject(exampleCube, masterShader01);
-sphere01.initializeObject(exampleSphere, masterShader01);
-plane01.initializeObject(examplePlane, masterShader01);
+cube01.initializeObject(exampleCube, masterShader01, false, false);
+sphere01.initializeObject(exampleSphere, masterShader01, false, false);
+plane01.initializeObject(examplePlane, masterShader01, false, false);
+let fish01 = new GameObject();
+let fish02 = new GameObject();
+let fish03 = new GameObject();
+let coral01 = new GameObject();
+let coral02 = new GameObject();
+let shark01 = new GameObject();
+fish01.initializeObject(baseFish01, masterShader01, true, true);
+fish02.initializeObject(baseFish02, masterShader01, true, true);
+fish03.initializeObject(baseFish03, masterShader01, true, true);
+coral01.initializeObject(baseCoral01, masterShader01, true, true);
+coral02.initializeObject(baseCoral02, masterShader01, true, true);
+shark01.initializeObject(baseShark01, masterShader01, true, true);
 
 //Add object instances to draw
 //TODO: right now it's instancing a single instance per gameObject, should be re-instancable
@@ -35,7 +47,7 @@ cube01.setBaseColor([1,1,1]);
 gameObjects01.add(cube01);
 
 sphere01.setMatrix(5, 1, -25, 1);
-sphere01.setAnimation(1, [-1,0,-0.5]);
+sphere01.setAnimation(1, [1,0,-0.5]);
 sphere01.setBaseColor([1,1,1]);
 gameObjects01.add(sphere01);
 
@@ -45,9 +57,34 @@ plane01.setBaseColor([0.7,0.7,0.7]);
 gameObjects01.add(plane01);
 
 
+//Imported
+fish01.setMatrix(0, 3, -10, 100);
+fish01.setRotation(-90, [1,0,0]);
+fish01.setAnimation(0, [0,0,0]);
+fish01.setBaseColor([0,0,1]);
+gameObjects01.add(fish01);
+fish01.setMatrix(3, 3, -15, 100);
+fish01.setRotation(-90, [1,0,0]);
+fish01.setAnimation(0, [0,0,0]);
+fish01.setBaseColor([0,0,1]);
+gameObjects01.add(fish02);
+
+/*
+fish01.setMatrix(-10, 10, -30, 100);
+fish01.setRotation(-90, [1,0,0]);
+fish01.setAnimation(0, [0,0,0]);
+fish01.setBaseColor([0,0,1]);
+gameObjects01.add(fish03);
+
+fish01.setMatrix(0, 20, 10, 100);
+fish01.setRotation(-90, [1,0,0]);
+fish01.setAnimation(0, [0,0,0]);
+fish01.setBaseColor([0,0,1]);
+gameObjects01.add(shark01);
+*/
+
 //TODO: JSON load example, works (returns vertices array), but gives errors (I think this will get fixed adding "var name = {")
-let fish01 = baseFish01;
-console.log(fish01.vertices);
+//console.log("vertices: " + fish01.vertices + ", normals: " + fish01.normals + ", colors: " + fish01.colors);
 
 window.onload = function(){
     P2.drawScene();

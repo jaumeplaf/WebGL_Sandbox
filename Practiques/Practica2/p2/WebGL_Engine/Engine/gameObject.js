@@ -15,10 +15,13 @@ class GameObject
     this.axis = [0,0,1];
   }
 
-  initializeObject(model, inShader)
+  initializeObject(model, inShader, hasNormals, hasColors)
   {
     this.vertices = model.vertices;
     this.indices = model.indices;
+    if(hasNormals) this.normals = model.normals;
+    if(hasColors) this.colors = model.colors;
+
     this.shader = inShader;
     this.initBuffers()
   }
@@ -47,9 +50,13 @@ class GameObject
     mat4.multiply(M, T, S);
 
     this.modelMatrixIndex = M;
+  }
 
-    //window.gl.uniformMatrix4fv(this.shader.modelMatrixIndex, false, this.modelMatrixIndex);
-
+  setRotation(angle, axis)
+  {
+    let R = mat4.create();
+    mat4.fromRotation(R, degToRad(angle), axis);
+    mat4.multiply(this.modelMatrixIndex, this.modelMatrixIndex, R);
   }
   
   setAnimation(speed, axis){
@@ -60,7 +67,6 @@ class GameObject
   animate(angle, axis)
   {
     let R = mat4.create();
-      //Set rotation matrix (out, rad, axis)
       mat4.fromRotation(R, angle, axis);
       mat4.multiply(this.modelMatrixIndex, this.modelMatrixIndex, R);
   }

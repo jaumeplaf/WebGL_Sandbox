@@ -72,9 +72,3 @@ function generateGrid(divisions, size) {
 
     return model;
 }
-
-function parseJSON()
-{
-    //TODO?
-    console.log("Parse JSON file");
-}

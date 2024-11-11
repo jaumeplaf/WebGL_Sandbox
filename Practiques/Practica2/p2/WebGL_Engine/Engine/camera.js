@@ -14,10 +14,10 @@ class Camera
 
         this.floor = 1;
         this.ceiling = 50;
-        this.maxDist = 50;
-        this.dist = this.getDistance();
-        this.nextPosition;
-        this.nextDist;
+        //his.maxDist = 50;
+        //this.dist = this.getDistance();
+        //this.nextPosition;
+        //this.nextDist;
 
         this.nearPlane = inNearPlane;
         this.farPlane = inFarPlane;
@@ -55,40 +55,7 @@ class Camera
     {
         return this.viewMatrix;
     }
-
-    getDirectionVectors()
-    {
-        let forw = vec3.subtract([], this.target, this.position);
-        this.forwardVec = vec3.normalize([], forw);
-
-        let righ = vec3.cross([], this.forwardVec, this.up)
-        this.rightVec = vec3.normalize([], righ);
-
-        this.upVec =  vec3.normalize([], this.up);
-    }
-
-    rotateView(deltaYaw, deltaPitch)
-    {
-      // Update yaw and pitch by delta
-      this.yaw -= deltaYaw;
-      this.pitch -= deltaPitch;
-
-      // Clamp pitch to avoid flipping (around 90 degrees up/down)
-      const maxPitch = Math.PI / 2 - 0.01;
-      this.pitch = Math.max(-maxPitch, Math.min(maxPitch, this.pitch));
-
-      // Calculate new forward direction from yaw and pitch
-      let newForward = vec3.fromValues(
-          Math.cos(this.pitch) * Math.sin(this.yaw),
-          Math.sin(this.pitch),
-          Math.cos(this.pitch) * Math.cos(this.yaw)
-      );
-
-      vec3.add(this.target, this.position, newForward);
-
-      this.setViewMatrix();
-    }
-
+/*
     getDistance()
     {
         this.dist = vec3.length(vec3.subtract([], [0,0,0], this.position));
@@ -116,6 +83,7 @@ class Camera
         console.log("Dist: " + this.dist + ", Next dist: " + this.nextDist);
         return this.nextDist = vec3.length(vec3.subtract([], [0,0,0], this.nextPosition));
     }
+*/
 
     getSprint(inPlayer)
     {
@@ -128,14 +96,41 @@ class Camera
             inPlayer.currFloat = inPlayer.floatSpeed;
         }
     }
+    
+    rotateView(deltaYaw, deltaPitch)
+    {
+      this.yaw -= deltaYaw;
+      this.pitch -= deltaPitch;
+    
+      const maxPitch = Math.PI / 2 - 0.01;
+      this.pitch = Math.max(-maxPitch, Math.min(maxPitch, this.pitch));
+    
+      let newForward = vec3.fromValues(
+          Math.cos(this.pitch) * Math.sin(this.yaw),
+          Math.sin(this.pitch),
+          Math.cos(this.pitch) * Math.cos(this.yaw)
+      );
+    
+      vec3.add(this.target, this.position, newForward);
+    
+      this.setViewMatrix();
+    }
+
+    getDirectionVectors()
+    {
+        let forw = vec3.subtract([], this.target, this.position);
+        this.forwardVec = vec3.normalize([], forw);
+
+        let righ = vec3.cross([], this.forwardVec, this.up)
+        this.rightVec = vec3.normalize([], righ);
+
+        this.upVec =  vec3.normalize([], this.up);
+    }
 
     updateCameraPosition(inPlayer)
     {
         this.getDirectionVectors();
-        //this.getDistance();
         this.getSprint(inPlayer);
-
-        console.log("Walk: " + inPlayer.walkSpeed + ", Float: " + inPlayer.floatSpeed);
 
         if(inPlayer.moveForward && !inPlayer.moveBack){
             this.position[0] += this.forwardVec[0] * inPlayer.currSpeed;
@@ -177,14 +172,12 @@ class Camera
 
 
 //move eye + center -> move camera through space
-//
 //MVP matrix -> mults apply from the end, so it's P*V*M
-//
-//examples-> mueveLaCamara.js / html
-//
 //Implement:
-    //fpsCam:
-        //shift (hold) -> sprint
+    //fpsCam: 
+        //fix trackpad
+        //
+        //save position/s, get position/s
     //editorCam:
         //lAlt + lMouse drag: pan around, AKA move eye in a "sphere" around center/at
         //lAlt + [...]

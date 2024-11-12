@@ -42,46 +42,47 @@ shark01.initializeObject(baseShark01, masterShader01, true, true);
 //Add object instances to draw
 //TODO: right now it's instancing a single instance per gameObject, should be re-instancable
 cube01.setMatrix(-1, -1, -5, 1);
-cube01.setAnimation(0.25, [0,1,1]);
+//cube01.setAnimation(0.25, [0,1,1]);
 cube01.setBaseColor([1,1,1]);
 gameObjects01.add(cube01);
 
 sphere01.setMatrix(5, 1, -25, 1);
-sphere01.setAnimation(1, [1,0,-0.5]);
+//sphere01.setAnimation(1, [1,0,-0.5]);
 sphere01.setBaseColor([1,1,1]);
 gameObjects01.add(sphere01);
 
 plane01.setMatrix(0, -2, -25, 100);
-plane01.setAnimation(0, [-0,0,0]);
+//plane01.setAnimation(0, [-0,0,0]);
 plane01.setBaseColor([0.7,0.7,0.7]);
 gameObjects01.add(plane01);
 
 
 //Imported
-fish01.setMatrix(0, 3, -10, 100);
+fish01.setMatrix(5, 2, -10, 100);
 fish01.setRotation(-90, [1,0,0]);
-fish01.setAnimation(0, [0,0,0]);
-fish01.setBaseColor([0,0,1]);
+//fish01.setAnimation(0, [0,0,0]);
+fish01.setBaseColor([1,0,0]);
 gameObjects01.add(fish01);
-fish01.setMatrix(3, 3, -15, 100);
-fish01.setRotation(-90, [1,0,0]);
-fish01.setAnimation(0, [0,0,0]);
-fish01.setBaseColor([0,0,1]);
+
+fish02.setMatrix(-8, 3, -15, 100);
+fish02.setRotation(-90, [1,0,0]);
+//fish02.setAnimation(0, [0,0,0]);
+fish02.setBaseColor([0,1,0]);
 gameObjects01.add(fish02);
 
-/*
-fish01.setMatrix(-10, 10, -30, 100);
-fish01.setRotation(-90, [1,0,0]);
-fish01.setAnimation(0, [0,0,0]);
-fish01.setBaseColor([0,0,1]);
+
+fish03.setMatrix(-10, 9, -20, 100);
+fish03.setRotation(-90, [1,0,0]);
+//fish03.setAnimation(0, [0,0,0]);
+fish03.setBaseColor([0,0,1]);
 gameObjects01.add(fish03);
 
-fish01.setMatrix(0, 20, 10, 100);
-fish01.setRotation(-90, [1,0,0]);
-fish01.setAnimation(0, [0,0,0]);
-fish01.setBaseColor([0,0,1]);
+shark01.setMatrix(0, 3, -30, 50);
+shark01.setRotation(-90, [1,0,0]);
+//shark01.setAnimation(0, [0,0,0]);
+shark01.setBaseColor([1,1,0]);
 gameObjects01.add(shark01);
-*/
+
 
 //TODO: JSON load example, works (returns vertices array), but gives errors (I think this will get fixed adding "var name = {")
 //console.log("vertices: " + fish01.vertices + ", normals: " + fish01.normals + ", colors: " + fish01.colors);

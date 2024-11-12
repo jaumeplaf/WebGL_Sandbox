@@ -73,7 +73,7 @@ class Scene
         */
 
         for(let collection of this.collections){
-            collection.update(this.deltaTime);
+            //collection.update(this.deltaTime);
             
             collection.shader.use();
             

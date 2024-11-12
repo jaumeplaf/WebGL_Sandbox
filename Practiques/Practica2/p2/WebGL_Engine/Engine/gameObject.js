@@ -58,7 +58,7 @@ class GameObject
     mat4.fromRotation(R, degToRad(angle), axis);
     mat4.multiply(this.modelMatrixIndex, this.modelMatrixIndex, R);
   }
-  
+  /*
   setAnimation(speed, axis){
     this.timeScale = speed ;
     this.axis = axis;
@@ -70,7 +70,7 @@ class GameObject
       mat4.fromRotation(R, angle, axis);
       mat4.multiply(this.modelMatrixIndex, this.modelMatrixIndex, R);
   }
-
+*/
   setBaseColor(newBaseColor)
   {
     this.baseColor = newBaseColor;
@@ -108,10 +108,12 @@ class ObjectCollection
           object.draw(inInput);
       }
     }
+    /*
     update(time){
       for(let object of this.sharedShaderGroup){
         object.animate(time * object.timeScale, object.axis);
       }
     }
+      */
 }
   

@@ -1,28 +1,29 @@
 class GameObject 
 {
-  constructor()
+  constructor(inModel, inShader, hasNrml, hasCol)
   {
+    this.model = inModel;
+    this.instances = [];
+
     this.modelMatrixIndex = mat4.create();
-    this.baseColor = [1,0,0];
+    this.baseColor = [0.8,0.8,0.8];
     
-    this.vertices = [];
-    this.indices = [];
+    this.vertices = this.model.vertices;
+    this.indices = this.model.indices;
     this.normals = [];
     this.colors = [];
     
-    this.shader = null;
+    this.shader = inShader;
     this.timeScale = 1;
     this.axis = [0,0,1];
+
+    this.initializeObject(hasNrml, hasCol);
   }
 
-  initializeObject(model, inShader, hasNormals, hasColors)
+  initializeObject(hasNrml, hasCol)
   {
-    this.vertices = model.vertices;
-    this.indices = model.indices;
-    if(hasNormals) this.normals = model.normals;
-    if(hasColors) this.colors = model.colors;
-
-    this.shader = inShader;
+    if(hasNrml) this.normals = this.model.normals;
+    if(hasCol) this.colors = this.model.colors;
     this.initBuffers()
   }
 
@@ -58,19 +59,7 @@ class GameObject
     mat4.fromRotation(R, degToRad(angle), axis);
     mat4.multiply(this.modelMatrixIndex, this.modelMatrixIndex, R);
   }
-  /*
-  setAnimation(speed, axis){
-    this.timeScale = speed ;
-    this.axis = axis;
-  }
- //TODO: port to shder
-  animate(angle, axis)
-  {
-    let R = mat4.create();
-      mat4.fromRotation(R, angle, axis);
-      mat4.multiply(this.modelMatrixIndex, this.modelMatrixIndex, R);
-  }
-*/
+
   setBaseColor(newBaseColor)
   {
     this.baseColor = newBaseColor;
@@ -80,6 +69,47 @@ class GameObject
     drawModel(inInput, this);
   }
 
+ 
+  }
+
+class ObjectInstance extends GameObject
+{
+  constructor(inGameObject, inObjectCollection)
+  {
+    super(inGameObject.model, inGameObject.shader, false, false);
+
+    this.parent = inGameObject;
+    this.collection = inObjectCollection;
+    
+    this.modelMatrixIndex = mat4.create();
+
+    this.addInstance();
+  } 
+
+  addInstance(){
+    this.parent.instances.push(this);
+    this.collection.add(this);
+  }
+
+  removeInstance() {
+    const index = this.parent.instances.indexOf(this);
+    if (index !== -1) {
+      this.instances.splice(index, 1);
+    }
+    this.collection.remove(this);
+  }
+
+  destroy()
+  {
+    this.removeInstance();
+    //Clear buffers
+  }
+
+  draw(inInput)
+  {
+    this.collection.shader.setModelMatrix(this.modelMatrixIndex);
+    drawModel(inInput, this.parent);
+  }
 }
 
 class ObjectCollection
@@ -100,6 +130,13 @@ class ObjectCollection
         this.sharedShaderGroup.push(model);
     }
 
+    remove(model) {
+      const index = this.sharedShaderGroup.indexOf(model);
+      if (index !== -1) {
+        this.sharedShaderGroup.splice(index, 1);
+      }
+    }
+
     draw(inInput)
     {
       for(let object of this.sharedShaderGroup)
@@ -108,12 +145,6 @@ class ObjectCollection
           object.draw(inInput);
       }
     }
-    /*
-    update(time){
-      for(let object of this.sharedShaderGroup){
-        object.animate(time * object.timeScale, object.axis);
-      }
-    }
-      */
+
 }
   

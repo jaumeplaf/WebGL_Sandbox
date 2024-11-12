@@ -1,4 +1,4 @@
-var baseCoral02 = {
+var mesh_coral02 = {
     "vertices": [
         -0.009965496137738228,
         -0.001557505107484758,

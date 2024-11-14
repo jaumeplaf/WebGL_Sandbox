@@ -55,35 +55,6 @@ class Camera
     {
         return this.viewMatrix;
     }
-/*
-    getDistance()
-    {
-        this.dist = vec3.length(vec3.subtract([], [0,0,0], this.position));
-    }
-
-    getNextDistance(inPlayer, positive)
-    {
-        //Unreliable, can get stuck on corners using "&& this.getNextDistance(inPlayer, true) < this.maxDist"
-        this.getDirectionVectors();
-        if(positive){
-            this.nextPosition = [
-                this.position[0] + this.forwardVec[0] * inPlayer.walkSpeed,
-                this.position[1],
-                this.position[2] + this.forwardVec[2] * inPlayer.walkSpeed
-            ];
-        }
-        else{
-            this.nextPosition = [
-                this.position[0] - this.forwardVec[0] * inPlayer.walkSpeed,
-                this.position[1],
-                this.position[2] - this.forwardVec[2] * inPlayer.walkSpeed
-                ];
-        }
-
-        console.log("Dist: " + this.dist + ", Next dist: " + this.nextDist);
-        return this.nextDist = vec3.length(vec3.subtract([], [0,0,0], this.nextPosition));
-    }
-*/
 
     getSprint(inPlayer)
     {

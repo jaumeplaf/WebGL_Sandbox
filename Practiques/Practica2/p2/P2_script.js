@@ -44,17 +44,17 @@ let coral02 = new ObjectInstance(base_coral02, gameObjects01);
 
 //Add object instances to draw
 floor.setMatrix(0, -2, -25, 200);
-floor.setBaseColor([0.7,0.7,0.7]);
+floor.setColor([0.7,0.7,0.7]);
 
 ceiling.setMatrix(0, 52, -25, 200);
 ceiling.setRotation(180, [1,0,0]);
-ceiling.setBaseColor([0.7,0.7,0.7]);
+ceiling.setColor([0.7,0.7,0.7]);
 
 cube01.setMatrix(-1, -1, -5, 1);
-cube01.setBaseColor([1,0,1]);
+cube01.setColor([1,1,1]);
 
 sphere01.setMatrix(5, 1, -25, 1);
-sphere01.setBaseColor([1,1,1]);
+sphere01.setColor([1,1,1]);
 
 
 fish01.setMatrix(5, 2, -10, 100);
@@ -75,9 +75,6 @@ coral01.setRotation(-90, [1,0,0]);
 
 coral02.setMatrix(3, -2, -15, 50);
 coral02.setRotation(-90, [1,0,0]);
-
-
-console.log(gameObjects01);
 
 window.onload = function(){
     P2.drawScene();

@@ -67,8 +67,6 @@ class InputParameters
         this.shadingMode = parseInt(key) - 1;
         requestAnimationFrame(() => inScene.drawScene());
       }
-
-      //console.log("Keys: " + key);
     });
 
     window.addEventListener('keyup', (event) => {
@@ -108,9 +106,6 @@ class InputParameters
           let sensitivity =  0.002;
           let deltaX = event.movementX;
           let deltaY = event.movementY;
-
-          //console.log("Mouse X: " + deltaX + ", Y: " + deltaY);
-  
           // Modify camera's target position to "look" left/right and up/down
           inScene.player.camera.rotateView(deltaX * sensitivity, deltaY * sensitivity);
       }

@@ -52,6 +52,12 @@ class Shader
         this.program.vertexPositionAttribute = window.gl.getAttribLocation(this.program, "VertexPosition");
         window.gl.enableVertexAttribArray(this.program.vertexPositionAttribute);
         
+        this.program.vertexNormalAttribute = window.gl.getAttribLocation(this.program, "VertexNormal");
+        window.gl.enableVertexAttribArray(this.program.vertexNormalAttribute);
+
+        this.program.vertexColorAttribute = window.gl.getAttribLocation(this.program, "VertexColor");
+        window.gl.enableVertexAttribArray(this.program.vertexColorAttribute);
+        
         //Uniforms
         this.program.modelMatrixIndex = window.gl.getUniformLocation(this.program, "modelMatrix");
         this.program.projectionMatrixIndex = window.gl.getUniformLocation(this.program, "projectionMatrix");
@@ -60,8 +66,6 @@ class Shader
         this.program.progShadingMode = window.gl.getUniformLocation(this.program, "shadingMode");
         this.program.progIsLine = window.gl.getUniformLocation(this.program, "isLine");
         this.program.progWireframeOpacity = window.gl.getUniformLocation(this.program, "wireframeOpacity");
-        
-        this.program.progBaseColor = window.gl.getUniformLocation (this.program, "baseColor");
 
         //Fog parameters
         this.program.progFogColor = window.gl.getUniformLocation(this.program, "fogColor");

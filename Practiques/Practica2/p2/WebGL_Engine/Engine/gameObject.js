@@ -6,7 +6,7 @@ class GameObject
     this.instances = [];
 
     this.modelMatrixIndex = mat4.create();
-    this.baseColor = [0.8,0.8,0.8];
+    this.color = [0.8,0.8,0.8];
     
     this.shader = inShader;
     this.timeScale = 1;
@@ -25,13 +25,11 @@ class GameObject
 
   initAttributeBuffer(attributeName, bufferType, arrayType) {
     const data = this.model[attributeName];
-    if (data) {
-      this[attributeName] = data;
-      const bufferIdName = `idBuffer${attributeName.charAt(0).toUpperCase() + attributeName.slice(1)}`;
-      this[bufferIdName] = window.gl.createBuffer();
-      window.gl.bindBuffer(window.gl[bufferType], this[bufferIdName]);
-      window.gl.bufferData(window.gl[bufferType], new arrayType(data), window.gl.STATIC_DRAW);
-    }
+    this[attributeName] = data;
+    const bufferIdName = `idBuffer${attributeName.charAt(0).toUpperCase() + attributeName.slice(1)}`;
+    this[bufferIdName] = window.gl.createBuffer();
+    window.gl.bindBuffer(window.gl[bufferType], this[bufferIdName]);
+    window.gl.bufferData(window.gl[bufferType], new arrayType(data), window.gl.STATIC_DRAW);
   }
 
   setMatrix(tx, ty, tz, uniformS)
@@ -76,9 +74,9 @@ class ObjectInstance extends GameObject
     this.addInstance();
   } 
   
-  setBaseColor(newBaseColor)
+  setColor(newColor)
   {
-    this.baseColor = newBaseColor;
+    this.color = newColor;
   }
 
   addInstance(){

@@ -10,31 +10,28 @@ const masterShader01 = new Shader("VS01", "FS01");
 //Initialize scene  
 const P2 = new Scene(camera01, player01);
 
-
 //Initialize GameObject collections, for "batch drawing" (TBI) objects with shared shader
 
-let gameObjects01 = new ObjectCollection(camera01);
-gameObjects01.initialize(masterShader01);
+let gameObjects01 = new ObjectCollection(masterShader01);
 P2.addCollection(gameObjects01);
-
 
 //Initialize GameObjects
 
-let base_cube01 = new GameObject(exampleCube, masterShader01, false, false);
-let base_sphere01 = new GameObject(exampleSphere, masterShader01, false, false);
-let base_plane01 = new GameObject(examplePlane, masterShader01, false, false);
+let base_cube01 = new GameObject(exampleCube, masterShader01);
+let base_sphere01 = new GameObject(exampleSphere, masterShader01);
+let base_plane01 = new GameObject(examplePlane, masterShader01);
 
-let base_fish01 = new GameObject(mesh_fish01, masterShader01, false, false);
-let base_fish02 = new GameObject(mesh_fish02, masterShader01, false, false);
-let base_fish03 = new GameObject(mesh_fish03, masterShader01, false, false);
-let base_coral01 = new GameObject(mesh_coral01, masterShader01, false, false);
-let base_coral02 = new GameObject(mesh_coral02, masterShader01, false, false);
-let base_shark01 = new GameObject(mesh_shark01, masterShader01, false, false);
+let base_fish01 = new GameObject(mesh_fish01, masterShader01);
+let base_fish02 = new GameObject(mesh_fish02, masterShader01);
+let base_fish03 = new GameObject(mesh_fish03, masterShader01);
+let base_coral01 = new GameObject(mesh_coral01, masterShader01);
+let base_coral02 = new GameObject(mesh_coral02, masterShader01);
+let base_shark01 = new GameObject(mesh_shark01, masterShader01);
 
 //Initialize object instances
 
-let floor_plane = new ObjectInstance(base_plane01, gameObjects01);
-let ceil_plane = new ObjectInstance(base_plane01, gameObjects01);
+let floor = new ObjectInstance(base_plane01, gameObjects01);
+let ceiling = new ObjectInstance(base_plane01, gameObjects01);
 let cube01 = new ObjectInstance(base_cube01, gameObjects01);
 let sphere01 = new ObjectInstance(base_sphere01, gameObjects01);
 
@@ -46,22 +43,20 @@ let coral01 = new ObjectInstance(base_coral01, gameObjects01);
 let coral02 = new ObjectInstance(base_coral02, gameObjects01);
 
 //Add object instances to draw
+floor.setMatrix(0, -2, -25, 200);
+floor.setBaseColor([0.7,0.7,0.7]);
+
+ceiling.setMatrix(0, 52, -25, 200);
+ceiling.setRotation(180, [1,0,0]);
+ceiling.setBaseColor([0.7,0.7,0.7]);
 
 cube01.setMatrix(-1, -1, -5, 1);
-cube01.setBaseColor([1,1,1]);
+cube01.setBaseColor([1,0,1]);
 
 sphere01.setMatrix(5, 1, -25, 1);
 sphere01.setBaseColor([1,1,1]);
 
-floor_plane.setMatrix(0, -2, -25, 200);
-floor_plane.setBaseColor([0.7,0.7,0.7]);
 
-ceil_plane.setMatrix(0, 52, -25, 200);
-ceil_plane.setRotation(180, [1,0,0]);
-ceil_plane.setBaseColor([0.7,0.7,0.7]);
-
-
-//Imported
 fish01.setMatrix(5, 2, -10, 100);
 fish01.setRotation(-90, [1,0,0]);
 

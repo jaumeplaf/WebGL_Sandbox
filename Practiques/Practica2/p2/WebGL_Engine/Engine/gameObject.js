@@ -1,6 +1,6 @@
 class GameObject 
 {
-  constructor(inModel, inShader, hasNrml, hasCol)
+  constructor(inModel, inShader)
   {
     this.model = inModel;
     this.instances = [];
@@ -8,36 +8,31 @@ class GameObject
     this.modelMatrixIndex = mat4.create();
     this.baseColor = [0.8,0.8,0.8];
     
-    this.vertices = this.model.vertices;
-    this.indices = this.model.indices;
-    this.normals = [];
-    this.colors = [];
-    
     this.shader = inShader;
     this.timeScale = 1;
     this.axis = [0,0,1];
-
-    this.initializeObject(hasNrml, hasCol);
+    
+    this.initializeBuffers();
   }
-
-  initializeObject(hasNrml, hasCol)
+  
+  initializeBuffers()
   {
-    if(hasNrml) this.normals = this.model.normals;
-    if(hasCol) this.colors = this.model.colors;
-    this.initBuffers()
+    this.initAttributeBuffer('indices', 'ELEMENT_ARRAY_BUFFER', Uint16Array);
+    this.initAttributeBuffer('vertices', 'ARRAY_BUFFER', Float32Array);
+    this.initAttributeBuffer('normals', 'ARRAY_BUFFER', Float32Array);
+    this.initAttributeBuffer('colors', 'ARRAY_BUFFER', Float32Array);
   }
 
-  initBuffers() {
-
-    this.idBufferVertices = window.gl.createBuffer ();
-    window.gl.bindBuffer (window.gl.ARRAY_BUFFER, this.idBufferVertices);
-    window.gl.bufferData (window.gl.ARRAY_BUFFER, new Float32Array(this.vertices), window.gl.STATIC_DRAW);
-    
-    this.idBufferIndices = window.gl.createBuffer ();
-    window.gl.bindBuffer (window.gl.ELEMENT_ARRAY_BUFFER, this.idBufferIndices);
-    window.gl.bufferData (window.gl.ELEMENT_ARRAY_BUFFER, new Uint16Array(this.indices), window.gl.STATIC_DRAW);
-    
-  }    
+  initAttributeBuffer(attributeName, bufferType, arrayType) {
+    const data = this.model[attributeName];
+    if (data) {
+      this[attributeName] = data;
+      const bufferIdName = `idBuffer${attributeName.charAt(0).toUpperCase() + attributeName.slice(1)}`;
+      this[bufferIdName] = window.gl.createBuffer();
+      window.gl.bindBuffer(window.gl[bufferType], this[bufferIdName]);
+      window.gl.bufferData(window.gl[bufferType], new arrayType(data), window.gl.STATIC_DRAW);
+    }
+  }
 
   setMatrix(tx, ty, tz, uniformS)
   {
@@ -45,7 +40,7 @@ class GameObject
     let M = mat4.create();
     let T = mat4.create();
     let S = mat4.create ();
-    //Initialize scale and position
+
     mat4.fromScaling(S, [uniformS, uniformS, uniformS]);
     mat4.fromTranslation(T, [tx, ty, tz]);
     mat4.multiply(M, T, S);
@@ -60,11 +55,6 @@ class GameObject
     mat4.multiply(this.modelMatrixIndex, this.modelMatrixIndex, R);
   }
 
-  setBaseColor(newBaseColor)
-  {
-    this.baseColor = newBaseColor;
-  }
-
   draw(inInput){
     drawModel(inInput, this);
   }
@@ -76,7 +66,7 @@ class ObjectInstance extends GameObject
 {
   constructor(inGameObject, inObjectCollection)
   {
-    super(inGameObject.model, inGameObject.shader, false, false);
+    super(inGameObject.model, inGameObject.shader);
 
     this.parent = inGameObject;
     this.collection = inObjectCollection;
@@ -85,6 +75,11 @@ class ObjectInstance extends GameObject
 
     this.addInstance();
   } 
+  
+  setBaseColor(newBaseColor)
+  {
+    this.baseColor = newBaseColor;
+  }
 
   addInstance(){
     this.parent.instances.push(this);
@@ -108,20 +103,15 @@ class ObjectInstance extends GameObject
   draw(inInput)
   {
     this.collection.shader.setModelMatrix(this.modelMatrixIndex);
-    drawModel(inInput, this.parent);
+    drawModel(inInput, this);
   }
 }
 
 class ObjectCollection
 {
-    constructor(camera)
+    constructor(inShader)
     {
         this.sharedShaderGroup = [];
-        this.shader = null;
-    }
-
-    initialize(inShader)
-    {
         this.shader = inShader;
     }
 
@@ -130,7 +120,8 @@ class ObjectCollection
         this.sharedShaderGroup.push(model);
     }
 
-    remove(model) {
+    remove(model) 
+    {
       const index = this.sharedShaderGroup.indexOf(model);
       if (index !== -1) {
         this.sharedShaderGroup.splice(index, 1);
@@ -139,8 +130,7 @@ class ObjectCollection
 
     draw(inInput)
     {
-      for(let object of this.sharedShaderGroup)
-      {
+      for(let object of this.sharedShaderGroup){
           this.shader.setModelMatrix(object.modelMatrixIndex);
           object.draw(inInput);
       }

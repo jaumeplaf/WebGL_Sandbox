@@ -1,16 +1,19 @@
 //Initialize HTML inputs
-const inFov = document.getElementById('fov');
 const inShadingMode = document.getElementById('shadingMode');
 const inWireframeIgnoreFog = document.getElementById('wireframeIgnoreFog');
 const inWireframeOpacity = document.getElementById('wireframeOpacity');
 const inFogColor = document.getElementById('fogColor');
 const inFogAmount = document.getElementById('fogAmount');
 const inFogPower = document.getElementById('fogPower');
+const inFov = document.getElementById('fov');
+const inSavePOI = document.getElementById('savePOI');
+const inLoadPOI = document.getElementById('loadPOI');
 
 //Initialize HTML outputs
 const outFps = document.getElementById('fpsCounter');
 const outFrameTime = document.getElementById('frameTime');
 const outFov = document.getElementById('displayFov');
+const outPoi = document.getElementById('POIdisplay');
 
 let counter = 0;
 let accumDeltaTime = 0.0;

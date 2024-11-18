@@ -14,10 +14,9 @@ class Camera
 
         this.floor = 1;
         this.ceiling = 50;
-        //his.maxDist = 50;
-        //this.dist = this.getDistance();
-        //this.nextPosition;
-        //this.nextDist;
+
+        this.positionPOI = null;
+        this.targetPOI = null;
 
         this.nearPlane = inNearPlane;
         this.farPlane = inFarPlane;
@@ -138,18 +137,18 @@ class Camera
 
         this.setViewMatrix();
     }
+
+    savePOI(position, target)
+    {
+        this.positionPOI = this.position;
+        this.targetPOI = this.target;
+        console.log("Saved PositionPOI: " + this.positionPOI + ", TargetPOI: " + this.targetPOI);
+    }
+
+    loadPOI()
+    {
+        this.position = this.positionPOI;
+        this.target = this.targetPOI;
+        console.log("Loaded PositionPOI: " + this.positionPOI + ", TargetPOI: " + this.targetPOI);
+    }
 }
-
-
-
-//move eye + center -> move camera through space
-//MVP matrix -> mults apply from the end, so it's P*V*M
-//Implement:
-    //fpsCam: 
-        //fix trackpad
-        //
-        //save position/s, get position/s
-    //editorCam:
-        //lAlt + lMouse drag: pan around, AKA move eye in a "sphere" around center/at
-        //lAlt + [...]
-        //

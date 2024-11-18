@@ -1,3 +1,6 @@
+//?Ray-sphere intersection - quadratic equation
+//
+
 function initRendering() 
 {
   window.gl.lineWidth(1.5);

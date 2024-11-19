@@ -138,17 +138,28 @@ class Camera
         this.setViewMatrix();
     }
 
+    getPosition()
+    {
+        return this.position;
+    }
+
+    getTarget()
+    {
+        return this.target;
+    }
+
     savePOI(position, target)
     {
-        this.positionPOI = this.position;
-        this.targetPOI = this.target;
+        //this.positionPOI = this.getPosition();
+        //this.targetPOI = this.getTarget();
+        //Cookies?
         console.log("Saved PositionPOI: " + this.positionPOI + ", TargetPOI: " + this.targetPOI);
     }
 
     loadPOI()
     {
-        this.position = this.positionPOI;
-        this.target = this.targetPOI;
+        //this.position = this.positionPOI;
+        //this.target = this.targetPOI;
         console.log("Loaded PositionPOI: " + this.positionPOI + ", TargetPOI: " + this.targetPOI);
     }
 }

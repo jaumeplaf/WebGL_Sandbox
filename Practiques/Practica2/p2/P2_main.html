@@ -28,7 +28,9 @@
           gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(VertexPosition, 1.0);
           vPos =  vec4(VertexPosition, 1.0);
           vCol = VertexColor;
-          vNorm = vec4(VertexNormal, 1.0);
+
+          mat3 normalMatrix = mat3(transpose(inverse(modelMatrix))); // Compute the normal matrix
+          vNorm = vec4(normalize(normalMatrix * VertexNormal), 1.0); // Transform and normalize the normal
       }
       
     </script>
@@ -76,7 +78,7 @@
     
         //vec4 fogFinalColorAdd = vCol + vDepth * fogColor;
         vec4 fogFlatColor = mix(vCol, fogColor, correctedDepth);
-        vec4 fogWorldNormal = mix(vNorm, fogColor, correctedDepth);
+        vec4 fogNormal = mix((vNorm * 0.5 + 0.5), fogColor, correctedDepth);
         vec4 wireframeBaseColor = vec4(0.0, 0.0, 0.0, 1.0);
         vec4 wireframeFogColor = mix(wireframeBaseColor, fogFlatColor, correctedDepth);
         vec4 undefinedError = vec4(1.0, 0.0, 1.0, 1.0);
@@ -111,22 +113,22 @@
                 fragmentColor = fogFlatColor;
             }
         }
-        else if(shadingMode == 3.0) //World normal (PLACEHOLDER)
+        else if(shadingMode == 3.0) //Normal
         {
-            fragmentColor = fogWorldNormal;
+            fragmentColor = fogNormal;
         }
-        else if(shadingMode == 4.0) //World normal+Wireframe (PLACEHOLDER)
+        else if(shadingMode == 4.0) //Normal+Wireframe
         {
             if(isLine == 1.0){
                 if(wireframeIgnoreFog == 1.0){
-                    fragmentColor = mix(fogWorldNormal, wireframeBaseColor, wireframeOpacity);
+                    fragmentColor = mix(fogNormal, wireframeBaseColor, wireframeOpacity);
                 }
                 else{
-                    fragmentColor = mix(fogWorldNormal, mix(wireframeBaseColor, fogWorldNormal, correctedDepth), wireframeOpacity);
+                    fragmentColor = mix(fogNormal, mix(wireframeBaseColor, fogNormal, correctedDepth), wireframeOpacity);
                 }
             }
             else{
-                fragmentColor = fogWorldNormal;
+                fragmentColor = fogNormal;
             }
         }
         else //Undefined
@@ -156,8 +158,8 @@
                     <option value="0">Wireframe</option>
                     <option selected value="1">Color</option>
                     <option value="2">Color+Wireframe</option>
-                    <option value="3">(temp)Normal</option>
-                    <option value="4">(temp)Normal+Wirefrane</option>
+                    <option value="3">Normal</option>
+                    <option value="4">Normal+Wirefrane</option>
                     <!-- TODO: depth [...] -->
                 </select>
             </div> 
@@ -199,10 +201,10 @@
 
   <!-- Load external libraries -->
   <script src = "WebGL_Engine/Resources/gl-matrix-min.js"></script>
-  <script src = "WebGL_Engine/Resources/primitivasG.js"></script>
-  <!-- Load model files -->
 
-  
+  <!-- Load model files -->
+  <script src = "WebGL_Engine/Resources/modelsJSON/baseShapes.json"></script>
+
   <script src = "WebGL_Engine/Resources/modelsJSON/SM_Fish01_export.json"></script>
   <script src = "WebGL_Engine/Resources/modelsJSON/SM_Fish02_export.json"></script>
   <script src = "WebGL_Engine/Resources/modelsJSON/SM_Fish03_export.json"></script>

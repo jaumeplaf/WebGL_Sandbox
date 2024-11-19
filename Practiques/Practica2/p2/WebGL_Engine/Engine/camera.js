@@ -142,7 +142,6 @@ class Camera
     {
         this.positionPOI = [...this.position];
         this.targetPOI = [...this.target];
-        console.log("Saved PositionPOI: " + this.positionPOI + ", TargetPOI: " + this.targetPOI);
         updatePOI(this);
     }
 
@@ -152,7 +151,6 @@ class Camera
             this.position = [...this.positionPOI];
             this.target = [...this.targetPOI];
             this.setViewMatrix();
-            console.log("Loaded PositionPOI: " + this.position + ", TargetPOI: " + this.target);
         }
     }
 }

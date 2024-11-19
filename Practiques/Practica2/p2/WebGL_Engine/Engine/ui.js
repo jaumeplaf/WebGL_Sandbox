@@ -19,9 +19,7 @@ function updateFpsCounter(deltaTime, precision) {
     if (deltaTime > 0) {
         const fps = Math.min(1 / deltaTime, 999);
         const frameTimeMs = deltaTime * 1000;
-        
-        console.log('FPS:', fps, 'Frame Time:', frameTimeMs);
-        
+
         outFps.textContent = fps.toFixed(precision) + " fps";
         outFrameTime.textContent = frameTimeMs.toFixed(precision) + " ms";
     }

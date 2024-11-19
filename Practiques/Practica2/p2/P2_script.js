@@ -17,9 +17,10 @@ P2.addCollection(gameObjects01);
 
 //Initialize GameObjects
 
-let base_cube01 = new GameObject(exampleCube, masterShader01);
-let base_sphere01 = new GameObject(exampleSphere, masterShader01);
-let base_plane01 = new GameObject(examplePlane, masterShader01);
+let base_cube01 = new GameObject(mesh_cube01, masterShader01);
+let base_sphere01 = new GameObject(mesh_sphere01, masterShader01);
+let base_plane01 = new GameObject(mesh_circle01, masterShader01);
+let base_wall = new GameObject(mesh_cylinderInvert01, masterShader01);
 
 let base_fish01 = new GameObject(mesh_fish01, masterShader01);
 let base_fish02 = new GameObject(mesh_fish02, masterShader01);
@@ -32,6 +33,7 @@ let base_shark01 = new GameObject(mesh_shark01, masterShader01);
 
 let floor = new ObjectInstance(base_plane01, gameObjects01);
 let ceiling = new ObjectInstance(base_plane01, gameObjects01);
+let wall = new ObjectInstance(base_wall, gameObjects01);
 let cube01 = new ObjectInstance(base_cube01, gameObjects01);
 let sphere01 = new ObjectInstance(base_sphere01, gameObjects01);
 
@@ -43,19 +45,18 @@ let coral01 = new ObjectInstance(base_coral01, gameObjects01);
 let coral02 = new ObjectInstance(base_coral02, gameObjects01);
 
 //Add object instances to draw
-floor.setMatrix(0, -2, -25, 200);
-floor.setColor([0.7,0.7,0.7]);
+floor.setMatrix(0, -2, -25, 100);
+floor.setRotation(180, [1,0,0]);
 
-ceiling.setMatrix(0, 52, -25, 200);
+ceiling.setMatrix(0, 52, -25, 100);
 ceiling.setRotation(180, [1,0,0]);
-ceiling.setColor([0.7,0.7,0.7]);
 
-cube01.setMatrix(-1, -1, -5, 1);
-cube01.setColor([1,1,1]);
+wall.setMatrix(0, -2, -25, 100);
+wall.setRotation(0, [1,0,0]);
+
+cube01.setMatrix(-1, -1, -10, 1);
 
 sphere01.setMatrix(5, 1, -25, 1);
-sphere01.setColor([1,1,1]);
-
 
 fish01.setMatrix(5, 2, -10, 100);
 fish01.setRotation(-90, [1,0,0]);

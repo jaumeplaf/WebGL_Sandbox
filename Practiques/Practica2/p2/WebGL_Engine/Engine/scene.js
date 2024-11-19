@@ -16,13 +16,11 @@ class Scene
         this.collections.push(inCollection);
     }
 
-    updateDeltaTime() {
+    updateDeltaTime() 
+    {
         const now = performance.now();
         this.deltaTime = Math.min((now - this.previousTime) / 1000, 0.1);
         this.previousTime = now;
-        
-        // Debug logging
-        console.log('Delta Time:', this.deltaTime);
     }
 
      drawScene() //Main rendering loop

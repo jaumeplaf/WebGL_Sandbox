@@ -78,14 +78,14 @@ function drawModel(inInput, model)
       window.gl.uniform1f (model.shader.program.progIsLine, 0.0);
     break;
 
-    case 3: //WorldNormal (PLACEHOLDER)
+    case 3: //Normal
       window.gl.polygonOffset(0.0, 0.0);
       window.gl.uniform1f(model.shader.program.progWireframeIgnoreFog, 0.0);
 
       window.gl.drawElements(window.gl.TRIANGLES, model.indices.length, window.gl.UNSIGNED_SHORT, 0);
     break;
 
-    case 4: //WorldNormal+Wireframe (PLACEHOLDER)
+    case 4: //Normal+Wireframe
       window.gl.polygonOffset(1.0, 1.0);
       window.gl.uniform1f(model.shader.program.progWireframeIgnoreFog, 0.0);
       window.gl.drawElements(window.gl.TRIANGLES, model.indices.length, window.gl.UNSIGNED_SHORT, 0);

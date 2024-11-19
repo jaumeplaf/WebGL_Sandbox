@@ -65,7 +65,7 @@ class InputParameters
       if(key === keyWireframe || key === keyBaseColor || key === keyColorWireframe || key === keyNormal || key === keyNormalWireframe)
       {
         this.shadingMode = parseInt(key) - 1;
-        requestAnimationFrame(() => inScene.drawScene());
+        requestAni//mationFrame(() => inScene.drawScene());
       }
     });
 
@@ -116,27 +116,22 @@ class InputParameters
     //Shading mode select
     inShadingMode.addEventListener('change', (event) => {
       this.shadingMode = parseInt(event.target.value);
-      requestAnimationFrame(() => inScene.drawScene());
     });
     
     inWireframeOpacity.addEventListener('input', (event) =>{
       this.wireframeOpacity = event.target.value;
-      requestAnimationFrame(() => inScene.drawScene());
     });
     
     inFogColor.addEventListener('input', (event) =>{
       this.fogColor = hexToRgba(event.target.value, 1.0) ;
-      requestAnimationFrame(() => inScene.drawScene());
     });
     
     inFogAmount.addEventListener('input', (event) =>{
       this.fogAmount = event.target.value;
-      requestAnimationFrame(() => inScene.drawScene());
     });
     
     inFogPower.addEventListener('input', (event) =>{
       this.fogPower = event.target.value;
-      requestAnimationFrame(() => inScene.drawScene());
     });
   
     //Wireframe ignore fog toggle
@@ -144,23 +139,19 @@ class InputParameters
       if([0, 2, 4].includes(this.shadingMode)){ //If shadingMode has to render wireframe
         this.wireframeIgnoreFog = event.target.checked ? 1.0 : 0.0;
       }
-      requestAnimationFrame(() => inScene.drawScene());
     });
 
     inFov.addEventListener('input', (event) => {
     this.fov = event.target.value;
     inScene.player.updateFov(this.fov);
-    requestAnimationFrame(() =>  inScene.drawScene());
     });
 
     inSavePOI.addEventListener('click', (event) => {
       inScene.camera.savePOI(inScene.camera.position, inScene.camera.target);
-      requestAnimationFrame(() => inScene.drawScene());
     });
 
     inLoadPOI.addEventListener('click', (event) => {
       inScene.camera.loadPOI();
-      requestAnimationFrame(() => inScene.drawScene());
     });
   }
 }

@@ -15,19 +15,16 @@ const outFrameTime = document.getElementById('frameTime');
 const outFov = document.getElementById('displayFov');
 const outPoi = document.getElementById('POIdisplay');
 
-let counter = 0;
-let accumDeltaTime = 0.0;
-let fps = 0.0;
-
-function updateFpsCounter(deltaTime, precision)
-{
-    //TODO: this works before interacting with any input. When interacting, increases until
-    //"fps: infinity fps" and "frame time: 0.00 ms"
-    deltaTime = deltaTime * 1000;
-    let frameFps = 1000/deltaTime;
-    
-    outFps.textContent = frameFps.toFixed(precision) + " fps";
-    outFrameTime.textContent = deltaTime.toFixed(precision) + " ms";
+function updateFpsCounter(deltaTime, precision) {
+    if (deltaTime > 0) {
+        const fps = Math.min(1 / deltaTime, 999);
+        const frameTimeMs = deltaTime * 1000;
+        
+        console.log('FPS:', fps, 'Frame Time:', frameTimeMs);
+        
+        outFps.textContent = fps.toFixed(precision) + " fps";
+        outFrameTime.textContent = frameTimeMs.toFixed(precision) + " ms";
+    }
 }
 
 function updateFovDisplay(fov)
@@ -35,7 +32,8 @@ function updateFovDisplay(fov)
     outFov.textContent = fov + "º";
 }
 
-//https://tweakpane.github.io/docs/getting-started/
-//https://github.com/dataarts/dat.gui
-//https://openrndr.org/
-//https://github.com/jnmaloney/WebGui -> CORS??
+function updatePOI(inCamera)
+{
+    outPoi.textContent = inCamera.positionPOI[0].toFixed(2) + ", " + inCamera.positionPOI[1].toFixed(2) + ", " + inCamera.positionPOI[0].toFixed(2);
+}
+

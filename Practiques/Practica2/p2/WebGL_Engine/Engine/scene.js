@@ -16,11 +16,13 @@ class Scene
         this.collections.push(inCollection);
     }
 
-    updateDeltaTime() //TODO: fix delta time infinity scaling
-    {
-        this.currentTime = performance.now();
-        this.deltaTime = (this.currentTime - this.previousTime) / 1000;
-        this.previousTime = this.currentTime;
+    updateDeltaTime() {
+        const now = performance.now();
+        this.deltaTime = Math.min((now - this.previousTime) / 1000, 0.1);
+        this.previousTime = now;
+        
+        // Debug logging
+        console.log('Delta Time:', this.deltaTime);
     }
 
      drawScene() //Main rendering loop
@@ -47,7 +49,7 @@ class Scene
         }
 
         //We need to use "requestAnimationFrame(() => scene.drawScene())" instead of "requestAnimationFrame(scene.drawScene)" to have access to "this", and it's properties
-        requestAnimationFrame(() => P2.drawScene())
+        requestAnimationFrame(() => this.drawScene())
     }
 
 }

@@ -27,8 +27,6 @@ class InputParameters
     this.fov = degToRad(inFov.value);
     this.nearPlane = inCamera.nearPlane;
     this.farPlane = inCamera.farPlane;
-
-    //this.mouseLock = false;
   }
 
   updateUniforms(inProgram)
@@ -44,7 +42,6 @@ class InputParameters
   
     window.gl.uniform1f(inProgram.progNearPlane, this.nearPlane);
     window.gl.uniform1f(inProgram.progFarPlane, this.farPlane);  
-  
   }
 
   initializeEventListeners(inScene)
@@ -65,7 +62,6 @@ class InputParameters
       if(key === keyWireframe || key === keyBaseColor || key === keyColorWireframe || key === keyNormal || key === keyNormalWireframe)
       {
         this.shadingMode = parseInt(key) - 1;
-        requestAni//mationFrame(() => inScene.drawScene());
       }
     });
 
@@ -99,8 +95,6 @@ class InputParameters
       }
     });
 
-
-    //TODO: not working with trackpad, when you move it loses input?
     document.addEventListener('mousemove', (event) => {
       if (document.pointerLockElement === canvas) {
           let sensitivity =  0.002;
@@ -141,6 +135,7 @@ class InputParameters
       }
     });
 
+    //Camera controls
     inFov.addEventListener('input', (event) => {
     this.fov = event.target.value;
     inScene.player.updateFov(this.fov);

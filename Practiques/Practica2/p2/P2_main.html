@@ -76,8 +76,12 @@
         float correctedDepth = saturate(pow(depth * fogAmount, fogPower));
         vec4 vDepth = vec4(vec3(correctedDepth), 1.0);
     
-        //vec4 fogFinalColorAdd = vCol + vDepth * fogColor;
-        vec4 fogFlatColor = mix(vCol, fogColor, correctedDepth);
+        vec4 topColor = vec4(fogColor) + 0.2;
+        vec3 norm3 = vec3(vNorm.x, vNorm.y, vNorm.z);
+        float topGrad = saturate(dot(norm3, vec3(0,1,0)));
+        vec4 colorGradient = vec4(mix(vCol, topColor, topGrad));
+
+        vec4 fogFlatColor = mix(colorGradient, fogColor, correctedDepth);
         vec4 fogNormal = mix((vNorm * 0.5 + 0.5), fogColor, correctedDepth);
         vec4 wireframeBaseColor = vec4(0.0, 0.0, 0.0, 1.0);
         vec4 wireframeFogColor = mix(wireframeBaseColor, fogFlatColor, correctedDepth);

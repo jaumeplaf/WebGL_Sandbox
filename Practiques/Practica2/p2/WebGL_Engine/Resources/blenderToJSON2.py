@@ -1,8 +1,8 @@
 bl_info = {
     "name": "JSON Mesh Exporter",
-    "author": "Your Name",
+    "author": "Jaume Pla Ferriol",
     "version": (1, 0),
-    "blender": (3, 0, 0),
+    "blender": (4, 2, 3),
     "location": "View3D > Sidebar > Tools > JSON Export",
     "description": "Export selected meshes to JSON format",
     "category": "Import-Export",
@@ -43,7 +43,7 @@ class MESH_OT_export_json(Operator):
         }
 
         mesh = obj.data
-        
+
         # Get vertices
         for vert in mesh.vertices:
             data["vertices"].extend([vert.co.x, vert.co.y, vert.co.z])
@@ -70,10 +70,8 @@ class MESH_OT_export_json(Operator):
         if "colors" in mesh.color_attributes:
             color_layer = mesh.color_attributes["colors"]
             
-            # Create a mapping of vertex index to color
             vertex_colors = {}
-            
-            # First pass: collect all colors for each vertex
+
             for poly in mesh.polygons:
                 for loop_idx, vert_idx in zip(poly.loop_indices, poly.vertices):
                     if color_layer.domain == 'POINT':
@@ -83,7 +81,6 @@ class MESH_OT_export_json(Operator):
                     if vert_idx not in vertex_colors:
                         vertex_colors[vert_idx] = color
 
-            # Second pass: add colors in vertex order
             for i in range(len(mesh.vertices)):
                 if i in vertex_colors:
                     color = vertex_colors[i]
@@ -96,18 +93,16 @@ class MESH_OT_export_json(Operator):
 
         # Generate output path
         mesh_name = bpy.path.clean_name(obj.name)
-        
-        # Use custom export path if specified, otherwise use blend file location
         if export_path and export_path.strip():
-            # Ensure the directory exists
             os.makedirs(export_path, exist_ok=True)
-            output_json_path = os.path.join(export_path, f"{mesh_name}_export.json")
+            output_json_path = os.path.join(export_path, f"{mesh_name}.json")
         else:
-            output_json_path = os.path.join(bpy.path.abspath("//"), f"{mesh_name}_export.json")
+            output_json_path = os.path.join(bpy.path.abspath("//"), f"{mesh_name}.json")
 
         # Write data to JSON
         try:
             with open(output_json_path, "w") as f:
+                f.write(f"var {mesh_name} = ")
                 json.dump(data, f, indent=4)
             return True
         except Exception as e:
@@ -115,17 +110,12 @@ class MESH_OT_export_json(Operator):
             return False
 
     def execute(self, context):
-        # Get selected objects
         selected_objects = [obj for obj in bpy.context.selected_objects if obj.type == 'MESH']
-        
         if not selected_objects:
             self.report({'WARNING'}, "No mesh objects selected")
             return {'CANCELLED'}
         
-        # Get export path from settings
         export_path = context.scene.json_export_settings.export_path
-
-        # If export path is specified, ensure it's absolute
         if export_path and export_path.strip():
             export_path = bpy.path.abspath(export_path)
         
@@ -152,15 +142,9 @@ class VIEW3D_PT_json_exporter(Panel):
     def draw(self, context):
         layout = self.layout
         settings = context.scene.json_export_settings
-
-        # Export path field
         layout.prop(settings, "export_path")
-        
-        # Export button
         row = layout.row()
         row.operator("mesh.export_json", text="Export Selected to JSON")
-        
-        # Add selection info
         box = layout.box()
         selected_meshes = [obj for obj in context.selected_objects if obj.type == 'MESH']
         box.label(text=f"Selected Meshes: {len(selected_meshes)}")

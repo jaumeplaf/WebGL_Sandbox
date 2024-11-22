@@ -46,6 +46,17 @@ class GameObject
     this.modelMatrixIndex = M;
   }
 
+  setTransform(sx, sy, sz)
+  {
+    let M = mat4.create();
+    let S = mat4.create ();
+
+    mat4.fromScaling(S, [sx, sy, sz]);
+    mat4.multiply(M, this.modelMatrixIndex, S);
+
+    this.modelMatrixIndex = M;
+  }
+
   setRotation(angle, axis)
   {
     let R = mat4.create();
@@ -70,6 +81,8 @@ class ObjectInstance extends GameObject
     this.collection = inObjectCollection;
     
     this.modelMatrixIndex = mat4.create();
+
+    this.triCount = Math.round(this.parent.indices.length / 9);
 
     this.addInstance();
   } 
@@ -111,6 +124,8 @@ class ObjectCollection
     {
         this.sharedShaderGroup = [];
         this.shader = inShader;
+        this.totalTriCount = 0;
+        this.drawCalls = 0;
     }
 
     add(model)
@@ -130,6 +145,8 @@ class ObjectCollection
     {
       for(let object of this.sharedShaderGroup){
           this.shader.setModelMatrix(object.modelMatrixIndex);
+          this.totalTriCount += object.triCount;
+          this.drawCalls ++;
           object.draw(inInput);
       }
     }

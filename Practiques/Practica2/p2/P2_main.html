@@ -76,10 +76,18 @@
         float correctedDepth = saturate(pow(depth * fogAmount, fogPower));
         vec4 vDepth = vec4(vec3(correctedDepth), 1.0);
     
-        vec4 topColor = vec4(fogColor) + 0.2;
+        vec4 topColor = vec4(fogColor);
         vec3 norm3 = vec3(vNorm.x, vNorm.y, vNorm.z);
-        float topGrad = saturate(dot(norm3, vec3(0,1,0)));
-        vec4 colorGradient = vec4(mix(vCol, topColor, topGrad));
+        vec3 lightDir = vec3(0,1,.25);
+        float diffMult = 1.05;
+        float diffPow = 1.0;
+        float diff = pow((saturate(dot(norm3, lightDir)) * diffMult), diffPow);
+        float topGrad = saturate(diff);
+
+        float steps = 3.0;
+        float diffShadow = pow((clamp(dot(norm3, lightDir), -1.0, 0.0) * diffMult), diffPow);
+        float quantize = floor(topGrad * steps) / steps;
+        vec4 colorGradient = vCol + quantize * fogColor * 1.0;
 
         vec4 fogFlatColor = mix(colorGradient, fogColor, correctedDepth);
         vec4 fogNormal = mix((vNorm * 0.5 + 0.5), fogColor, correctedDepth);
@@ -194,7 +202,7 @@
             <div class="indent">
                 <div class="slidercontainer" id="wireframeOpacityContainer">
                     <label for="fov">FOV: </label><span id="displayFov">"fov" </span><br>
-                    <input type="range" min="20.0" max="120.0" value="50.0" step="0.01" class="slider" id="fov">
+                    <input type="range" min="20.0" max="120.0" value="70.0" step="0.01" class="slider" id="fov">
                 </div> 
                 <button id="savePOI">Save camera POI</button><br>
                 <span>POI: </span><span id="POIdisplay">"empty" </span><br>
@@ -209,12 +217,12 @@
   <!-- Load model files -->
   <script src = "WebGL_Engine/Resources/modelsJSON/baseShapes.json"></script>
 
-  <script src = "WebGL_Engine/Resources/modelsJSON/SM_Fish01_export.json"></script>
-  <script src = "WebGL_Engine/Resources/modelsJSON/SM_Fish02_export.json"></script>
-  <script src = "WebGL_Engine/Resources/modelsJSON/SM_Fish03_export.json"></script>
-  <script src = "WebGL_Engine/Resources/modelsJSON/SM_Coral01_export.json"></script>
-  <script src = "WebGL_Engine/Resources/modelsJSON/SM_Coral02_export.json"></script>
-  <script src = "WebGL_Engine/Resources/modelsJSON/SM_Shark01_export.json"></script>
+  <script src = "WebGL_Engine/Resources/modelsJSON/SM_Fish01.json"></script>
+  <script src = "WebGL_Engine/Resources/modelsJSON/SM_Fish02.json"></script>
+  <script src = "WebGL_Engine/Resources/modelsJSON/SM_Fish03.json"></script>
+  <script src = "WebGL_Engine/Resources/modelsJSON/SM_Coral01.json"></script>
+  <script src = "WebGL_Engine/Resources/modelsJSON/SM_Coral02.json"></script>
+  <script src = "WebGL_Engine/Resources/modelsJSON/SM_Shark01.json"></script>
   
   
   <!-- Load engine scripts -->

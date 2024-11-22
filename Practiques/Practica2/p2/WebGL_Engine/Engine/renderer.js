@@ -20,6 +20,9 @@ function initRendering()
   //Fix Z-fighting
   window.gl.enable(window.gl.POLYGON_OFFSET_FILL);
   window.gl.polygonOffset(0.0, 0.0);
+
+  //Enable backface culling
+  window.gl.enable(gl.CULL_FACE);
 }
 
 function drawModel(inInput, model) 

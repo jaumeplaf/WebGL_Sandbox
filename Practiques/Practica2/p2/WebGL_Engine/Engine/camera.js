@@ -12,8 +12,9 @@ class Camera
         this.yaw = Math.PI //X rotation
         this.pitch = 0 //Y rotation
 
-        this.floor = 1;
-        this.ceiling = 50;
+        this.floor = -9;
+        this.ceiling = 89;
+        this.maxRadius = 95;
 
         this.positionPOI = null;
         this.targetPOI = null;
@@ -99,44 +100,59 @@ class Camera
 
     updateCameraPosition(inPlayer)
     {
-        this.getDirectionVectors();
-        this.getSprint(inPlayer);
+            this.getDirectionVectors();
+            this.getSprint(inPlayer);
+        
+            // Update position based on input
+            if (inPlayer.moveForward && !inPlayer.moveBack) {
+                this.position[0] += this.forwardVec[0] * inPlayer.currSpeed;
+                this.position[2] += this.forwardVec[2] * inPlayer.currSpeed;
+                this.target[0] += this.forwardVec[0] * inPlayer.currSpeed;
+                this.target[2] += this.forwardVec[2] * inPlayer.currSpeed;
+            }
+            if (inPlayer.moveBack) {
+                this.position[0] -= this.forwardVec[0] * inPlayer.currSpeed;
+                this.position[2] -= this.forwardVec[2] * inPlayer.currSpeed;
+                this.target[0] -= this.forwardVec[0] * inPlayer.currSpeed;
+                this.target[2] -= this.forwardVec[2] * inPlayer.currSpeed;
+            }
+            if (inPlayer.moveLeft) {
+                this.position[0] -= this.rightVec[0] * inPlayer.currSpeed;
+                this.position[2] -= this.rightVec[2] * inPlayer.currSpeed;
+                this.target[0] -= this.rightVec[0] * inPlayer.currSpeed;
+                this.target[2] -= this.rightVec[2] * inPlayer.currSpeed;
+            }
+            if (inPlayer.moveRight && !inPlayer.moveLeft) {
+                this.position[0] += this.rightVec[0] * inPlayer.currSpeed;
+                this.position[2] += this.rightVec[2] * inPlayer.currSpeed;
+                this.target[0] += this.rightVec[0] * inPlayer.currSpeed;
+                this.target[2] += this.rightVec[2] * inPlayer.currSpeed;
+            }
+            if (inPlayer.moveUp && !inPlayer.moveDown && this.position[1] <= this.ceiling) {
+                this.position[1] += this.upVec[1] * inPlayer.currFloat;
+                this.target[1] += this.upVec[1] * inPlayer.currFloat;
+            }
+            if (inPlayer.moveDown && this.position[1] >= this.floor) {
+                this.position[1] -= this.upVec[1] * inPlayer.currFloat;
+                this.target[1] -= this.upVec[1] * inPlayer.currFloat;
+            }
+        
+            // Constrain to radius in xz plane
+            const distXZ = Math.sqrt(this.position[0] ** 2 + this.position[2] ** 2);
+            if (distXZ > this.maxRadius) {
+                const scale = this.maxRadius / distXZ;
 
-        if(inPlayer.moveForward && !inPlayer.moveBack){
-            this.position[0] += this.forwardVec[0] * inPlayer.currSpeed;
-            this.position[2] += this.forwardVec[2] * inPlayer.currSpeed;
-            this.target[0] += this.forwardVec[0] * inPlayer.currSpeed;
-            this.target[2] += this.forwardVec[2] * inPlayer.currSpeed;
-        }
-        if(inPlayer.moveBack){
-            this.position[0] -= this.forwardVec[0] * inPlayer.currSpeed;
-            this.position[2] -= this.forwardVec[2] * inPlayer.currSpeed;
-            this.target[0] -= this.forwardVec[0] * inPlayer.currSpeed;
-            this.target[2] -= this.forwardVec[2] * inPlayer.currSpeed;
-        }
-        if(inPlayer.moveLeft){
-            this.position[0] -= this.rightVec[0] * inPlayer.currSpeed;
-            this.position[2] -= this.rightVec[2] * inPlayer.currSpeed;
-            this.target[0] -= this.rightVec[0] * inPlayer.currSpeed;
-            this.target[2] -= this.rightVec[2] * inPlayer.currSpeed;
-        }
-        if(inPlayer.moveRight && !inPlayer.moveLeft){
-            this.position[0] += this.rightVec[0] * inPlayer.currSpeed;
-            this.position[2] += this.rightVec[2] * inPlayer.currSpeed;
-            this.target[0] += this.rightVec[0] * inPlayer.currSpeed;
-            this.target[2] += this.rightVec[2] * inPlayer.currSpeed;
-        }
-        if(inPlayer.moveUp && !inPlayer.moveDown && this.position[1] <= this.ceiling){
-            this.position[1] += this.upVec[1] * inPlayer.currFloat;
-            this.target[1] += this.upVec[1] * inPlayer.currFloat;
-        }
-        if(inPlayer.moveDown && this.position[1] >= this.floor){
-            this.position[1] -= this.upVec[1] * inPlayer.currFloat;
-            this.target[1] -= this.upVec[1] * inPlayer.currFloat;
-        }
+                this.position[0] *= scale;
+                this.position[2] *= scale;
+                
+                //this.target[0] *= scale;
+                //this.target[2] *= scale;
+                this.target = [0,0,0];
+            }
 
-        this.setViewMatrix();
-    }
+        
+            this.setViewMatrix();
+        }
 
         savePOI(position, target)
     {

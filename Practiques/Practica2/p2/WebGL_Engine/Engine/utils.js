@@ -72,3 +72,37 @@ function generateGrid(divisions, size) {
 
     return model;
 }
+
+function generateInstancesRadial(GameObject, objectCollection, instanceNum, center, minScale, maxScale, radius, maxHeight) {
+    // Create an array to store the generated instances
+    let instances = [];
+
+    for (let i = 0; i < instanceNum; i++) {
+        // Generate random position within a radial constraint
+        let angle = Math.random() * Math.PI * 2; // Random angle in radians
+        let distance = radius * Math.sqrt(Math.random());  // Random distance within radius
+        let x = center[0] + Math.cos(angle) * distance;
+        let z = center[2] + Math.sin(angle) * distance;
+
+        // Random height between -maxHeight and maxHeight
+        let y = center[1] + (Math.random() * 2 * maxHeight - maxHeight);
+
+        // Generate a random Y-axis rotation (0 to 360 degrees)
+        let randomYRotation = Math.random() * 360;
+
+        let randomScale = Math.random() * (maxScale - minScale) + minScale;
+        // Create a new ObjectInstance
+        let newInstance = new ObjectInstance(GameObject, objectCollection);
+
+        // Set the position and random rotation for the new instance
+        newInstance.setMatrix(x, y, z, randomScale);
+        newInstance.setRotation(randomYRotation, [0, 1, 0]); // Fixed Y-axis rotation
+
+        // Add the instance to the collection
+        instances.push(newInstance);
+    }
+
+    // Return the list of instances for further reference if needed
+    return instances;
+}
+

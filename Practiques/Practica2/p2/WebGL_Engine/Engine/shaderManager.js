@@ -74,6 +74,8 @@ class Shader
         this.program.progWireframeIgnoreFog = window.gl.getUniformLocation(this.program, "wireframeIgnoreFog");
         this.program.progNearPlane = window.gl.getUniformLocation(this.program, "nPlane");
         this.program.progFarPlane = window.gl.getUniformLocation(this.program, "fPlane");
+
+        this.program.progTime = window.gl.getUniformLocation(this.program, "time");
     }
 
     setProjection(projectionMatrix)

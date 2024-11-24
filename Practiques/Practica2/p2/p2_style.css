@@ -1,54 +1,56 @@
 body, html {
-    margin: 0;
-    padding: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 100vh;
-    background-color: hwb(0 16% 84%);
-    font-family: "Lucida Sans Unicode", sans-serif;
-    font-size: small;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  height: 100%;
+  overflow: hidden; /* Prevent scrollbars */
+  font-family: "Lucida Sans Unicode", sans-serif;
+  font-size: small;
 }
 
 #container {
-    display: flex;
-    height: 90vh;
-    width: 90vw;
+  display: flex;
+  flex-direction: row;
+  width: 100%;
+  height: 100%;
 }
 
-#webglCanvas {
-    flex: 1;
-    background-color: #000;
+#wglCanvas {
+  flex: 1;
+  background-color: #000;
 }
 
 #menu {
-    width: 20%;
-    padding: 20px;
-    box-sizing: border-box;
-    background-color: #f4f4f4;
-    display: flex;
-    flex-direction: column;
-    align-items: flex-start;
+  width: 20%;
+  min-width: 250px;
+  max-width: 300px;
+  box-sizing: border-box;
+  background-color: #f4f4f4;
+  display: flex;
+  flex-direction: column;
+  padding: 10px;
+  overflow-y: auto;
 }
 
 #menu label, #menu select, #menu input {
-    margin-bottom: 15px;
+  margin-bottom: 15px;
 }
 
-.slidecontainer {
-    width: 100%; /* Width of the outside container */
+.slidercontainer {
+  width: 100%;
 }
-  
+
 .slider {
   -webkit-appearance: none;
-  width: 100%;
+  width: 50%;
   height: 10px;
-  border-radius: 5px;  
+  border-radius: 5px;
   background: #d3d3d3;
   outline: none;
   opacity: 0.7;
-  -webkit-transition: .2s;
-  transition: opacity .2s;
+  transition: opacity 0.2s;
 }
 
 .slider::-webkit-slider-thumb {
@@ -56,7 +58,7 @@ body, html {
   appearance: none;
   width: 10px;
   height: 10px;
-  border-radius: 30%; 
+  border-radius: 30%;
   background: rgb(10, 75, 200);
   cursor: pointer;
 }
@@ -65,27 +67,46 @@ body, html {
   width: 10px;
   height: 10px;
   border-radius: 30%;
-  background:  rgb(10, 75, 200);
+  background: rgb(10, 75, 200);
   cursor: pointer;
 }
-/* Mouse-over effects */
+
 .slider:hover {
-  opacity: 1; /* Fully shown on mouse-over */
+  opacity: 1;
 }
 
-.separator{
+.separator {
   padding-top: 15px;
   padding-bottom: 15px;
 }
 
-.indent{
+.indent {
   padding-left: 15px;
 }
 
-.UI_counter{
+.UI_counter {
   padding-bottom: 10px;
 }
 
-.counter{
+.counter {
   color: red;
+}
+
+@media (max-width: 768px) {
+  #menu {
+      width: 30%;
+      min-width: 200px;
+  }
+}
+
+@media (max-width: 480px) {
+  #menu {
+      width: 100%;
+      position: absolute;
+      z-index: 10;
+      height: auto;
+  }
+  #webglCanvas {
+      display: none;
+  }
 }

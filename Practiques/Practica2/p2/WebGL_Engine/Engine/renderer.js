@@ -1,16 +1,3 @@
-//?Ray-sphere intersection - quadratic equation
-//?Ray-plane intersection
-//
-//Frustum/occlusion/back culling
-//gl.enable(gl.CULL_FACE);
-//gl.cullFace(face) - face = gl.BACK or gl.FRONT
-//?Bounding box
-//?Space partitioning - octtrees, binary trees - acceleration structures?
-//
-//
-//
-
-
 function initRendering() 
 {
   window.gl.lineWidth(1.5);

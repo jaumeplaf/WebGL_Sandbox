@@ -21,6 +21,9 @@ class Scene
         const now = performance.now();
         this.deltaTime = Math.min((now - this.previousTime) / 1000, 0.1);
         this.previousTime = now;
+
+        this.input.time = now / 1000;
+
     }
 
     updateAnimations() {

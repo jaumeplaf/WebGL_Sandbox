@@ -27,6 +27,8 @@ class InputParameters
     this.fov = degToRad(inFov.value);
     this.nearPlane = inCamera.nearPlane;
     this.farPlane = inCamera.farPlane;
+
+    this.time = performance.now() / 1000;
   }
 
   updateUniforms(inProgram)
@@ -41,7 +43,9 @@ class InputParameters
     window.gl.uniform1f(inProgram.progWireframeIgnoreFog, this.wireframeIgnoreFog);
   
     window.gl.uniform1f(inProgram.progNearPlane, this.nearPlane);
-    window.gl.uniform1f(inProgram.progFarPlane, this.farPlane);  
+    window.gl.uniform1f(inProgram.progFarPlane, this.farPlane); 
+
+    window.gl.uniform1f(inProgram.progTime, this.time);
   }
 
   initializeEventListeners(inScene)

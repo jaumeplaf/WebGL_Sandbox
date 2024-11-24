@@ -9,8 +9,9 @@ class GameObject
     this.color = [0.8,0.8,0.8];
     
     this.shader = inShader;
-    this.timeScale = 1;
-    this.axis = [0,0,1];
+
+    this.rotationSpeed = 0;
+    this.rotationAxis = [0, 1, 0];
     
     this.initializeBuffers();
   }
@@ -57,12 +58,26 @@ class GameObject
     this.modelMatrixIndex = M;
   }
 
+  setRotationSpeed(speed, axis) {
+    this.rotationSpeed = speed; // Degrees per second
+    this.rotationAxis = axis;
+}
+
   setRotation(angle, axis)
   {
     let R = mat4.create();
     mat4.fromRotation(R, degToRad(angle), axis);
     mat4.multiply(this.modelMatrixIndex, this.modelMatrixIndex, R);
   }
+
+  update(deltaTime) {
+    if (this.rotationSpeed !== 0) {
+        const angle = this.rotationSpeed * deltaTime; // Increment based on delta time
+        let R = mat4.create();
+        mat4.fromRotation(R, degToRad(angle), this.rotationAxis);
+        mat4.multiply(this.modelMatrixIndex, R, this.modelMatrixIndex);
+    }
+}
 
   draw(inInput){
     drawModel(inInput, this);

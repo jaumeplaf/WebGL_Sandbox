@@ -23,6 +23,14 @@ class Scene
         this.previousTime = now;
     }
 
+    updateAnimations() {
+        for (let collection of this.collections) {
+            for (let object of collection.sharedShaderGroup) {
+                object.update(this.deltaTime);
+            }
+        }
+    }
+
      drawScene() //Main rendering loop
     {
         this.player.moveCamera();
@@ -33,6 +41,8 @@ class Scene
         
         this.updateDeltaTime();
         updateFpsCounter(this.deltaTime, 2);
+
+        this.updateAnimations(); 
 
         for(let collection of this.collections)
         {

@@ -15,6 +15,7 @@ class Camera
         this.floor = -9;
         this.ceiling = 89;
         this.maxRadius = 95;
+        this.constraints = true;
 
         this.positionPOI = null;
         this.targetPOI = null;
@@ -138,18 +139,19 @@ class Camera
             }
         
             // Constrain to radius in xz plane
-            const distXZ = Math.sqrt(this.position[0] ** 2 + this.position[2] ** 2);
-            if (distXZ > this.maxRadius) {
-                const scale = this.maxRadius / distXZ;
-
-                this.position[0] *= scale;
-                this.position[2] *= scale;
-                
-                //this.target[0] *= scale;
-                //this.target[2] *= scale;
-                this.target = [0,0,0];
+            if(this.constraints)
+            {
+                const distXZ = Math.sqrt(this.position[0] ** 2 + this.position[2] ** 2);
+                if (distXZ > this.maxRadius) {
+                    const scale = this.maxRadius / distXZ;
+    
+                    this.position[0] *= scale;
+                    this.position[2] *= scale;
+                    
+                    this.target[0] *= scale;
+                    this.target[2] *= scale;
+                }
             }
-
         
             this.setViewMatrix();
         }

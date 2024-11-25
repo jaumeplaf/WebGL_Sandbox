@@ -1,3 +1,7 @@
+//TODO: set shader variants and swap between them
+//TODO: get working base color
+//
+
 class Shader 
 {
     constructor(vsSource, fsSource) 

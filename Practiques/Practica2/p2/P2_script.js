@@ -1,5 +1,5 @@
 //Initialize camera
-const camera01 = new Camera(0.1, 500.0);
+const camera01 = new Camera(0.1, 500.0, [0,0,0], [0,0,-1], true);
 
 //Initialize player
 const player01 = new Player(camera01);

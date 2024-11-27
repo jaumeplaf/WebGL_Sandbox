@@ -26,3 +26,10 @@
 //[gas:] 
     //volume scattering
 //
+//shading model: flat / smooth (Gouraud/Phong
+//)
+
+//GLSL -> Typedef? Struct?
+//
+
+//UE5 shading bug -> guoraud? can it be changed for phong?

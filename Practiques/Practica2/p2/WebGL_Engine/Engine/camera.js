@@ -1,12 +1,12 @@
 class Camera 
 {
-    constructor(inNearPlane, inFarPlane) 
+    constructor(inNearPlane, inFarPlane, initPos = [0,0,0], initTarg = [0,0,-1], hasConstraints = false) 
     {
         //type: fps, editor ...
         //this.type = inType;
 
-        this.position = [0,0,0];
-        this.target = [0,0,-1];
+        this.position = initPos;
+        this.target = initTarg;
         this.up = [0,1,0];
 
         this.yaw = Math.PI //X rotation
@@ -15,7 +15,7 @@ class Camera
         this.floor = -9;
         this.ceiling = 89;
         this.maxRadius = 95;
-        this.constraints = true;
+        this.constraints = hasConstraints;
 
         this.positionPOI = null;
         this.targetPOI = null;

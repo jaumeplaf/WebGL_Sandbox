@@ -78,13 +78,13 @@
     
         vec4 topColor = vec4(fogColor);
         vec3 norm3 = vec3(vNorm.x, vNorm.y, vNorm.z);
-        vec3 lightDir = vec3(0,1,.25);
+        vec3 lightDir = normalize(vec3(1.0, 1.0, 1.0));
         float diffMult = 1.05;
         float diffPow = 1.0;
         float diff = pow((saturate(dot(norm3, lightDir)) * diffMult), diffPow);
         float topGrad = saturate(diff);
 
-        float steps = 2.0;
+        float steps = 10.0;
         float diffShadow = pow((clamp(dot(norm3, lightDir), -1.0, 0.0) * diffMult), diffPow);
         float quantize = floor(topGrad * steps) / steps;
         vec4 colorGradient = vCol + quantize * fogColor * 1.0;
@@ -149,12 +149,39 @@
         }
     }
     </script>
+
+    <script id="VS02" 
+        type="x-shader/x-vertex">#version 300 es
+
+        in vec3 VertexPosition;
+        in vec3 VertexColor;
+        in vec3 VertexNormal;
+
+        uniform mat4 modelMatrix;
+        uniform mat4 viewMatrix;
+        uniform mat4 projectionMatrix;
+
+        out vec4 vPos;
+        out vec4 vCol;
+        out vec3 vNorm;
+
+        void main()
+      {
+          vec4 vertexPos = vec4(VertexPosition, 1.0);
+          gl_Position = projectionMatrix * viewMatrix * modelMatrix * vertexPos;
+          vPos =  vec4(VertexPosition, 1.0);
+          vCol = VertexColor;
+
+          mat3 normalMatrix = mat3(transpose(inverse(modelMatrix))); // Compute the normal matrix
+          vNorm = vec4(normalize(normalMatrix * VertexNormal), 1.0); // Transform and normalize the normal
+      }
+    </script>
     
     </head>
 
     <body>
         <div id="container">
-            <canvas id="wglCanvas" width="1550" height="850">
+            <canvas id="wglCanvas" width="1500" height="850">
                 HTML5 not supported
             </canvas>
             <div id="menu">

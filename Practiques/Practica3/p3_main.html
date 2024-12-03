@@ -1,0 +1,264 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <title> Practica 2 - Jaume Pla Ferriol </title>
+    <link rel="stylesheet" href="p3_style.css">
+
+    <!-- Load all shaders here, get them by ID in current scene script-->
+
+    <script id="VS01" 
+          type="x-shader/x-vertex">#version 300 es
+
+      in vec3 VertexPosition;
+      in vec4 VertexColor;
+      in vec3 VertexNormal;
+
+      uniform mat4 modelMatrix;
+      uniform mat4 viewMatrix;
+      uniform mat4 projectionMatrix;
+      
+      out vec4 vPos;
+      out vec4 vCol;
+      out vec4 vNorm;
+      
+      void main()
+      {
+          gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(VertexPosition, 1.0);
+          vPos =  vec4(VertexPosition, 1.0);
+          vCol = VertexColor;
+
+          mat3 normalMatrix = mat3(transpose(inverse(modelMatrix))); // Compute the normal matrix
+          vNorm = vec4(normalize(normalMatrix * VertexNormal), 1.0); // Transform and normalize the normal
+      }
+      
+    </script>
+    
+    <script id="FS01" 
+    type="x-shader/x-fragment">#version 300 es
+    
+    precision mediump float;
+    
+    //Attributes
+    in vec4 vPos;
+    in vec4 vCol;
+    in vec4 vNorm;
+
+    //Uniforms
+    uniform float shadingMode;
+    uniform float isLine;
+    uniform vec4 fogColor;
+    uniform float wireframeIgnoreFog;
+    uniform float wireframeOpacity;
+    uniform float nPlane;
+    uniform float fPlane;
+    uniform float fogAmount;
+    uniform float fogPower;
+
+    //Out fragment color
+    out vec4 fragmentColor;
+    
+    float saturate(float value)
+    {
+        return clamp(value, 0.0, 1.0);
+    }
+    
+    float linearDepth(float inDepth)
+    {
+        float z = inDepth * 2.0 - 1.0;
+        return (2.0 * nPlane * fPlane) / (fPlane + nPlane - z * (fPlane - nPlane));
+    }
+    
+    void main() 
+    {
+        float depth = linearDepth(gl_FragCoord.z) / fPlane;
+        float correctedDepth = saturate(pow(depth * fogAmount, fogPower));
+        vec4 vDepth = vec4(vec3(correctedDepth), 1.0);
+    
+        vec4 topColor = vec4(fogColor);
+        vec3 norm3 = vec3(vNorm.x, vNorm.y, vNorm.z);
+        vec3 lightDir = normalize(vec3(1.0, 1.0, 1.0));
+        float diffMult = 1.05;
+        float diffPow = 1.0;
+        float diff = pow((saturate(dot(norm3, lightDir)) * diffMult), diffPow);
+        float topGrad = saturate(diff);
+
+        float steps = 10.0;
+        float diffShadow = pow((clamp(dot(norm3, lightDir), -1.0, 0.0) * diffMult), diffPow);
+        float quantize = floor(topGrad * steps) / steps;
+        vec4 colorGradient = vCol + quantize * fogColor * 1.0;
+
+        vec4 fogFlatColor = mix(colorGradient, fogColor, correctedDepth);
+        vec4 fogNormal = mix((vNorm * 0.5 + 0.5), fogColor, correctedDepth);
+        vec4 wireframeBaseColor = vec4(0.0, 0.0, 0.0, 1.0);
+        vec4 wireframeFogColor = mix(wireframeBaseColor, fogFlatColor, correctedDepth);
+        vec4 undefinedError = vec4(1.0, 0.0, 1.0, 1.0);
+    
+        if(shadingMode == 0.0) //Wireframe
+        {
+            if(isLine == 1.0){
+                if(wireframeIgnoreFog == 1.0){
+                    fragmentColor = mix(fogColor, wireframeBaseColor, wireframeOpacity);
+                }
+                else{
+                    fragmentColor = mix(fogColor, mix(wireframeBaseColor, fogColor, correctedDepth), wireframeOpacity);
+                }
+            }
+            else fragmentColor = undefinedError;
+        }
+        else if(shadingMode == 1.0) //Color
+        {
+            fragmentColor = fogFlatColor;
+        }
+        else if(shadingMode == 2.0) //Color+Wireframe
+        {
+            if(isLine == 1.0){
+                if(wireframeIgnoreFog == 1.0){
+                    fragmentColor = mix(fogFlatColor, wireframeBaseColor, wireframeOpacity);
+                }
+                else{
+                    fragmentColor = mix(fogFlatColor, wireframeFogColor, wireframeOpacity);
+                }
+            }
+            else{
+                fragmentColor = fogFlatColor;
+            }
+        }
+        else if(shadingMode == 3.0) //Normal
+        {
+            fragmentColor = fogNormal;
+        }
+        else if(shadingMode == 4.0) //Normal+Wireframe
+        {
+            if(isLine == 1.0){
+                if(wireframeIgnoreFog == 1.0){
+                    fragmentColor = mix(fogNormal, wireframeBaseColor, wireframeOpacity);
+                }
+                else{
+                    fragmentColor = mix(fogNormal, mix(wireframeBaseColor, fogNormal, correctedDepth), wireframeOpacity);
+                }
+            }
+            else{
+                fragmentColor = fogNormal;
+            }
+        }
+        else //Undefined
+        {
+            fragmentColor = undefinedError;
+        }
+    }
+    </script>
+
+    <script id="VS02" 
+        type="x-shader/x-vertex">#version 300 es
+
+        in vec3 VertexPosition;
+        in vec3 VertexColor;
+        in vec3 VertexNormal;
+
+        uniform mat4 modelMatrix;
+        uniform mat4 viewMatrix;
+        uniform mat4 projectionMatrix;
+
+        out vec4 vPos;
+        out vec4 vCol;
+        out vec3 vNorm;
+
+        void main()
+      {
+          vec4 vertexPos = vec4(VertexPosition, 1.0);
+          gl_Position = projectionMatrix * viewMatrix * modelMatrix * vertexPos;
+          vPos =  vec4(VertexPosition, 1.0);
+          vCol = VertexColor;
+
+          mat3 normalMatrix = mat3(transpose(inverse(modelMatrix))); // Compute the normal matrix
+          vNorm = vec4(normalize(normalMatrix * VertexNormal), 1.0); // Transform and normalize the normal
+      }
+    </script>
+    
+    </head>
+
+    <body>
+        <div id="container">
+            <canvas id="wglCanvas" width="1500" height="850">
+                HTML5 not supported
+            </canvas>
+            <div id="menu">
+                <div class = "UI_counter">
+                    <span>fps: </span><span class ="counter" id="fpsCounter">"fps" </span><br>
+                    <span>frame time: </span><span class="counter" id ="frameTime">"frame time" </span><br>
+                </div>
+
+            <!-- Shading mode controls -->
+            <label for="shadingMode">Shading Mode:</label>
+            <div class="indent">
+                <select id="shadingMode">
+                    <option value="0">Wireframe</option>
+                    <option selected value="1">Color</option>
+                    <option value="2">Color+Wireframe</option>
+                    <option value="3">Normal</option>
+                    <option value="4">Normal+Wirefrane</option>
+                    <!-- TODO: depth [...] -->
+                </select>
+            </div> 
+
+            <div class="slidercontainer indent" id="wireframeOpacityContainer">
+                <label for="wireframeOpacity">Wireframe opacity:</label>
+                <input type="range" min="0.0" max="1.0" value="0.5" step="0.01" class="slider" id="wireframeOpacity">
+            </div> 
+            <!-- Fog controls -->
+            <span class="separator">Fog:</span>
+            <div class="indent">
+                <input type="color" id="fogColor" value="#444444">
+                <label for="fogColor">Fog color</label>
+            </div>
+            <div class="slidercontainer indent">
+                <label for="fogAmount">Fog amount:</label>
+                <input type="range" min="0.0" max="20.0" value="0.1" step="0.01" class="slider" id="fogAmount">
+            </div>
+            <div class="slidercontainer indent">
+                <label for="fogPower">Fog power:</label>
+                <input type="range" min="0.05" max="2.0" value="0.2" step="0.01" class="slider" id="fogPower">
+            </div>
+            <div class="indent">
+                <label for="wireframeToggle">Wireframe Ignore Fog:</label>
+                <input type="checkbox" id="wireframeIgnoreFog">
+            </div>
+            <span class="separator">Camera:</span>
+            <div class="indent">
+                <div class="slidercontainer" id="wireframeOpacityContainer">
+                    <label for="fov">FOV: </label><span id="displayFov">"fov" </span><br>
+                    <input type="range" min="20.0" max="120.0" value="70.0" step="0.01" class="slider" id="fov">
+                </div> 
+                <button id="savePOI">Save camera POI</button><br>
+                <span>POI: </span><span id="POIdisplay">"empty" </span><br>
+                <button id="loadPOI">Load camera POI</button>
+            </div>
+        </div>
+    </div>
+
+  <!-- Load external libraries -->
+  <script src = "WebGL_Engine/Resources/gl-matrix-min.js"></script>
+
+  <!-- Load model files -->
+  <script src = "WebGL_Engine/Resources/modelsJSON/baseShapes.json"></script>
+  <script src = "Models/HamsterHavocAssets.json"></script>
+  
+  <!-- Load engine scripts -->
+  <script src = "WebGL_Engine/Engine/input.js"></script>
+  <script src = "WebGL_Engine/Engine/ui.js"></script>
+  <script src = "WebGL_Engine/Engine/renderer.js"></script>
+  <script src = "WebGL_Engine/Engine/engine.js"></script>
+  <script src = "WebGL_Engine/Engine/utils.js"></script>
+  <script src = "WebGL_Engine/Engine/shaderManager.js"></script>
+  <script src = "WebGL_Engine/Engine/camera.js"></script>
+  <script src = "WebGL_Engine/Engine/player.js"></script>
+  <script src = "WebGL_Engine/Engine/scene.js"></script>
+  <script src = "WebGL_Engine/Engine/gameObject.js"></script>
+  <!-- Load current scene script -->
+  <script src = "p3_scene.js"></script>
+
+</body>
+
+</html>

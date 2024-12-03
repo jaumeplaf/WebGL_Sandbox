@@ -26,10 +26,25 @@
 //[gas:] 
     //volume scattering
 //
-//shading model: flat / smooth (Gouraud/Phong
-//)
+//shading model: flat / smooth (Gouraud/Phong)
+//
 
 //GLSL -> Typedef? Struct?
 //
 
 //UE5 shading bug -> guoraud? can it be changed for phong?
+
+
+
+//blender py json: add ticks for each export attribute (pos, index, normal, color, uv, uv2, uv3)
+
+//TEXTURE MAPPING:
+//
+//UV projection -> actual projection formulas
+//
+//Filtering:
+    //Nearest neighbor (box filter) -> steps -> blocky
+    //Linear interpolation -> blend -> blending all 4 neighbors -> blurry
+//
+//
+//

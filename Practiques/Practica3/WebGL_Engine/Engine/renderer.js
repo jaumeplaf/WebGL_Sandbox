@@ -21,23 +21,23 @@ function drawModel(inInput, model)
 
   window.gl.bindBuffer(window.gl.ARRAY_BUFFER, model.idBufferNormals);
   window.gl.vertexAttribPointer(model.shader.program.vertexNormalAttribute, 3, window.gl.FLOAT, false, 0, 0);
-  
-  if(model.idBufferColors != null){  
+
+  if(model.idBufferColors){
     window.gl.bindBuffer(window.gl.ARRAY_BUFFER, model.idBufferColors);
     window.gl.vertexAttribPointer(model.shader.program.vertexColorAttribute, 4, window.gl.FLOAT, false, 0, 0);
   }
 
-  if(model.idBufferTexcoords1 != null){  
+  if(model.idBufferTexcoords1){
     window.gl.bindBuffer(window.gl.ARRAY_BUFFER, model.idBufferTexcoords1);
     window.gl.vertexAttribPointer(model.shader.program.texCoords1Attribute, 2, window.gl.FLOAT, false, 0, 0);
   }
 
-  if(model.idBufferTexcoords2 != null){  
+  if(model.idBufferTexcoords2){
     window.gl.bindBuffer(window.gl.ARRAY_BUFFER, model.idBufferTexcoords2);
     window.gl.vertexAttribPointer(model.shader.program.texCoords2Attribute, 2, window.gl.FLOAT, false, 0, 0);
   }
 
-  if(model.idBufferTexcoords3 != null){  
+  if(model.idBufferTexcoords3){  
     window.gl.bindBuffer(window.gl.ARRAY_BUFFER, model.idBufferTexcoords3);
     window.gl.vertexAttribPointer(model.shader.program.texCoords3Attribute, 2, window.gl.FLOAT, false, 0, 0);
   }

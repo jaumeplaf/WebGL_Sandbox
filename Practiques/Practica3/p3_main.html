@@ -8,175 +8,147 @@
 
     <!-- Load all shaders here, get them by ID in current scene script-->
 
-    <script id="VS01" 
-          type="x-shader/x-vertex">#version 300 es
-
-      in vec3 VertexPosition;
-      in vec4 VertexColor;
-      in vec3 VertexNormal;
-
-      uniform mat4 modelMatrix;
-      uniform mat4 viewMatrix;
-      uniform mat4 projectionMatrix;
-      
-      out vec4 vPos;
-      out vec4 vCol;
-      out vec4 vNorm;
-      
-      void main()
-      {
-          gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(VertexPosition, 1.0);
-          vPos =  vec4(VertexPosition, 1.0);
-          vCol = VertexColor;
-
-          mat3 normalMatrix = mat3(transpose(inverse(modelMatrix))); // Compute the normal matrix
-          vNorm = vec4(normalize(normalMatrix * VertexNormal), 1.0); // Transform and normalize the normal
-      }
-      
-    </script>
-    
-    <script id="FS01" 
-    type="x-shader/x-fragment">#version 300 es
-    
-    precision mediump float;
-    
-    //Attributes
-    in vec4 vPos;
-    in vec4 vCol;
-    in vec4 vNorm;
-
-    //Uniforms
-    uniform float shadingMode;
-    uniform float isLine;
-    uniform vec4 fogColor;
-    uniform float wireframeIgnoreFog;
-    uniform float wireframeOpacity;
-    uniform float nPlane;
-    uniform float fPlane;
-    uniform float fogAmount;
-    uniform float fogPower;
-
-    //Out fragment color
-    out vec4 fragmentColor;
-    
-    float saturate(float value)
-    {
-        return clamp(value, 0.0, 1.0);
-    }
-    
-    float linearDepth(float inDepth)
-    {
-        float z = inDepth * 2.0 - 1.0;
-        return (2.0 * nPlane * fPlane) / (fPlane + nPlane - z * (fPlane - nPlane));
-    }
-    
-    void main() 
-    {
-        float depth = linearDepth(gl_FragCoord.z) / fPlane;
-        float correctedDepth = saturate(pow(depth * fogAmount, fogPower));
-        vec4 vDepth = vec4(vec3(correctedDepth), 1.0);
-    
-        vec4 topColor = vec4(fogColor);
-        vec3 norm3 = vec3(vNorm.x, vNorm.y, vNorm.z);
-        vec3 lightDir = normalize(vec3(1.0, 1.0, 1.0));
-        float diffMult = 1.05;
-        float diffPow = 1.0;
-        float diff = pow((saturate(dot(norm3, lightDir)) * diffMult), diffPow);
-        float topGrad = saturate(diff);
-
-        float steps = 10.0;
-        float diffShadow = pow((clamp(dot(norm3, lightDir), -1.0, 0.0) * diffMult), diffPow);
-        float quantize = floor(topGrad * steps) / steps;
-        vec4 colorGradient = vCol + quantize * fogColor * 1.0;
-
-        vec4 fogFlatColor = mix(colorGradient, fogColor, correctedDepth);
-        vec4 fogNormal = mix((vNorm * 0.5 + 0.5), fogColor, correctedDepth);
-        vec4 wireframeBaseColor = vec4(0.0, 0.0, 0.0, 1.0);
-        vec4 wireframeFogColor = mix(wireframeBaseColor, fogFlatColor, correctedDepth);
-        vec4 undefinedError = vec4(1.0, 0.0, 1.0, 1.0);
-    
-        if(shadingMode == 0.0) //Wireframe
-        {
-            if(isLine == 1.0){
-                if(wireframeIgnoreFog == 1.0){
-                    fragmentColor = mix(fogColor, wireframeBaseColor, wireframeOpacity);
-                }
-                else{
-                    fragmentColor = mix(fogColor, mix(wireframeBaseColor, fogColor, correctedDepth), wireframeOpacity);
-                }
-            }
-            else fragmentColor = undefinedError;
-        }
-        else if(shadingMode == 1.0) //Color
-        {
-            fragmentColor = fogFlatColor;
-        }
-        else if(shadingMode == 2.0) //Color+Wireframe
-        {
-            if(isLine == 1.0){
-                if(wireframeIgnoreFog == 1.0){
-                    fragmentColor = mix(fogFlatColor, wireframeBaseColor, wireframeOpacity);
-                }
-                else{
-                    fragmentColor = mix(fogFlatColor, wireframeFogColor, wireframeOpacity);
-                }
-            }
-            else{
-                fragmentColor = fogFlatColor;
-            }
-        }
-        else if(shadingMode == 3.0) //Normal
-        {
-            fragmentColor = fogNormal;
-        }
-        else if(shadingMode == 4.0) //Normal+Wireframe
-        {
-            if(isLine == 1.0){
-                if(wireframeIgnoreFog == 1.0){
-                    fragmentColor = mix(fogNormal, wireframeBaseColor, wireframeOpacity);
-                }
-                else{
-                    fragmentColor = mix(fogNormal, mix(wireframeBaseColor, fogNormal, correctedDepth), wireframeOpacity);
-                }
-            }
-            else{
-                fragmentColor = fogNormal;
-            }
-        }
-        else //Undefined
-        {
-            fragmentColor = undefinedError;
-        }
-    }
-    </script>
-
-    <script id="VS02" 
-        type="x-shader/x-vertex">#version 300 es
+        <script id="VS01" 
+            type="x-shader/x-vertex">#version 300 es
 
         in vec3 VertexPosition;
-        in vec3 VertexColor;
+        in vec4 VertexColor;
         in vec3 VertexNormal;
 
         uniform mat4 modelMatrix;
         uniform mat4 viewMatrix;
         uniform mat4 projectionMatrix;
-
+        
         out vec4 vPos;
         out vec4 vCol;
-        out vec3 vNorm;
-
+        out vec4 vNorm;
+        
         void main()
-      {
-          vec4 vertexPos = vec4(VertexPosition, 1.0);
-          gl_Position = projectionMatrix * viewMatrix * modelMatrix * vertexPos;
-          vPos =  vec4(VertexPosition, 1.0);
-          vCol = VertexColor;
+        {
+            gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(VertexPosition, 1.0);
+            vPos =  vec4(VertexPosition, 1.0);
+            vCol = VertexColor;
 
-          mat3 normalMatrix = mat3(transpose(inverse(modelMatrix))); // Compute the normal matrix
-          vNorm = vec4(normalize(normalMatrix * VertexNormal), 1.0); // Transform and normalize the normal
-      }
-    </script>
-    
+            mat3 normalMatrix = mat3(transpose(inverse(modelMatrix)));
+            vNorm = vec4(normalize(normalMatrix * VertexNormal), 1.0);
+        }
+        
+        </script>
+        
+        <script id="FS01" 
+        type="x-shader/x-fragment">#version 300 es
+        
+        precision mediump float;
+        
+        //Attributes
+        in vec4 vPos;
+        in vec4 vCol;
+        in vec4 vNorm;
+
+        //Uniforms
+        uniform float shadingMode;
+        uniform float isLine;
+        uniform vec4 fogColor;
+        uniform float wireframeIgnoreFog;
+        uniform float wireframeOpacity;
+        uniform float nPlane;
+        uniform float fPlane;
+        uniform float fogAmount;
+        uniform float fogPower;
+
+        //Out fragment color
+        out vec4 fragmentColor;
+        
+        float saturate(float value)
+        {
+            return clamp(value, 0.0, 1.0);
+        }
+        
+        float linearDepth(float inDepth)
+        {
+            float z = inDepth * 2.0 - 1.0;
+            return (2.0 * nPlane * fPlane) / (fPlane + nPlane - z * (fPlane - nPlane));
+        }
+        
+        void main() 
+        {
+            float depth = linearDepth(gl_FragCoord.z) / fPlane;
+            float correctedDepth = saturate(pow(depth * fogAmount, fogPower));
+            vec4 vDepth = vec4(vec3(correctedDepth), 1.0);
+        
+            vec4 topColor = vec4(fogColor);
+            vec3 norm3 = vec3(vNorm.x, vNorm.y, vNorm.z);
+            vec3 lightDir = normalize(vec3(1.0, 1.0, 1.0));
+            float diffMult = 1.05;
+            float diffPow = 1.0;
+            float diff = pow((saturate(dot(norm3, lightDir)) * diffMult), diffPow);
+            float topGrad = saturate(diff);
+
+            float steps = 10.0;
+            float diffShadow = pow((clamp(dot(norm3, lightDir), -1.0, 0.0) * diffMult), diffPow);
+            float quantize = floor(topGrad * steps) / steps;
+            vec4 colorGradient = vCol + quantize * fogColor * 1.0;
+
+            vec4 fogFlatColor = mix(colorGradient, fogColor, correctedDepth);
+            vec4 fogNormal = mix((vNorm * 0.5 + 0.5), fogColor, correctedDepth);
+            vec4 wireframeBaseColor = vec4(0.0, 0.0, 0.0, 1.0);
+            vec4 wireframeFogColor = mix(wireframeBaseColor, fogFlatColor, correctedDepth);
+            vec4 undefinedError = vec4(1.0, 0.0, 1.0, 1.0);
+        
+            if(shadingMode == 0.0) //Wireframe
+            {
+                if(isLine == 1.0){
+                    if(wireframeIgnoreFog == 1.0){
+                        fragmentColor = mix(fogColor, wireframeBaseColor, wireframeOpacity);
+                    }
+                    else{
+                        fragmentColor = mix(fogColor, mix(wireframeBaseColor, fogColor, correctedDepth), wireframeOpacity);
+                    }
+                }
+                else fragmentColor = undefinedError;
+            }
+            else if(shadingMode == 1.0) //Color
+            {
+                fragmentColor = fogFlatColor;
+            }
+            else if(shadingMode == 2.0) //Color+Wireframe
+            {
+                if(isLine == 1.0){
+                    if(wireframeIgnoreFog == 1.0){
+                        fragmentColor = mix(fogFlatColor, wireframeBaseColor, wireframeOpacity);
+                    }
+                    else{
+                        fragmentColor = mix(fogFlatColor, wireframeFogColor, wireframeOpacity);
+                    }
+                }
+                else{
+                    fragmentColor = fogFlatColor;
+                }
+            }
+            else if(shadingMode == 3.0) //Normal
+            {
+                fragmentColor = fogNormal;
+            }
+            else if(shadingMode == 4.0) //Normal+Wireframe
+            {
+                if(isLine == 1.0){
+                    if(wireframeIgnoreFog == 1.0){
+                        fragmentColor = mix(fogNormal, wireframeBaseColor, wireframeOpacity);
+                    }
+                    else{
+                        fragmentColor = mix(fogNormal, mix(wireframeBaseColor, fogNormal, correctedDepth), wireframeOpacity);
+                    }
+                }
+                else{
+                    fragmentColor = fogNormal;
+                }
+            }
+            else //Undefined
+            {
+                fragmentColor = undefinedError;
+            }
+        }
+        </script>
     </head>
 
     <body>

@@ -1,6 +1,6 @@
 class GameObject 
 {
-  constructor(inModel, inShader, colors = false, uv1 = true)
+  constructor(inModel, inShader, colors, uv1)
   {
     this.model = inModel;
     this.instances = [];
@@ -21,16 +21,18 @@ class GameObject
     this.initAttributeBuffer('indices', 'ELEMENT_ARRAY_BUFFER', Uint16Array);
     this.initAttributeBuffer('vertices', 'ARRAY_BUFFER', Float32Array);
     this.initAttributeBuffer('normals', 'ARRAY_BUFFER', Float32Array);
-    if(inColors) this.initAttributeBuffer('colors', 'ARRAY_BUFFER', Float32Array);
-    if(inUv1) this.initAttributeBuffer('texcoords1', 'ARRAY_BUFFER', Float32Array);
+    if(inColors) {this.initAttributeBuffer('colors', 'ARRAY_BUFFER', Float32Array); console.log("init colors");}
+    if(inUv1) {this.initAttributeBuffer('texcoords1', 'ARRAY_BUFFER', Float32Array); console.log("init uv1");}
   }
 
   initializeUv2(){
     this.initAttributeBuffer('texcoords2', 'ARRAY_BUFFER', Float32Array);
+    console.log("init uv2");
   }
 
   initializeUv3(){
     this.initAttributeBuffer('texcoords3', 'ARRAY_BUFFER', Float32Array);
+    console.log("init uv3");
   }
 
   initAttributeBuffer(attributeName, bufferType, arrayType) {
@@ -97,14 +99,15 @@ class GameObject
 
 class ObjectInstance extends GameObject
 {
-  constructor(inGameObject, inObjectCollection)
+  constructor(inGameObject, colors, uv1)
   {
-    super(inGameObject.model, inGameObject.shader);
+    super(inGameObject.model, inGameObject.shader, colors, uv1);
 
     this.parent = inGameObject;
-    this.collection = inObjectCollection;
-    
-    this.modelMatrixIndex = mat4.create();
+
+    //this.shader = inGameObject.shader;
+    this.collection = this.shader.collection;
+    //this.modelMatrixIndex = mat4.create();
 
     this.triCount = Math.round(this.parent.indices.length / 9);
 

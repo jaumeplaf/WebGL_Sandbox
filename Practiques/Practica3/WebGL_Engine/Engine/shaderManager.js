@@ -1,9 +1,16 @@
 class Shader 
 {
-    constructor(vsSource, fsSource, useColors = false, useUv1 = true, useUv2 = false, useUv3 = false) 
+    constructor(inScene, vsSource, fsSource, useColors = false, useUv1 = true, useUv2 = false, useUv3 = false) 
     {
+        this.scene = inScene;
         this.program = this.compileAndLinkShaders(document.getElementById(vsSource).text, document.getElementById(fsSource).text);
         this.initializeUniforms(useColors, useUv1, useUv2, useUv3);
+        this.initializeCollection();
+    }
+    
+    initializeCollection(){
+        this.collection = new ObjectCollection(this);
+        this.scene.addCollection(this.collection);
     }
 
     compileAndLinkShaders(vertexSource, fragmentSource) 
@@ -51,28 +58,34 @@ class Shader
         
         this.program.vertexPositionAttribute = window.gl.getAttribLocation(this.program, "VertexPosition");
         window.gl.enableVertexAttribArray(this.program.vertexPositionAttribute);
+        console.log("VERTEX ON!");
         
         this.program.vertexNormalAttribute = window.gl.getAttribLocation(this.program, "VertexNormal");
         window.gl.enableVertexAttribArray(this.program.vertexNormalAttribute);
+        console.log("NORMAL ON!");
 
         if(inUseColor){
             this.program.vertexColorAttribute = window.gl.getAttribLocation(this.program, "VertexColor");
             window.gl.enableVertexAttribArray(this.program.vertexColorAttribute);
+            console.log("COLOR ON!");
         }
 
         if(inUseUv1){
             this.program.texCoords1Attribute = window.gl.getAttribLocation(this.program, "TexCoords1");
             window.gl.enableVertexAttribArray(this.program.texCoords1Attribute);
+            console.log("UV1 ON!");
         }
 
         if(inUseUv2){
             this.program.texCoords2Attribute = window.gl.getAttribLocation(this.program, "TexCoords2");
             window.gl.enableVertexAttribArray(this.program.texCoords2Attribute);
+            console.log("UV2 ON!");
         }
 
         if(inUseUv3){
             this.program.texCoords3Attribute = window.gl.getAttribLocation(this.program, "TexCoords3");
             window.gl.enableVertexAttribArray(this.program.texCoords3Attribute);
+            console.log("UV3 ON!");
         }
         
         //Uniforms

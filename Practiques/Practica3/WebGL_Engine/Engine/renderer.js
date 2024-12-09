@@ -14,6 +14,14 @@ function initRendering()
 
 function drawModel(inInput, model) 
 {
+  console.log("Drawing model:", {
+    indices: model.indices.length,
+    vertices: model.vertices.length,
+    normals: model.normals.length,
+    colors: model.idBufferColors ? model.colors.length : "No colors",
+    shadingMode: inInput.shadingMode
+});
+
   window.gl.bindBuffer(window.gl.ELEMENT_ARRAY_BUFFER, model.idBufferIndices);
 
   window.gl.bindBuffer(window.gl.ARRAY_BUFFER, model.idBufferVertices);
@@ -26,20 +34,32 @@ function drawModel(inInput, model)
     window.gl.bindBuffer(window.gl.ARRAY_BUFFER, model.idBufferColors);
     window.gl.vertexAttribPointer(model.shader.program.vertexColorAttribute, 4, window.gl.FLOAT, false, 0, 0);
   }
+  else{
+    window.gl.disableVertexAttribArray(model.shader.program.vertexColorAttribute);
+  }
 
   if(model.idBufferTexcoords1){
     window.gl.bindBuffer(window.gl.ARRAY_BUFFER, model.idBufferTexcoords1);
     window.gl.vertexAttribPointer(model.shader.program.texCoords1Attribute, 2, window.gl.FLOAT, false, 0, 0);
+  }
+  else{
+    window.gl.disableVertexAttribArray(model.shader.program.texCoords1Attribute);
   }
 
   if(model.idBufferTexcoords2){
     window.gl.bindBuffer(window.gl.ARRAY_BUFFER, model.idBufferTexcoords2);
     window.gl.vertexAttribPointer(model.shader.program.texCoords2Attribute, 2, window.gl.FLOAT, false, 0, 0);
   }
+  else{
+    window.gl.disableVertexAttribArray(model.shader.program.texCoords2Attribute);
+  }
 
   if(model.idBufferTexcoords3){  
     window.gl.bindBuffer(window.gl.ARRAY_BUFFER, model.idBufferTexcoords3);
     window.gl.vertexAttribPointer(model.shader.program.texCoords3Attribute, 2, window.gl.FLOAT, false, 0, 0);
+  }
+  else{
+    window.gl.disableVertexAttribArray(model.shader.program.texCoords2Attribute);
   }
     
 

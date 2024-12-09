@@ -2,6 +2,7 @@ class GameObject
 {
   constructor(inModel, inShader, colors, uv1)
   {
+    this.name = inModel.name;
     this.model = inModel;
     this.instances = [];
 
@@ -88,31 +89,36 @@ class GameObject
         mat4.fromRotation(R, degToRad(angle), this.rotationAxis);
         mat4.multiply(this.modelMatrixIndex, R, this.modelMatrixIndex);
     }
+  } 
 }
-
-  draw(inInput){
-    drawModel(inInput, this);
-  }
-
- 
-  }
 
 class ObjectInstance extends GameObject
 {
-  constructor(inGameObject, colors, uv1)
+  constructor(inGameObject)
   {
-    super(inGameObject.model, inGameObject.shader, colors, uv1);
+    super(inGameObject.model, inGameObject.shader);
 
     this.parent = inGameObject;
-
-    //this.shader = inGameObject.shader;
     this.collection = this.shader.collection;
-    //this.modelMatrixIndex = mat4.create();
-
     this.triCount = Math.round(this.parent.indices.length / 9);
-
+    this.getBuffers();
+    
+    console.log("Colors: ", this.colors);
     this.addInstance();
   } 
+
+  getBuffers() {
+    //Copy buffer IDs and data from parent if they exist
+    const attributes = ['indices', 'vertices', 'normals', 'colors', 'texcoords1', 'texcoords2', 'texcoords3'];
+    
+    attributes.forEach(attr => {
+      const bufferIdName = `idBuffer${attr.charAt(0).toUpperCase() + attr.slice(1)}`;
+      if (this.parent[bufferIdName]) {
+        this[bufferIdName] = this.parent[bufferIdName];
+        this[attr] = this.parent[attr];
+      }
+    });
+  }
   
   setColor(newColor)
   {
@@ -138,7 +144,7 @@ class ObjectInstance extends GameObject
     //Clear buffers
   }
 
-  draw(inInput)
+  drawInst(inInput)
   {
     this.collection.shader.setModelMatrix(this.modelMatrixIndex);
     drawModel(inInput, this);
@@ -172,9 +178,9 @@ class ObjectCollection
     {
       for(let object of this.sharedShaderGroup){
           this.shader.setModelMatrix(object.modelMatrixIndex);
-          this.totalTriCount += object.triCount;
-          this.drawCalls ++;
-          object.draw(inInput);
+          //this.totalTriCount += object.triCount;
+          //this.drawCalls ++;
+          object.drawInst(inInput);
       }
     }
 

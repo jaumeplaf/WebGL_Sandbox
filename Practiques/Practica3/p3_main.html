@@ -34,7 +34,28 @@
         }
         
         </script>
+
+        <script id="FS02"
+        type="x-shader/x-fragment">#version 300 es
+            
+            precision mediump float;
+            
+            //Attributes
+            in vec4 vPos;
+            in vec4 vCol;
+            in vec4 vNorm;
+
+            //Out fragment color
+            out vec4 fragmentColor;
         
+
+            void main() 
+            {
+                fragmentColor = vCol;
+            }
+
+        </script>
+
         <script id="FS01" 
         type="x-shader/x-fragment">#version 300 es
         

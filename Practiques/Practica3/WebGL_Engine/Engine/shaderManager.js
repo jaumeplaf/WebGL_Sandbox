@@ -55,7 +55,6 @@ class Shader
 
     initializeUniforms(inUseColor, inUseUv1, inUseUv2, inUseUv3)
     {
-        
         this.program.vertexPositionAttribute = window.gl.getAttribLocation(this.program, "VertexPosition");
         window.gl.enableVertexAttribArray(this.program.vertexPositionAttribute);
         console.log("VERTEX ON!");

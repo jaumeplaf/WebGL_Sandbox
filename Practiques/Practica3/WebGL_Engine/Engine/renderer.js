@@ -14,6 +14,7 @@ function initRendering()
 
 function drawModel(inInput, model) 
 {
+  /*
   console.log("Drawing model:", {
     indices: model.indices.length,
     vertices: model.vertices.length,
@@ -21,6 +22,7 @@ function drawModel(inInput, model)
     colors: model.idBufferColors ? model.colors.length : "No colors",
     shadingMode: inInput.shadingMode
 });
+*/
 
   window.gl.bindBuffer(window.gl.ELEMENT_ARRAY_BUFFER, model.idBufferIndices);
 

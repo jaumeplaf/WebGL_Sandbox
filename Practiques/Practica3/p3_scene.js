@@ -29,12 +29,9 @@ let base_arrowZ = new GameObject(SM_DebugArrow_Z, shaderC01, true, false);
 
 //Initialize object instances
 let floor = new ObjectInstance(base_plane);
-floor.setMatrix(0, -10, -5, 100);
+floor.setMatrix(0, -10, -5, 1000);
+floor.setColor([0.6, 0.6, 0.6, 1.0]);
 
-let cube01 = new ObjectInstance(base_cube);
-cube01.setMatrix(0, 0, 0, 10);
-
-/*
 let arrowX = new ObjectInstance(base_arrowX);
 arrowX.setMatrix(0, 0, -5, 100);
 arrowX.setTransform(-1,1,1);
@@ -44,7 +41,7 @@ arrowY.setMatrix(0, 0, -5, 100);
 
 let arrowZ = new ObjectInstance(base_arrowZ);
 arrowZ.setMatrix(0, 0, -5, 100);
-*/
+
 
 
 //TODO: shader: add a on/off uniform float UseTextureMap, UseNormalMap, UseDisplacementMap, UseEnvironmentMap, UseLightingMaps. Look into shader permutations/instances/variants.
@@ -62,8 +59,6 @@ function debugInstance(instance) {
     console.log("Debug projection matrix: ", camera01.projectionMatrix); 
 }
 
-debugInstance(floor);
-debugInstance(cube01);
 /*
 debugInstance(arrowX);
 debugInstance(arrowY);

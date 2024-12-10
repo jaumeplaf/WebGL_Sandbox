@@ -120,11 +120,24 @@ class ObjectInstance extends GameObject
     });
   }
   
-  setColor(newColor)
-  {
+  setColor(newColor) {
     this.color = newColor;
+    console.log("Setting new color: ", newColor);
+    console.log("Initial colors array: ", this.colors);
+  
+    for (let i = 0; i < this.colors.length; i += 4) {
+      this.colors[i] = newColor[0];
+      this.colors[i + 1] = newColor[1];
+      this.colors[i + 2] = newColor[2];
+      this.colors[i + 3] = newColor[3];
+    }
+  
+    console.log("Updated colors array: ", this.colors);
+  
+    window.gl.bindBuffer(window.gl.ARRAY_BUFFER, this.idBufferColors);
+    window.gl.bufferSubData(window.gl.ARRAY_BUFFER, 0, new Float32Array(this.colors));
+    console.log("Buffer updated with new colors");
   }
-
   addInstance(){
     this.parent.instances.push(this);
     this.collection.add(this);

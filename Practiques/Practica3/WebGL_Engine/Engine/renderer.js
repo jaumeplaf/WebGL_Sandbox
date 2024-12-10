@@ -12,18 +12,26 @@ function initRendering()
   window.gl.enable(gl.CULL_FACE);
 }
 
-function drawModel(inInput, model) 
+function drawModel(inInput, model)
 {
-  /*
-  console.log("Drawing model:", {
-    indices: model.indices.length,
-    vertices: model.vertices.length,
-    normals: model.normals.length,
-    colors: model.idBufferColors ? model.colors.length : "No colors",
-    shadingMode: inInput.shadingMode
-});
-*/
+  window.gl.bindBuffer(window.gl.ELEMENT_ARRAY_BUFFER, model.idBufferIndices);
 
+  window.gl.bindBuffer(window.gl.ARRAY_BUFFER, model.idBufferVertices);
+  window.gl.vertexAttribPointer(model.shader.program.vertexPositionAttribute, 3, window.gl.FLOAT, false, 0, 0);
+
+  window.gl.bindBuffer(window.gl.ARRAY_BUFFER, model.idBufferNormals);
+  window.gl.vertexAttribPointer(model.shader.program.vertexNormalAttribute, 3, window.gl.FLOAT, false, 0, 0);
+
+  window.gl.bindBuffer(window.gl.ARRAY_BUFFER, model.idBufferColors);
+  window.gl.vertexAttribPointer(model.shader.program.vertexColorAttribute, 4, window.gl.FLOAT, false, 0, 0);
+
+  window.gl.polygonOffset(0.0, 0.0);
+
+  window.gl.drawElements(window.gl.TRIANGLES, model.indices.length, window.gl.UNSIGNED_SHORT, 0);
+}
+
+function drawModelOld(inInput, model) 
+{
   window.gl.bindBuffer(window.gl.ELEMENT_ARRAY_BUFFER, model.idBufferIndices);
 
   window.gl.bindBuffer(window.gl.ARRAY_BUFFER, model.idBufferVertices);

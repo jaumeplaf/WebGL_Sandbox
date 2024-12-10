@@ -11,21 +11,21 @@ const P3 = new Scene(camera01, player01);
 //Initialize shaders. Shaders must be declared in the HTML document and have an ID
 //TODO: RENAME TO MATERIALS. MATERIALS ARE SHADER INSTANCES. SHADERS ARE SOURCE GLSL
 //TODO: find some way to link imported material name (MODIFY JSON EXPORTER TO HAVE THIS, per vertex ID? look into .obj(.mtl)) with these initialized materials
-const shaderC01 = new Shader(P3, "VS01", "FS02", true, false, false, false);
-/*
-const shaderT01 = new Shader(P3, "VS01", "FS01", false, true, false, false);
-*/
+const M_Color = new Shader(P3, "VS_VertexColors_01", "FS_VertexColors_01", true, false, false, false);
+
+const M_Texture = new Shader(P3, "VS01", "FS01", false, true, false, false);
+
 
 
 //TODO: refactor gameObjects to get created on shader initialization (can have the same name), auto-add it on instance creation,
 //create instance method to overwrite shader, removing itself from the collection and adding to new collection.
 
 //Initialize GameObjects
-let base_plane = new GameObject(SM_Plane, shaderC01, true, false);
-let base_cube = new GameObject(SM_Cube, shaderC01, true, false);
-let base_arrowX = new GameObject(SM_DebugArrow_X, shaderC01, true, false);
-let base_arrowY = new GameObject(SM_DebugArrow_Y, shaderC01, true, false);
-let base_arrowZ = new GameObject(SM_DebugArrow_Z, shaderC01, true, false);
+let base_plane = new GameObject(SM_Plane, M_Color, true, false);
+let base_cube = new GameObject(SM_Cube, M_Color, true, false);
+let base_arrowX = new GameObject(SM_DebugArrow_X, M_Color, true, false);
+let base_arrowY = new GameObject(SM_DebugArrow_Y, M_Color, true, false);
+let base_arrowZ = new GameObject(SM_DebugArrow_Z, M_Color, true, false);
 
 //Initialize object instances
 let floor = new ObjectInstance(base_plane);
@@ -67,5 +67,5 @@ debugInstance(arrowZ);
 
 window.onload = function(){
     P3.drawScene();
-    //console.log((shaderC01.collection.totalTriCount + shaderT01.collection.totalTriCount) + " triangles");
+    //console.log((M_Color.collection.totalTriCount + shaderT01.collection.totalTriCount) + " triangles");
 }

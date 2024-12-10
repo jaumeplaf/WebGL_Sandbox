@@ -53,6 +53,71 @@
 //AO -> calcula integral per mirar que te a prop?
 //
 //
+//Ray tracing & extensions: (Practica 4 NO webgl, nomes utiitzem <canvas>, ?webgl "editor", "render mode" button?, "colored room" scene?)
+    //Pixel-model intersection
+    //[...]
+    //
+    //Ray-triangle intersection:
+        //Compute intersection with triangle plane
+        //Check if intersection is inside triangle area
+            //Precalculate UV, UU, VV, D, or:
+            //Calculate with cross products
+    //
+//
+//Acceleration structures:
+        //Bounding volumes
+        //Binary trees
+        //[...]
+//
+//Reflections:
+    //Snell's law!
+//
+//
+//Components:
+    //Diffuse (same as ray casting, with shadows)
+    //Specular (same as ray casting, with shadows)
+    //Mirror reflexion (recursive)
+    //Refraction (recursive)
+//
+//?Recursive algos? "action"? 
+    //Stop condition:
+        //Lose "importance" on each bounce -> Ray tree depth
+        //Max bounces
+//
+//Ray tree:
+    //Each bounce splits into reflection and refraction
+    //Tree from eye (root), bouncing in scene, then to each light
+//
+//
+//Antialiasing (Ray tracing):
+    //Jittering: area-weighted jittered gaussian distribution
+    //Conventional ray tracing: 
+        //infinitesimally thin rays
+        //perfect, sharp multiple reflections and shadows
+        //NOT reality
+        //Surfaces are NOT perfectly smooth
+    //Distributed ray tracing! Fixes this
+        //Can enable DOF, motion blur...
+//
+//?Look at instantiation
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 //TODO: blenderJSONexporter: add warning if faces are not triangulated!!!

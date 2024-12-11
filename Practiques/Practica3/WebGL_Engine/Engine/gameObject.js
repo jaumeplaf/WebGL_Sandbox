@@ -1,6 +1,6 @@
-class GameObject 
+class MeshObject 
 {
-  constructor(inModel, inShader, colors, uv1)
+  constructor(inModel, inMaterial, colors, uv1)
   {
     this.name = inModel.name;
     this.model = inModel;
@@ -9,7 +9,7 @@ class GameObject
     this.modelMatrixIndex = mat4.create();
     this.color = [0.8,0.8,0.8];
     
-    this.shader = inShader;
+    this.material = inMaterial;
 
     this.rotationSpeed = 0;
     this.rotationAxis = [0, 1, 0];
@@ -22,18 +22,24 @@ class GameObject
     this.initAttributeBuffer('indices', 'ELEMENT_ARRAY_BUFFER', Uint16Array);
     this.initAttributeBuffer('vertices', 'ARRAY_BUFFER', Float32Array);
     this.initAttributeBuffer('normals', 'ARRAY_BUFFER', Float32Array);
-    if(inColors) {this.initAttributeBuffer('colors', 'ARRAY_BUFFER', Float32Array); console.log("init colors");}
-    if(inUv1) {this.initAttributeBuffer('texcoords1', 'ARRAY_BUFFER', Float32Array); console.log("init uv1");}
+    if(inColors) {
+      this.initAttributeBuffer('colors', 'ARRAY_BUFFER', Float32Array); 
+      //console.log("init colors");
+    }
+    if(inUv1) {
+      this.initAttributeBuffer('texcoords1', 'ARRAY_BUFFER', Float32Array); 
+      //console.log("init uv1");
+    }
   }
 
   initializeUv2(){
     this.initAttributeBuffer('texcoords2', 'ARRAY_BUFFER', Float32Array);
-    console.log("init uv2");
+    //console.log("init uv2");
   }
 
   initializeUv3(){
     this.initAttributeBuffer('texcoords3', 'ARRAY_BUFFER', Float32Array);
-    console.log("init uv3");
+    //console.log("init uv3");
   }
 
   initAttributeBuffer(attributeName, bufferType, arrayType) {
@@ -92,18 +98,19 @@ class GameObject
   } 
 }
 
-class ObjectInstance extends GameObject
+class MeshActor extends MeshObject
 {
-  constructor(inGameObject)
+  constructor(inMeshObject)
   {
-    super(inGameObject.model, inGameObject.shader);
+    super(inMeshObject.model, inMeshObject.material);
 
-    this.parent = inGameObject;
-    this.collection = this.shader.collection;
+    this.parent = inMeshObject;
+    this.collection = this.material.collection;
     this.triCount = Math.round(this.parent.indices.length / 9);
     this.getBuffers();
     
     console.log("Colors: ", this.colors);
+    console.log("Texcoords1: ", this.texcoords1);
     this.addInstance();
   } 
 
@@ -122,8 +129,8 @@ class ObjectInstance extends GameObject
   
   setColor(newColor) {
     this.color = newColor;
-    console.log("Setting new color: ", newColor);
-    console.log("Initial colors array: ", this.colors);
+    //console.log("Setting new color: ", newColor);
+    //console.log("Initial colors array: ", this.colors);
   
     for (let i = 0; i < this.colors.length; i += 4) {
       this.colors[i] = newColor[0];
@@ -132,11 +139,11 @@ class ObjectInstance extends GameObject
       this.colors[i + 3] = newColor[3];
     }
   
-    console.log("Updated colors array: ", this.colors);
+    //console.log("Updated colors array: ", this.colors);
   
     window.gl.bindBuffer(window.gl.ARRAY_BUFFER, this.idBufferColors);
     window.gl.bufferSubData(window.gl.ARRAY_BUFFER, 0, new Float32Array(this.colors));
-    console.log("Buffer updated with new colors");
+    //console.log("Buffer updated with new colors");
   }
   addInstance(){
     this.parent.instances.push(this);
@@ -159,38 +166,38 @@ class ObjectInstance extends GameObject
 
   drawInst(inInput)
   {
-    this.collection.shader.setModelMatrix(this.modelMatrixIndex);
+    this.collection.material.setModelMatrix(this.modelMatrixIndex);
     drawModel(inInput, this);
   }
 }
 
-class ObjectCollection
+class SceneActorsCollection
 {
-    constructor(inShader)
+    constructor(inMaterial)
     {
-        this.sharedShaderGroup = [];
-        this.shader = inShader;
+        this.sharedMaterialGroup = [];
+        this.material = inMaterial;
         this.totalTriCount = 0;
         this.drawCalls = 0;
     }
 
     add(model)
     {
-        this.sharedShaderGroup.push(model);
+        this.sharedMaterialGroup.push(model);
     }
 
     remove(model) 
     {
-      const index = this.sharedShaderGroup.indexOf(model);
+      const index = this.sharedMaterialGroup.indexOf(model);
       if (index !== -1) {
-        this.sharedShaderGroup.splice(index, 1);
+        this.sharedMaterialGroup.splice(index, 1);
       }
     }
 
     draw(inInput)
     {
-      for(let object of this.sharedShaderGroup){
-          this.shader.setModelMatrix(object.modelMatrixIndex);
+      for(let object of this.sharedMaterialGroup){
+          this.material.setModelMatrix(object.modelMatrixIndex);
           //this.totalTriCount += object.triCount;
           //this.drawCalls ++;
           object.drawInst(inInput);
@@ -198,4 +205,4 @@ class ObjectCollection
     }
 
 }
-  
+

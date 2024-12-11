@@ -1,4 +1,3 @@
-
 //Initialize camera
 const camera01 = new Camera(0.1, 500.0, [15,15,15], [0,15,-1], false);
 
@@ -11,37 +10,39 @@ const P3 = new Scene(camera01, player01);
 //Initialize shaders. Shaders must be declared in the HTML document and have an ID
 //TODO: RENAME TO MATERIALS. MATERIALS ARE SHADER INSTANCES. SHADERS ARE SOURCE GLSL
 //TODO: find some way to link imported material name (MODIFY JSON EXPORTER TO HAVE THIS, per vertex ID? look into .obj(.mtl)) with these initialized materials
-const M_Color = new Shader(P3, "VS_VertexColors_01", "FS_VertexColors_01", true, false, false, false);
+const M_Color = new Material(P3, "VS_VertexColors_01", "FS_VertexColors_01", true, false, false, false);
 
-const M_Texture = new Shader(P3, "VS01", "FS01", false, true, false, false);
+const M_Texture = new Material(P3, "VS_Texture_01", "FS_Texture_01", false, true, false, false);
 
 
 
-//TODO: refactor gameObjects to get created on shader initialization (can have the same name), auto-add it on instance creation,
+//TODO: refactor MeshObjects to get created on shader initialization (can have the same name), auto-add it on instance creation,
 //create instance method to overwrite shader, removing itself from the collection and adding to new collection.
 
-//Initialize GameObjects
-let base_plane = new GameObject(SM_Plane, M_Color, true, false);
-let base_cube = new GameObject(SM_Cube, M_Color, true, false);
-let base_arrowX = new GameObject(SM_DebugArrow_X, M_Color, true, false);
-let base_arrowY = new GameObject(SM_DebugArrow_Y, M_Color, true, false);
-let base_arrowZ = new GameObject(SM_DebugArrow_Z, M_Color, true, false);
+//Initialize MeshObjects
+const base_plane = new MeshObject(SM_Plane, M_Color, true, false);
+const base_cube = new MeshObject(SM_Cube, M_Color, true, false);
+const base_arrowX = new MeshObject(SM_DebugArrow_X, M_Color, true, false);
+const base_arrowY = new MeshObject(SM_DebugArrow_Y, M_Color, true, false);
+const base_arrowZ = new MeshObject(SM_DebugArrow_Z, M_Color, true, false);
+
+const base_wheel = new MeshObject(Wheel01, M_Texture, false, true);
 
 //Initialize object instances
-let floor = new ObjectInstance(base_plane);
+const floor = new MeshActor(base_plane);
 floor.setMatrix(0, -10, -5, 1000);
 floor.setColor([0.6, 0.6, 0.6, 1.0]);
 
-let arrowX = new ObjectInstance(base_arrowX);
+const arrowX = new MeshActor(base_arrowX);
 arrowX.setMatrix(0, 0, -5, 100);
 arrowX.setTransform(-1,1,1);
-
-let arrowY = new ObjectInstance(base_arrowY);
+const arrowY = new MeshActor(base_arrowY);
 arrowY.setMatrix(0, 0, -5, 100);
-
-let arrowZ = new ObjectInstance(base_arrowZ);
+const arrowZ = new MeshActor(base_arrowZ);
 arrowZ.setMatrix(0, 0, -5, 100);
 
+const wheel01 = new MeshActor(base_wheel);
+wheel01.setMatrix(0, 0, -5, 10);
 
 
 //TODO: shader: add a on/off uniform float UseTextureMap, UseNormalMap, UseDisplacementMap, UseEnvironmentMap, UseLightingMaps. Look into shader permutations/instances/variants.

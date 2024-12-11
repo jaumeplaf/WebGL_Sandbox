@@ -12,7 +12,7 @@ const P2 = new Scene(camera01, player01);
 
 //Initialize GameObject collections, for "batch drawing" (TBI) objects with shared shader
 
-let gameObjects01 = new ObjectCollection(masterShader01);
+let gameObjects01 = new SceneActorsCollection(masterShader01);
 P2.addCollection(gameObjects01);
 
 

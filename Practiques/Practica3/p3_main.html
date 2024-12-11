@@ -61,23 +61,26 @@
 
         in vec3 VertexPosition;
         in vec3 VertexNormal;
-
+        in vec2 VertexTexcoords;
+        
+        
         uniform mat4 modelMatrix;
         uniform mat4 viewMatrix;
         uniform mat4 projectionMatrix;
         
         out vec4 vPos;
-        out vec4 vCol;
         out vec4 vNorm;
+        out vec2 texCoords;
         
         void main()
         {
             gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(VertexPosition, 1.0);
             vPos =  vec4(VertexPosition, 1.0);
-            vCol = VertexColor;
 
             mat3 normalMatrix = mat3(transpose(inverse(modelMatrix)));
             vNorm = vec4(normalize(normalMatrix * VertexNormal), 1.0);
+
+            texCoords = VertexTexcoords;
         }
         
         </script>
@@ -89,8 +92,8 @@
             
             //Attributes
             in vec4 vPos;
-            in vec4 vCol;
             in vec4 vNorm;
+            in vec2 texCoords;
 
             //Out fragment color
             out vec4 fragmentColor;
@@ -98,7 +101,7 @@
 
             void main() 
             {
-                fragmentColor = vCol;
+                fragmentColor = vec4(texCoords.x, texCoords.y, 0.0, 1.0);
             }
 
         </script>
@@ -169,7 +172,7 @@
 
   <!-- Load model files -->
   <script src = "WebGL_Engine/Resources/modelsJSON/baseShapes.json"></script>
-  <script src = "Models/woodTrimMeshes.json"></script>
+  <script src = "WebGL_Engine/Resources/woodTrimMeshes.json"></script>
   
   <!-- Load engine scripts -->
   <script src = "WebGL_Engine/Engine/input.js"></script>

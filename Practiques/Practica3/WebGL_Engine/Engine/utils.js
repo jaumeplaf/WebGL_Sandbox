@@ -92,12 +92,12 @@ function generateInstancesRadial(GameObject, objectCollection, instanceNum, cent
         let y = center[1] + (Math.random() * 2 * maxHeight - maxHeight);
         
         let randomScale = Math.random() * (maxScale - minScale) + minScale;
-        let newInstance = new ObjectInstance(GameObject, objectCollection);
-        newInstance.setMatrix(x, y, z, randomScale);
+        let newMeshActor = new MeshActor(GameObject, objectCollection);
+        newMeshActor.setMatrix(x, y, z, randomScale);
         
         if(!orient) {
             let randomYRotation = Math.random() * 360;
-            newInstance.setRotation(randomYRotation, [0, 1, 0]);
+            newMeshActor.setRotation(randomYRotation, [0, 1, 0]);
         } else {
             // Calculate the angle using atan2
             let dx = x - center[0];
@@ -108,10 +108,10 @@ function generateInstancesRadial(GameObject, objectCollection, instanceNum, cent
             // Plus any additional rotation offset
             rotationAngle += 180 + rotationOffset;
             
-            newInstance.setRotation(rotationAngle, [0, 1, 0]);
+            newMeshActor.setRotation(rotationAngle, [0, 1, 0]);
         }
         
-        instances.push(newInstance);
+        instances.push(newMeshActor);
     }
     
     return instances;

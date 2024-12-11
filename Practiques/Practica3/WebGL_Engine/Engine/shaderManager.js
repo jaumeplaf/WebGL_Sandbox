@@ -1,4 +1,4 @@
-class Shader 
+class Material 
 {
     constructor(inScene, vsSource, fsSource, useColors = false, useUv1 = true, useUv2 = false, useUv3 = false) 
     {
@@ -9,7 +9,7 @@ class Shader
     }
     
     initializeCollection(){
-        this.collection = new ObjectCollection(this);
+        this.collection = new SceneActorsCollection(this);
         this.scene.addCollection(this.collection);
     }
 
@@ -34,16 +34,16 @@ class Shader
 
     newShader(type, source) 
     {
-        const shader = window.gl.createShader(type);
-        window.gl.shaderSource(shader, source);
-        window.gl.compileShader(shader);
+        const material = window.gl.createShader(type);
+        window.gl.shaderSource(material, source);
+        window.gl.compileShader(material);
 
-        if (!window.gl.getShaderParameter(shader, window.gl.COMPILE_STATUS)) {
-            console.error("Error compiling shader:", window.gl.getShaderInfoLog(shader));
+        if (!window.gl.getShaderParameter(material, window.gl.COMPILE_STATUS)) {
+            console.error("Error compiling material:", window.gl.getShaderInfoLog(material));
             return null;
         }
 
-        return shader;
+        return material;
     }
 
     use() 
@@ -57,34 +57,34 @@ class Shader
     {
         this.program.vertexPositionAttribute = window.gl.getAttribLocation(this.program, "VertexPosition");
         window.gl.enableVertexAttribArray(this.program.vertexPositionAttribute);
-        console.log("VERTEX ON!");
+        //console.log("VERTEX ON!");
         
         this.program.vertexNormalAttribute = window.gl.getAttribLocation(this.program, "VertexNormal");
         window.gl.enableVertexAttribArray(this.program.vertexNormalAttribute);
-        console.log("NORMAL ON!");
+        //console.log("NORMAL ON!");
 
         if(inUseColor){
             this.program.vertexColorAttribute = window.gl.getAttribLocation(this.program, "VertexColor");
             window.gl.enableVertexAttribArray(this.program.vertexColorAttribute);
-            console.log("COLOR ON!");
+            //console.log("COLOR ON!");
         }
 
         if(inUseUv1){
             this.program.texCoords1Attribute = window.gl.getAttribLocation(this.program, "TexCoords1");
             window.gl.enableVertexAttribArray(this.program.texCoords1Attribute);
-            console.log("UV1 ON!");
+            //console.log("UV1 ON!");
         }
 
         if(inUseUv2){
             this.program.texCoords2Attribute = window.gl.getAttribLocation(this.program, "TexCoords2");
             window.gl.enableVertexAttribArray(this.program.texCoords2Attribute);
-            console.log("UV2 ON!");
+            //console.log("UV2 ON!");
         }
 
         if(inUseUv3){
             this.program.texCoords3Attribute = window.gl.getAttribLocation(this.program, "TexCoords3");
             window.gl.enableVertexAttribArray(this.program.texCoords3Attribute);
-            console.log("UV3 ON!");
+            //console.log("UV3 ON!");
         }
         
         //Uniforms

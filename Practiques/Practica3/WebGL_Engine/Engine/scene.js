@@ -28,7 +28,7 @@ class Scene
 
     updateAnimations() {
         for (let collection of this.collections) {
-            for (let object of collection.sharedShaderGroup) {
+            for (let object of collection.sharedMaterialGroup) {
                 object.update(this.deltaTime);
             }
         }
@@ -50,11 +50,11 @@ class Scene
         for(let collection of this.collections)
         {
             
-            collection.shader.use();
+            collection.material.use();
             
-            this.input.updateUniforms(collection.shader.program);
-            collection.shader.setProjection(this.camera.getProjectionMatrix());
-            collection.shader.setView(this.camera.getViewMatrix());
+            this.input.updateUniforms(collection.material.program);
+            collection.material.setProjection(this.camera.getProjectionMatrix());
+            collection.material.setView(this.camera.getViewMatrix());
             
             collection.draw(this.input);
         }

@@ -24,7 +24,6 @@ function drawModel(inInput, model)
   
   window.gl.bindBuffer(window.gl.ARRAY_BUFFER, model.idBufferColors);
   window.gl.vertexAttribPointer(model.shader.program.vertexColorAttribute, 4, window.gl.FLOAT, false, 0, 0);
-    
 
   switch(inInput.shadingMode)
   {

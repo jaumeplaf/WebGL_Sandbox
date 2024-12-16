@@ -1,3 +1,6 @@
+//Convert to resource manager -> mesh object + actor? + just 1 shader? (or just remove obj collections, and render them in order of shader)
+//Check P2 json values!
+
 class MeshObject 
 {
   constructor(inModel, inMaterial)

@@ -26,7 +26,7 @@ function drawModel(model)
   window.gl.vertexAttribPointer(model.material.program.vertexColorAttribute, 4, window.gl.FLOAT, false, 0, 0);
 
   window.gl.bindBuffer(window.gl.ARRAY_BUFFER, model.idBufferTexcoords1);
-  window.gl.vertexAttribPointer(model.material.program.texCoords1Attribute, 3, window.gl.FLOAT, false, 0, 0);
+  window.gl.vertexAttribPointer(model.material.program.texCoords1Attribute, 2, window.gl.FLOAT, false, 0, 0);
 
   window.gl.polygonOffset(0.0, 0.0);
 

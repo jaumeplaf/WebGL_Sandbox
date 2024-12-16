@@ -62,12 +62,17 @@
         //Check if intersection is inside triangle area
             //Precalculate UV, UU, VV, D, or:
             //Calculate with cross products
+    //look recursive algo theory example, action RayTrace(scene, r)
     //
 //
-//Acceleration structures:
+//Acceleration structures: (very necessary)
         //Bounding volumes
-        //Binary trees
-        //[...]
+            //Boxes: min/max values of x y z
+            //Spheres: min/max values of x y z, get center and calculate sphere
+            //Check hit on lowest level volume, then check volumes inside that volume
+        //Binary trees (?)
+        //Octrees: 3d grid, splits in parts and "discards" empty ones
+        //Uniform grids: 3d grid
 //
 //Reflections:
     //Snell's law!
@@ -96,17 +101,26 @@
         //perfect, sharp multiple reflections and shadows
         //NOT reality
         //Surfaces are NOT perfectly smooth
-    //Distributed ray tracing! Fixes this
-        //Can enable DOF, motion blur...
+    //Distributed ray tracing! Fixes this -> Cook-Porter-Carpenter -> rendering equation (?)
+        //Can enable DOF, motion blur, diffuse reflection, soft shadows...
+        //Sample number -> more definition
+        //Transparency / frosted glass translucency
+        //
 //
 //?Look at instantiation
 //
 //
+//DOF: [...]
 //
+//Motion blur: 
+    //Distribute rays in time
+        //Give each ray a time value
+        //E.g. jittered time distribution during the "shutter open"
+        //for intersection, use the object position at the first ray's time
+        //Combine ray colors
+    //Temporal jittering sampling
 //
-//
-//
-//
+//Global Illumination (GI)
 //
 //
 //

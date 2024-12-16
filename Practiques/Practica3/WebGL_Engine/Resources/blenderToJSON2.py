@@ -1,20 +1,22 @@
-bl_info = {
-    "name": "JSON Mesh Exporter",
-    "author": "Jaume Pla Ferriol",
-    "version": (1, 0),
-    "blender": (4, 2, 3),
-    "location": "View3D > Sidebar > Tools > JSON Export",
-    "description": "Export selected meshes to JSON format",
-    "category": "Import-Export",
-}
-
 import bpy
 import json
 import os
+import numpy as np
 from bpy.types import Operator, Panel, PropertyGroup
-from bpy.props import StringProperty, PointerProperty
+from bpy.props import BoolProperty, StringProperty, PointerProperty
 
 class JsonExportSettings(PropertyGroup):
+    export_to_single_file: BoolProperty(
+        name="Export to Single File",
+        description="Export all selected meshes to a single JSON file",
+        default=False
+    )
+    single_file_name: StringProperty(
+        name="Single File Name",
+        description="Name of the single JSON file (without extension)",
+        default="all_meshes",
+        maxlen=255
+    )
     export_path: StringProperty(
         name="Export Path",
         description="Path to export JSON files (leave empty for blend file location)",
@@ -22,6 +24,14 @@ class JsonExportSettings(PropertyGroup):
         subtype='DIR_PATH',
         maxlen=1024
     )
+    export_vertices: BoolProperty(name="Export Vertices", default=True)
+    export_normals: BoolProperty(name="Export Normals", default=True)
+    export_indices: BoolProperty(name="Export Indices", default=True)
+    export_texcoords1: BoolProperty(name="Export UV Channel 1", default=True)
+    export_texcoords2: BoolProperty(name="Export UV Channel 2", default=False)
+    export_texcoords3: BoolProperty(name="Export UV Channel 3", default=False)
+    export_colors: BoolProperty(name="Export Colors", default=True)
+
 
 class MESH_OT_export_json(Operator):
     """Export selected meshes to JSON"""
@@ -29,107 +39,109 @@ class MESH_OT_export_json(Operator):
     bl_label = "Export JSON"
     bl_options = {'REGISTER', 'UNDO'}
 
-    def export_single_mesh(self, obj, export_path):
+    def export_single_mesh(self, obj, settings):
         if obj.type != 'MESH':
-            return False
+            return None
 
         # Prepare storage for JSON data
-        data = {
-            "vertices": [],
-            "normals": [],
-            "texcoords": [],
-            "indices": [],
-            "colors": []
-        }
+        data = {}
 
         mesh = obj.data
 
-        # Get vertices
-        for vert in mesh.vertices:
-            data["vertices"].extend([vert.co.x, vert.co.y, vert.co.z])
+        if settings.export_vertices:
+            data["vertices"] = np.array([
+                [vert.co.x, vert.co.y, vert.co.z] for vert in mesh.vertices
+            ], dtype=np.float32).tolist()
 
-        # Get normals
-        for vert in mesh.vertices:
-            data["normals"].extend([vert.normal.x, vert.normal.y, vert.normal.z])
+        if settings.export_normals:
+            data["normals"] = np.array([
+                [vert.normal.x, vert.normal.y, vert.normal.z] for vert in mesh.vertices
+            ], dtype=np.float32).tolist()
 
-        # Get texture coordinates
-        if len(mesh.uv_layers) > 0:
-            uv_layer = mesh.uv_layers.active.data
-            for uv in uv_layer:
-                data["texcoords"].extend([uv.uv.x, uv.uv.y])
-        else:
-            for _ in range(len(mesh.vertices)):
-                data["texcoords"].extend([0.0, 0.0])
+        if settings.export_indices:
+            data["indices"] = np.array([
+                [poly.vertices[0], poly.vertices[1], poly.vertices[2]]
+                for poly in mesh.polygons if len(poly.vertices) == 3
+            ], dtype=np.uint16).tolist()
 
-        # Get indices
-        for poly in mesh.polygons:
-            if len(poly.vertices) == 3:  # Only process triangles
-                data["indices"].extend(poly.vertices[:3])
+        if settings.export_texcoords1 or settings.export_texcoords2 or settings.export_texcoords3:
+            uv_layers = mesh.uv_layers
+            for i in range(3):  # Up to 3 UV layers
+                if i < len(uv_layers):
+                    if getattr(settings, f"export_texcoords{i+1}"):
+                        uv_data = np.array([
+                            [loop.uv.x, loop.uv.y] for loop in uv_layers[i].data
+                        ], dtype=np.float32).tolist()
+                        data[f"texcoords{i+1}"] = uv_data
 
-        # Get vertex colors
-        if "colors" in mesh.color_attributes:
-            color_layer = mesh.color_attributes["colors"]
-            
-            vertex_colors = {}
+        if settings.export_colors:
+            if "colors" in mesh.color_attributes:
+                color_layer = mesh.color_attributes["colors"]
+                data["colors"] = np.array([
+                    [color_layer.data[i].color[0],
+                     color_layer.data[i].color[1],
+                     color_layer.data[i].color[2],
+                     color_layer.data[i].color[3]]
+                    for i in range(len(mesh.vertices))
+                ], dtype=np.float32).tolist()
+            else:
+                data["colors"] = np.array([
+                    [0, 0, 0, 0] for _ in range(len(mesh.vertices))
+                ], dtype=np.float32).tolist()
 
-            for poly in mesh.polygons:
-                for loop_idx, vert_idx in zip(poly.loop_indices, poly.vertices):
-                    if color_layer.domain == 'POINT':
-                        color = color_layer.data[vert_idx].color
-                    else:
-                        color = color_layer.data[loop_idx].color
-                    if vert_idx not in vertex_colors:
-                        vertex_colors[vert_idx] = color
-
-            for i in range(len(mesh.vertices)):
-                if i in vertex_colors:
-                    color = vertex_colors[i]
-                    data["colors"].extend([color[0], color[1], color[2], 1.0])
-                else:
-                    data["colors"].extend([1.0, 1.0, 1.0, 1.0])
-        else:
-            for _ in range(len(mesh.vertices)):
-                data["colors"].extend([1.0, 1.0, 1.0, 1.0])
-
-        # Generate output path
-        mesh_name = bpy.path.clean_name(obj.name)
-        if export_path and export_path.strip():
-            os.makedirs(export_path, exist_ok=True)
-            output_json_path = os.path.join(export_path, f"{mesh_name}.json")
-        else:
-            output_json_path = os.path.join(bpy.path.abspath("//"), f"{mesh_name}.json")
-
-        # Write data to JSON
-        try:
-            with open(output_json_path, "w") as f:
-                f.write(f"var {mesh_name} = ")
-                json.dump(data, f, indent=4)
-            return True
-        except Exception as e:
-            self.report({'ERROR'}, f"Failed to export {obj.name}: {str(e)}")
-            return False
+        return data
 
     def execute(self, context):
-        selected_objects = [obj for obj in bpy.context.selected_objects if obj.type == 'MESH']
+        settings = context.scene.json_export_settings
+        selected_objects = [obj for obj in context.selected_objects if obj.type == 'MESH']
+
         if not selected_objects:
             self.report({'WARNING'}, "No mesh objects selected")
             return {'CANCELLED'}
-        
-        export_path = context.scene.json_export_settings.export_path
-        if export_path and export_path.strip():
-            export_path = bpy.path.abspath(export_path)
-        
-        export_count = 0
-        for obj in selected_objects:
-            if self.export_single_mesh(obj, export_path):
-                export_count += 1
-        
-        if export_count > 0:
-            self.report({'INFO'}, f"Successfully exported {export_count} mesh{'es' if export_count > 1 else ''}")
-            return {'FINISHED'}
+
+        export_path = bpy.path.abspath(settings.export_path) if settings.export_path.strip() else bpy.path.abspath("//")
+        os.makedirs(export_path, exist_ok=True)
+
+        if settings.export_to_single_file:
+            # Export to a single file
+            single_file_name = settings.single_file_name.strip() or "all_meshes"
+            output_file = os.path.join(export_path, f"{single_file_name}.json")
+            try:
+                with open(output_file, "w") as f:
+                    for obj in selected_objects:
+                        mesh_data = self.export_single_mesh(obj, settings)
+                        if mesh_data:
+                            mesh_name = bpy.path.clean_name(obj.name)
+                            f.write(f"var {mesh_name} = ")
+                            json.dump(mesh_data, f, indent=4)
+                            f.write(";\n")
+                self.report({'INFO'}, f"Exported all meshes to {output_file}")
+                return {'FINISHED'}
+            except Exception as e:
+                self.report({'ERROR'}, f"Failed to export meshes: {str(e)}")
+                return {'CANCELLED'}
         else:
-            self.report({'WARNING'}, "No meshes were exported")
-            return {'CANCELLED'}
+            # Export to separate files
+            export_count = 0
+            for obj in selected_objects:
+                mesh_data = self.export_single_mesh(obj, settings)
+                if mesh_data:
+                    mesh_name = bpy.path.clean_name(obj.name)
+                    output_file = os.path.join(export_path, f"{mesh_name}.json")
+                    try:
+                        with open(output_file, "w") as f:
+                            f.write(f"var {mesh_name} = ")
+                            json.dump(mesh_data, f, indent=4)
+                        export_count += 1
+                    except Exception as e:
+                        self.report({'ERROR'}, f"Failed to export {obj.name}: {str(e)}")
+            if export_count:
+                self.report({'INFO'}, f"Successfully exported {export_count} mesh{'es' if export_count > 1 else ''}")
+                return {'FINISHED'}
+            else:
+                self.report({'WARNING'}, "No meshes were exported")
+                return {'CANCELLED'}
+
 
 class VIEW3D_PT_json_exporter(Panel):
     """Creates a Panel in the Tools sidebar"""
@@ -142,14 +154,23 @@ class VIEW3D_PT_json_exporter(Panel):
     def draw(self, context):
         layout = self.layout
         settings = context.scene.json_export_settings
+
+        layout.prop(settings, "export_to_single_file")
+        if settings.export_to_single_file:
+            layout.prop(settings, "single_file_name")
         layout.prop(settings, "export_path")
-        row = layout.row()
-        row.operator("mesh.export_json", text="Export Selected to JSON")
-        box = layout.box()
-        selected_meshes = [obj for obj in context.selected_objects if obj.type == 'MESH']
-        box.label(text=f"Selected Meshes: {len(selected_meshes)}")
-        for obj in selected_meshes:
-            box.label(text=f"• {obj.name}")
+
+        col = layout.column(align=True)
+        col.label(text="Export Options:")
+        col.prop(settings, "export_vertices")
+        col.prop(settings, "export_normals")
+        col.prop(settings, "export_indices")
+        col.prop(settings, "export_texcoords1")
+        col.prop(settings, "export_texcoords2")
+        col.prop(settings, "export_texcoords3")
+        col.prop(settings, "export_colors")
+
+        layout.operator("mesh.export_json", text="Export Selected to JSON")
 
 def register():
     bpy.utils.register_class(JsonExportSettings)
@@ -157,11 +178,13 @@ def register():
     bpy.utils.register_class(VIEW3D_PT_json_exporter)
     bpy.types.Scene.json_export_settings = PointerProperty(type=JsonExportSettings)
 
+
 def unregister():
+    bpy.utils.unregister_class(JsonExportSettings)
     bpy.utils.unregister_class(MESH_OT_export_json)
     bpy.utils.unregister_class(VIEW3D_PT_json_exporter)
-    bpy.utils.unregister_class(JsonExportSettings)
     del bpy.types.Scene.json_export_settings
+
 
 if __name__ == "__main__":
     register()

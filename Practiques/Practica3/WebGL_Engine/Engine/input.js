@@ -17,12 +17,9 @@ class InputParameters
   {
     this.mouseLock = false;
 
-    this.shadingMode = parseInt(inShadingMode.value);
-    this.wireframeOpacity = inWireframeOpacity.value;
     this.fogColor = hexToRgba(inFogColor.value, 1.0);
     this.fogAmount = inFogAmount.value;
     this.fogPower = inFogPower.value;
-    this.wireframeIgnoreFog = inWireframeIgnoreFog.checked ? 1.0 : 0.0;
     
     this.fov = degToRad(inFov.value);
     this.nearPlane = inCamera.nearPlane;
@@ -33,19 +30,14 @@ class InputParameters
 
   updateUniforms(inProgram)
   {
-    window.gl.uniform1f(inProgram.progShadingMode, this.shadingMode);
-    window.gl.uniform1f(inProgram.progIsLine, 0.0);
-    window.gl.uniform1f(inProgram.progWireframeOpacity, this.wireframeOpacity);
-    
     window.gl.uniform4f(inProgram.progFogColor, this.fogColor[0], this.fogColor[1],this.fogColor[2],this.fogColor[3]);
     window.gl.uniform1f(inProgram.progFogAmount, this.fogAmount);
     window.gl.uniform1f(inProgram.progFogPower, this.fogPower);  
-    window.gl.uniform1f(inProgram.progWireframeIgnoreFog, this.wireframeIgnoreFog);
   
     window.gl.uniform1f(inProgram.progNearPlane, this.nearPlane);
     window.gl.uniform1f(inProgram.progFarPlane, this.farPlane); 
 
-    window.gl.uniform1f(inProgram.progTime, this.time);
+    //window.gl.uniform1f(inProgram.progTime, this.time);
   }
 
   initializeEventListeners(inScene)
@@ -110,16 +102,6 @@ class InputParameters
   });
 
     //UI
-    
-    //Shading mode select
-    inShadingMode.addEventListener('change', (event) => {
-      this.shadingMode = parseInt(event.target.value);
-    });
-    
-    inWireframeOpacity.addEventListener('input', (event) =>{
-      this.wireframeOpacity = event.target.value;
-    });
-    
     inFogColor.addEventListener('input', (event) =>{
       this.fogColor = hexToRgba(event.target.value, 1.0) ;
     });
@@ -130,13 +112,6 @@ class InputParameters
     
     inFogPower.addEventListener('input', (event) =>{
       this.fogPower = event.target.value;
-    });
-  
-    //Wireframe ignore fog toggle
-    inWireframeIgnoreFog.addEventListener('change', (event) => {
-      if([0, 2, 4].includes(this.shadingMode)){ //If shadingMode has to render wireframe
-        this.wireframeIgnoreFog = event.target.checked ? 1.0 : 0.0;
-      }
     });
 
     //Camera controls

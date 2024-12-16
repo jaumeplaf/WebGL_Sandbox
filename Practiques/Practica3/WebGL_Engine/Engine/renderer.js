@@ -12,7 +12,7 @@ function initRendering()
   window.gl.enable(gl.CULL_FACE);
 }
 
-function drawModel(inInput, model)
+function drawModel(model)
 {
   window.gl.bindBuffer(window.gl.ELEMENT_ARRAY_BUFFER, model.idBufferIndices);
 
@@ -22,15 +22,11 @@ function drawModel(inInput, model)
   window.gl.bindBuffer(window.gl.ARRAY_BUFFER, model.idBufferNormals);
   window.gl.vertexAttribPointer(model.material.program.vertexNormalAttribute, 3, window.gl.FLOAT, false, 0, 0);
   
-  
-  if(model.idBufferColors){
-    window.gl.bindBuffer(window.gl.ARRAY_BUFFER, model.idBufferColors);
-    window.gl.vertexAttribPointer(model.material.program.vertexColorAttribute, 4, window.gl.FLOAT, false, 0, 0);
-  }
-  if(model.idBufferTexcoords1){
-    window.gl.bindBuffer(window.gl.ARRAY_BUFFER, model.idBufferTexcoords1);
-    window.gl.vertexAttribPointer(model.material.program.texCoords1Attribute, 3, window.gl.FLOAT, false, 0, 0);
-  }
+  window.gl.bindBuffer(window.gl.ARRAY_BUFFER, model.idBufferColors);
+  window.gl.vertexAttribPointer(model.material.program.vertexColorAttribute, 4, window.gl.FLOAT, false, 0, 0);
+
+  window.gl.bindBuffer(window.gl.ARRAY_BUFFER, model.idBufferTexcoords1);
+  window.gl.vertexAttribPointer(model.material.program.texCoords1Attribute, 3, window.gl.FLOAT, false, 0, 0);
 
   window.gl.polygonOffset(0.0, 0.0);
 

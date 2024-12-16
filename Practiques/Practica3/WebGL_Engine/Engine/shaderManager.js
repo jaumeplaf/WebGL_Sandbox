@@ -1,10 +1,10 @@
 class Material 
 {
-    constructor(inScene, vsSource, fsSource, useColors = false, useUv1 = true, useUv2 = false, useUv3 = false) 
+    constructor(inScene, vsSource, fsSource) 
     {
         this.scene = inScene;
         this.program = this.compileAndLinkShaders(document.getElementById(vsSource).text, document.getElementById(fsSource).text);
-        this.initializeUniforms(useColors, useUv1, useUv2, useUv3);
+        this.initializeUniforms();
         this.initializeCollection();
     }
     
@@ -53,59 +53,30 @@ class Material
         }
     }
 
-    initializeUniforms(inUseColor, inUseUv1, inUseUv2, inUseUv3)
+    initializeUniforms()
     {
         this.program.vertexPositionAttribute = window.gl.getAttribLocation(this.program, "VertexPosition");
         window.gl.enableVertexAttribArray(this.program.vertexPositionAttribute);
-        //console.log("VERTEX ON!");
-        
         this.program.vertexNormalAttribute = window.gl.getAttribLocation(this.program, "VertexNormal");
         window.gl.enableVertexAttribArray(this.program.vertexNormalAttribute);
-        //console.log("NORMAL ON!");
+        this.program.vertexColorAttribute = window.gl.getAttribLocation(this.program, "VertexColor");
+        window.gl.enableVertexAttribArray(this.program.vertexColorAttribute);
+        this.program.texCoords1Attribute = window.gl.getAttribLocation(this.program, "TexCoords1");
+        window.gl.enableVertexAttribArray(this.program.texCoords1Attribute);
 
-        if(inUseColor){
-            this.program.vertexColorAttribute = window.gl.getAttribLocation(this.program, "VertexColor");
-            window.gl.enableVertexAttribArray(this.program.vertexColorAttribute);
-            //console.log("COLOR ON!");
-        }
-
-        if(inUseUv1){
-            this.program.texCoords1Attribute = window.gl.getAttribLocation(this.program, "TexCoords1");
-            window.gl.enableVertexAttribArray(this.program.texCoords1Attribute);
-            //console.log("UV1 ON!");
-        }
-
-        if(inUseUv2){
-            this.program.texCoords2Attribute = window.gl.getAttribLocation(this.program, "TexCoords2");
-            window.gl.enableVertexAttribArray(this.program.texCoords2Attribute);
-            //console.log("UV2 ON!");
-        }
-
-        if(inUseUv3){
-            this.program.texCoords3Attribute = window.gl.getAttribLocation(this.program, "TexCoords3");
-            window.gl.enableVertexAttribArray(this.program.texCoords3Attribute);
-            //console.log("UV3 ON!");
-        }
-        
         //Uniforms
         this.program.modelMatrixIndex = window.gl.getUniformLocation(this.program, "modelMatrix");
         this.program.projectionMatrixIndex = window.gl.getUniformLocation(this.program, "projectionMatrix");
         this.program.viewMatrixIndex = window.gl.getUniformLocation(this.program, "viewMatrix");
         
-        //TODO: handle these?
-        this.program.progShadingMode = window.gl.getUniformLocation(this.program, "shadingMode");
-        this.program.progIsLine = window.gl.getUniformLocation(this.program, "isLine");
-        this.program.progWireframeOpacity = window.gl.getUniformLocation(this.program, "wireframeOpacity");
-
         //Fog parameters
         this.program.progFogColor = window.gl.getUniformLocation(this.program, "fogColor");
         this.program.progFogAmount = window.gl.getUniformLocation(this.program, "fogAmount");
         this.program.progFogPower = window.gl.getUniformLocation(this.program, "fogPower");
-        this.program.progWireframeIgnoreFog = window.gl.getUniformLocation(this.program, "wireframeIgnoreFog");
         this.program.progNearPlane = window.gl.getUniformLocation(this.program, "nPlane");
         this.program.progFarPlane = window.gl.getUniformLocation(this.program, "fPlane");
 
-        this.program.progTime = window.gl.getUniformLocation(this.program, "time");
+        //this.program.progTime = window.gl.getUniformLocation(this.program, "time");
     }
 
     setProjection(projectionMatrix)

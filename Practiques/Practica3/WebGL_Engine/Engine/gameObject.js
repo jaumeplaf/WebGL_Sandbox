@@ -1,6 +1,6 @@
 class MeshObject 
 {
-  constructor(inModel, inMaterial, colors, uv1)
+  constructor(inModel, inMaterial)
   {
     this.name = inModel.name;
     this.model = inModel;
@@ -14,32 +14,16 @@ class MeshObject
     this.rotationSpeed = 0;
     this.rotationAxis = [0, 1, 0];
     
-    this.initializeBuffers(colors, uv1);
+    this.initializeBuffers();
   }
   
-  initializeBuffers(inColors, inUv1)
+  initializeBuffers()
   {
     this.initAttributeBuffer('indices', 'ELEMENT_ARRAY_BUFFER', Uint16Array);
     this.initAttributeBuffer('vertices', 'ARRAY_BUFFER', Float32Array);
     this.initAttributeBuffer('normals', 'ARRAY_BUFFER', Float32Array);
-    if(inColors) {
-      this.initAttributeBuffer('colors', 'ARRAY_BUFFER', Float32Array); 
-      //console.log("init colors");
-    }
-    if(inUv1) {
-      this.initAttributeBuffer('texcoords1', 'ARRAY_BUFFER', Float32Array); 
-      //console.log("init uv1");
-    }
-  }
-
-  initializeUv2(){
-    this.initAttributeBuffer('texcoords2', 'ARRAY_BUFFER', Float32Array);
-    //console.log("init uv2");
-  }
-
-  initializeUv3(){
-    this.initAttributeBuffer('texcoords3', 'ARRAY_BUFFER', Float32Array);
-    //console.log("init uv3");
+    this.initAttributeBuffer('colors', 'ARRAY_BUFFER', Float32Array); 
+    this.initAttributeBuffer('texcoords1', 'ARRAY_BUFFER', Float32Array); 
   }
 
   initAttributeBuffer(attributeName, bufferType, arrayType) {
@@ -109,14 +93,12 @@ class MeshActor extends MeshObject
     this.triCount = Math.round(this.parent.indices.length / 9);
     this.getBuffers();
     
-    console.log("Colors: ", this.colors);
-    console.log("Texcoords1: ", this.texcoords1);
     this.addInstance();
   } 
 
   getBuffers() {
     //Copy buffer IDs and data from parent if they exist
-    const attributes = ['indices', 'vertices', 'normals', 'colors', 'texcoords1', 'texcoords2', 'texcoords3'];
+    const attributes = ['indices', 'vertices', 'normals', 'colors', 'texcoords1'];
     
     attributes.forEach(attr => {
       const bufferIdName = `idBuffer${attr.charAt(0).toUpperCase() + attr.slice(1)}`;
@@ -164,10 +146,10 @@ class MeshActor extends MeshObject
     //Clear buffers
   }
 
-  drawInst(inInput)
+  drawInst()
   {
     this.collection.material.setModelMatrix(this.modelMatrixIndex);
-    drawModel(inInput, this);
+    drawModel(this);
   }
 }
 
@@ -177,8 +159,6 @@ class SceneActorsCollection
     {
         this.sharedMaterialGroup = [];
         this.material = inMaterial;
-        this.totalTriCount = 0;
-        this.drawCalls = 0;
     }
 
     add(model)
@@ -198,9 +178,8 @@ class SceneActorsCollection
     {
       for(let object of this.sharedMaterialGroup){
           this.material.setModelMatrix(object.modelMatrixIndex);
-          //this.totalTriCount += object.triCount;
-          //this.drawCalls ++;
-          object.drawInst(inInput);
+
+          object.drawInst();
       }
     }
 

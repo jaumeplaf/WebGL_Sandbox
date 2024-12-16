@@ -1,0 +1,185 @@
+<!DOCTYPE html>
+<html>
+
+  <head>
+    <meta charset="utf-8">
+    <title> Practica 2 - Jaume Pla Ferriol </title>
+    <link rel="stylesheet" href="wglEngine/Samples/baseScene.css">
+
+    <!-- Load all shaders here, get them by ID in current scene script-->
+
+    <script id="VS_01" 
+            type="x-shader/x-vertex">#version 300 es
+
+        //Attributes
+            in vec3 VertexPosition;
+            in vec4 VertexColor;
+            in vec3 VertexNormal;
+            in vec2 TexCoords1;
+
+            uniform mat4 modelMatrix;
+            uniform mat4 viewMatrix;
+            uniform mat4 projectionMatrix;
+            
+            out vec4 vCol;
+            out vec4 vNorm;
+            out vec2 uv;
+
+        //Alternative normals calculation taken from https://github.com/graphitemaster/normals_revisited
+            //Calculate the minor of a 3x3 matrix
+            float minor(mat4 m, int r0, int r1, int r2, int c0, int c1, int c2) {
+                return m[r0][c0] * (m[r1][c1] * m[r2][c2] - m[r2][c1] * m[r1][c2]) -
+                    m[r0][c1] * (m[r1][c0] * m[r2][c2] - m[r2][c0] * m[r1][c2]) +
+                    m[r0][c2] * (m[r1][c0] * m[r2][c1] - m[r2][c0] * m[r1][c1]);
+            }
+
+            //Calculate the cofactor matrix of a 4x4 matrix
+            mat4 cofactorMatrix(mat4 m) {
+                mat4 cof;
+                cof[0][0] =  minor(m, 1, 2, 3, 1, 2, 3);
+                cof[0][1] = -minor(m, 1, 2, 3, 0, 2, 3);
+                cof[0][2] =  minor(m, 1, 2, 3, 0, 1, 3);
+                cof[0][3] = -minor(m, 1, 2, 3, 0, 1, 2);
+                cof[1][0] = -minor(m, 0, 2, 3, 1, 2, 3);
+                cof[1][1] =  minor(m, 0, 2, 3, 0, 2, 3);
+                cof[1][2] = -minor(m, 0, 2, 3, 0, 1, 3);
+                cof[1][3] =  minor(m, 0, 2, 3, 0, 1, 2);
+                cof[2][0] =  minor(m, 0, 1, 3, 1, 2, 3);
+                cof[2][1] = -minor(m, 0, 1, 3, 0, 2, 3);
+                cof[2][2] =  minor(m, 0, 1, 3, 0, 1, 3);
+                cof[2][3] = -minor(m, 0, 1, 3, 0, 1, 2);
+                cof[3][0] = -minor(m, 0, 1, 2, 1, 2, 3);
+                cof[3][1] =  minor(m, 0, 1, 2, 0, 2, 3);
+                cof[3][2] = -minor(m, 0, 1, 2, 0, 1, 3);
+                cof[3][3] =  minor(m, 0, 1, 2, 0, 1, 2);
+                return cof;
+            }
+        
+        void main()
+        {
+            gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(VertexPosition, 1.0);
+            vCol = VertexColor;
+
+            //Old normal matrix calculation:
+            //mat3 normalMatrix = mat3(transpose(inverse(modelMatrix)));
+            mat3 normalMatrix = mat3(cofactorMatrix(modelMatrix));
+            vNorm = vec4(normalize(normalMatrix * VertexNormal), 1.0);
+
+            uv = TexCoords1;
+        }
+        
+        </script>
+
+        <script id="FS_01"
+        type="x-shader/x-fragment">#version 300 es
+            
+            precision mediump float;
+            
+            //Attributes
+            //in vec4 vPos;
+            in vec4 vCol;
+            in vec4 vNorm;
+            in vec2 uv;
+
+            //Uniforms
+            uniform vec4 fogColor;
+            uniform float nPlane;
+            uniform float fPlane;
+            uniform float fogAmount;
+            uniform float fogPower;
+
+            uniform sampler2D t_baseColor;
+
+            //Out fragment color
+            out vec4 fragmentColor;
+        
+            float saturate(float value)
+            {
+                return clamp(value, 0.0, 1.0);
+            }
+            
+            float linearDepth(float inDepth)
+            {
+                float z = inDepth * 2.0 - 1.0;
+                return (2.0 * nPlane * fPlane) / (fPlane + nPlane - z * (fPlane - nPlane));
+            }
+
+            void main() 
+            {
+                float depth = linearDepth(gl_FragCoord.z) / fPlane;
+                float correctedDepth = saturate(pow(depth * fogAmount, fogPower));
+                vec4 vDepth = vec4(vec3(correctedDepth), 1.0);
+
+                vec4 vCol2 = vCol * texture(t_baseColor, uv);
+
+                vec4 fogFlatColor = mix(vCol2 + vNorm * 0.001, fogColor, correctedDepth);
+
+                fragmentColor = fogFlatColor;
+            }
+
+        </script>
+    
+    </head>
+
+    <body>
+        <div id="container">
+            <canvas id="wglCanvas" width="1500" height="850">
+                HTML5 not supported
+            </canvas>
+            <div id="menu">
+                <div class = "UI_counter">
+                    <span>fps: </span><span class ="counter" id="fpsCounter">"fps" </span><br>
+                    <span>frame time: </span><span class="counter" id ="frameTime">"frame time" </span><br>
+                </div>
+            <!-- Fog controls -->
+            <span class="separator">Fog:</span>
+            <div class="indent">
+                <input type="color" id="fogColor" value="#444444">
+                <label for="fogColor">Fog color</label>
+            </div>
+            <div class="slidercontainer indent">
+                <label for="fogAmount">Fog amount:</label>
+                <input type="range" min="0.0" max="20.0" value="0.1" step="0.01" class="slider" id="fogAmount">
+            </div>
+            <div class="slidercontainer indent">
+                <label for="fogPower">Fog power:</label>
+                <input type="range" min="0.05" max="2.0" value="0.2" step="0.01" class="slider" id="fogPower">
+            </div>
+            <span class="separator">Camera:</span>
+            <div class="indent">
+                <div class="slidercontainer" id="wireframeOpacityContainer">
+                    <label for="fov">FOV: </label><span id="displayFov">"fov" </span><br>
+         </div>           <input type="range" min="20.0" max="120.0" value="70.0" step="0.01" class="slider" id="fov">
+                </div> 
+                <button id="savePOI">Save camera POI</button><br>
+                <span>POI: </span><span id="POIdisplay">"empty" </span><br>
+                <button id="loadPOI">Load camera POI</button>
+            </div>
+        </div>
+    </div>
+
+  <!-- Load external libraries -->
+  <script src = "wglEngine/Resources/Scripts/gl-matrix-min.js"></script>
+
+  <!-- Load model files -->
+  <script src = "wglEngine/Resources/Models/Basic/basicMeshes.json"></script>
+  <script src = "wglEngine/Resources/Models/Ruins/woodTrimMeshes.json"></script>
+  
+  
+  <!-- Load engine scripts -->
+  <script src = "wglEngine/resources.js"></script>
+  <script src = "wglEngine/input.js"></script>
+  <script src = "wglEngine/output.js"></script>
+  <script src = "wglEngine/renderer.js"></script>
+  <script src = "wglEngine/utils.js"></script>
+  <script src = "wglEngine/materials.js"></script>
+  <script src = "wglEngine/camera.js"></script>
+  <script src = "wglEngine/player.js"></script>
+  <script src = "wglEngine/scene.js"></script>
+  <script src = "wglEngine/gameObject.js"></script>
+  <!-- Load current scene script -->
+  <script src = "wglEngine/Samples/baseScene.JS"></script>
+
+</body>
+
+</html>

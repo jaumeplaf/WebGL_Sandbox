@@ -7,6 +7,14 @@ class Material
         this.initializeUniforms();
     }
     
+    setMaterialParameters(texture = false)
+    {
+        if(!texture)
+        {
+            this.program.textureIndex = window.gl.getUniformLocation(this.program, "texture");
+            window.gl.uniform1i(this.program.textureIndex, 0);
+        }
+    }
     compileAndLinkShaders(vertexSource, fragmentSource) 
     {
         const vertexShader = this.newShader(window.gl.VERTEX_SHADER, vertexSource);

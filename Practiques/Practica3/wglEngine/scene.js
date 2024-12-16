@@ -6,6 +6,7 @@ class Scene
         this.player = inPlayer;
 
         this.meshActors = [];
+        this.textures = [];
         this.currentMaterial = null;
         
         this.previousTime = performance.now();
@@ -27,6 +28,12 @@ class Scene
         this.meshActors.splice(insertIndex, 0, inMeshActor);
     }
 
+    addTexture(texturePath)
+    {
+        const texture = new TextureObject(texturePath);
+        this.textures.push(texture);
+    }
+    
     updateDeltaTime() 
     {
         const now = performance.now();

@@ -78,6 +78,14 @@ class InputParameters
       this.mouseLock = true;
     });
 
+    document.addEventListener('pointerlockchange', () => {
+      if (document.pointerLockElement === canvas) {
+          console.log('Pointer lock active');
+      } else {
+          console.log('Pointer lock released');
+      }
+  });
+
     canvas.addEventListener('wheel', (event) => {
       if(this.mouseLock){
         if(event.deltaY < 0){ //SpeedUp
@@ -87,6 +95,10 @@ class InputParameters
           inScene.player.updateSpeed(false);
         }
       }
+    });
+
+    document.addEventListener('pointerlockchange', () => {
+      this.mouseLock = (document.pointerLockElement === canvas);
     });
 
     document.addEventListener('mousemove', (event) => {

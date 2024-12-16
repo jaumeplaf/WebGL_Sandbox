@@ -86,9 +86,8 @@ class MESH_OT_export_json(Operator):
                 ], dtype=np.float32).tolist()
             else:
                 data["colors"] = np.array([
-                    (0, 0, 0, 0) for _ in range(len(mesh.vertices))
+                    0.0 for _ in range(len(mesh.vertices) * 4)
                 ], dtype=np.float32).tolist()
-
         return data
 
     def execute(self, context):

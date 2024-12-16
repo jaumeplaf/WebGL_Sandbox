@@ -1,0 +1,66 @@
+class Scene
+{
+    constructor(inCamera, inPlayer)
+    {
+        this.collections = [];
+        this.camera = inCamera;
+        this.player = inPlayer;
+        this.input = new InputParameters(this.camera);
+        this.previousTime = performance.now();
+
+        this.input.initializeEventListeners(this);
+    }
+
+    addCollection(inCollection)
+    {
+        this.collections.push(inCollection);
+    }
+
+    updateDeltaTime() 
+    {
+        const now = performance.now();
+        this.deltaTime = Math.min((now - this.previousTime) / 1000, 0.1);
+        this.previousTime = now;
+
+        this.input.time = now / 1000;
+
+    }
+
+    updateAnimations() {
+        for (let collection of this.collections) {
+            for (let object of collection.sharedMaterialGroup) {
+                object.update(this.deltaTime);
+            }
+        }
+    }
+
+     drawScene() //Main rendering loop
+    {
+        this.player.moveCamera();
+        
+        window.gl.clearColor(this.input.fogColor[0], this.input.fogColor[1], this.input.fogColor[2], this.input.fogColor[3]);
+        
+        window.gl.clear(window.gl.COLOR_BUFFER_BIT | window.gl.DEPTH_BUFFER_BIT);
+        
+        this.updateDeltaTime();
+        updateFpsCounter(this.deltaTime, 2);
+
+        this.updateAnimations(); 
+
+        for(let collection of this.collections)
+        {
+            
+            collection.material.use();
+            
+            this.input.updateUniforms(collection.material.program);
+            collection.material.setProjection(this.camera.getProjectionMatrix());
+            collection.material.setView(this.camera.getViewMatrix());
+            
+            collection.draw(this.input);
+        }
+
+        //We need to use "requestAnimationFrame(() => scene.drawScene())" instead of "requestAnimationFrame(scene.drawScene)" to have access to "this", and it's properties
+        requestAnimationFrame(() => this.drawScene())
+    }
+
+}

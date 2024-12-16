@@ -116,3 +116,22 @@ function generateInstancesRadial(GameObject, objectCollection, instanceNum, cent
     
     return instances;
 }
+function debugInstance(name, instance) {
+    console.log(name.toUpperCase());
+    console.log("Debug attributes: ");
+    console.log("Indices: ", instance.indices);
+    console.log("Vertices: ", instance.vertices);
+    console.log("Colors: ", instance.colors);
+    console.log("Normals: ", instance.normals);
+    console.log("Texture Coordinates 1: ", instance.texcoords1);
+    console.log("Debug idBuffers: ");
+    console.log("Index Buffer: ", instance.idBufferIndices);
+    console.log("Vertex Buffer: ", instance.idBufferVertices);
+    console.log("Normal Buffer: ", instance.idBufferNormals);
+    console.log("Color Buffer: ", instance.idBufferColors);
+    console.log("Texture Coordinate Buffer 1: ", instance.idBufferTexcoords1);
+
+    console.log("Debug model matrix: ", instance.modelMatrixIndex); 
+    console.log("Debug view matrix: ", camera01.viewMatrix);
+    console.log("Debug projection matrix: ", camera01.projectionMatrix); 
+}

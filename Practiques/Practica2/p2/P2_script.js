@@ -31,6 +31,10 @@ let wall = new ObjectInstance(base_wall, gameObjects01);
 wall.setMatrix(0, 40, 0, 100);
 wall.setTransform(1, .5, 1);
 
+let shark01 = new  ObjectInstance(base_shark01, gameObjects01);
+shark01.setMatrix(0, 10, -50, 200);
+debugInstance("shark01", shark01);
+
 let coral01Instances = generateInstancesRadial(base_coral01, gameObjects01, 400, [0, -10, 0], 60, 100, 95, 0, false, 0, 0);
 let coral02Instances = generateInstancesRadial(base_coral02, gameObjects01, 400, [0, -10, 0], 50, 90, 95, 0, false, 0, 0);
 let fish01Instances = generateInstancesRadial(base_fish01, gameObjects01, 100, [0, 40, 0], 30, 100, 99.5, 48, true, 270, 10);
@@ -42,6 +46,8 @@ for(let inst of shark01Instances) inst.setRotationSpeed(2, [0,1,0]);
 for(let inst of fish01Instances) inst.setRotationSpeed(3, [0,1,0]);
 for(let inst of fish02Instances) inst.setRotationSpeed(4, [0,1,0]);
 for(let inst of fish03Instances) inst.setRotationSpeed(6, [0,1,0]);
+
+
 
 window.onload = function(){
     P2.drawScene();

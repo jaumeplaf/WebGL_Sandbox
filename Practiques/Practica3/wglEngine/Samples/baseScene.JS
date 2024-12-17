@@ -23,7 +23,7 @@ currentScene.addMeshActor(arrowZ);
 currentScene.addMeshActor(barrel_01);
 
 //debugInstance("arrowX", arrowX);
-//debugInstance("barrel_01", barrel_01);
+debugInstance("barrel_01", barrel_01);
 
 window.onload = function(){
     currentScene.drawScene();

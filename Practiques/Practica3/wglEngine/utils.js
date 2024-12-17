@@ -114,7 +114,7 @@ function generateInstancesRadial(GameObject, objectCollection, instanceNum, cent
     
     return instances;
 }
-/*
+
 function debugInstance(name, instance) {
     console.log(name.toUpperCase());
     console.log("Debug attributes: ");
@@ -131,6 +131,4 @@ function debugInstance(name, instance) {
     console.log("Texture Coordinate Buffer 1: ", instance.idBufferTexcoords1);
 
     console.log("Debug model matrix: ", instance.modelMatrixIndex); 
-    console.log("Debug view matrix: ", camera01.viewMatrix);
-    console.log("Debug projection matrix: ", camera01.projectionMatrix); 
-}*/
+}

@@ -59,7 +59,15 @@ class Scene
             let objectMaterial = object.meshObject.material;
             if(objectMaterial != this.currentMaterial){
                 objectMaterial.use(this.input);
-                this.material = objectMaterial;
+                this.currentMaterial = objectMaterial;
+
+                // Set textures
+                if (objectMaterial.useTextureBaseColor) {
+                    objectMaterial.setTexture(objectMaterial.textures['baseColor'], 0, objectMaterial.program.baseColorSampler);
+                }
+                if (objectMaterial.useTextureNormal) {
+                    objectMaterial.setTexture(objectMaterial.textures['normalMap'], 1, objectMaterial.program.normalSampler);
+                }
             }
             else {
                 console.log("Material already in use");

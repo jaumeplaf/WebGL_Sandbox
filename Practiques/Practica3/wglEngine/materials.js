@@ -1,20 +1,38 @@
 class Material 
 {
-    constructor(inScene, vsSource, fsSource) 
+    constructor(inScene, vsSource, fsSource, inTextureBaseColor = false, inTextureNormal = false) 
     {
         this.scene = inScene;
-        this.program = this.compileAndLinkShaders(document.getElementById(vsSource).text, document.getElementById(fsSource).text);
+        this.useTextureBaseColor = inTextureBaseColor;
+        this.useTextureNormal = inTextureNormal;
+        this.useFog = true;
+        this.useAdjugateNormal = true;
+        this.shaderFeatures = '';
+
+        this.program = this.compileAndLinkShaders(this.preprocessShaderSource(vsSource), this.preprocessShaderSource(fsSource));
+        
         this.initializeUniforms();
+        this.textures = {};
     }
     
-    setMaterialParameters(texture = false)
-    {
-        if(!texture)
-        {
-            this.program.textureIndex = window.gl.getUniformLocation(this.program, "texture");
-            window.gl.uniform1i(this.program.textureIndex, 0);
+    preprocessShaderSource(inSource) {
+        const source = document.getElementById(inSource).text;
+        const versionDirective = '#version 300 es';
+        if (this.useTextureBaseColor) {
+            this.shaderFeatures += '#define USE_TEXTURE_BASECOLOR\n';
         }
+        if (this.useTextureNormal) {
+            this.shaderFeatures += '#define USE_TEXTURE_NORMAL\n';
+        }
+        if (this.useFog) {
+            this.shaderFeatures += '#define USE_FOG\n';
+        }
+        if (this.useAdjugateNormal) {
+            this.shaderFeatures += '#define USE_ADJUGATE_NORMALS\n';
+        }
+        return `${versionDirective}\n${this.shaderFeatures}\n${source}`;
     }
+
     compileAndLinkShaders(vertexSource, fragmentSource) 
     {
         const vertexShader = this.newShader(window.gl.VERTEX_SHADER, vertexSource);
@@ -65,7 +83,7 @@ class Material
         window.gl.enableVertexAttribArray(this.program.vertexColorAttribute);
         this.program.texCoords1Attribute = window.gl.getAttribLocation(this.program, "TexCoords1");
         window.gl.enableVertexAttribArray(this.program.texCoords1Attribute);
-        
+
         //Uniforms
         this.program.modelMatrixIndex = window.gl.getUniformLocation(this.program, "modelMatrix");
         this.program.projectionMatrixIndex = window.gl.getUniformLocation(this.program, "projectionMatrix");
@@ -77,6 +95,10 @@ class Material
         this.program.progFogPower = window.gl.getUniformLocation(this.program, "fogPower");
         this.program.progNearPlane = window.gl.getUniformLocation(this.program, "nPlane");
         this.program.progFarPlane = window.gl.getUniformLocation(this.program, "fPlane");
+
+        // Texture uniforms
+        this.program.baseColorSampler = window.gl.getUniformLocation(this.program, "t_baseColor");
+        this.program.normalSampler = window.gl.getUniformLocation(this.program, "t_normal");
     }
 
     setProjection(projectionMatrix)
@@ -92,5 +114,31 @@ class Material
     setModelMatrix(matrix)
     {
         window.gl.uniformMatrix4fv(this.program.modelMatrixIndex, false, matrix);
+    }
+
+    setTexture(texture, textureUnit, uniformLocation)
+    {
+        window.gl.activeTexture(window.gl.TEXTURE0 + textureUnit);
+        window.gl.bindTexture(window.gl.TEXTURE_2D, texture.texture);
+        window.gl.uniform1i(uniformLocation, textureUnit);
+    }
+
+    bindTexture(image) 
+    {
+        window.gl.bindTexture(window.gl.TEXTURE_2D, this.texture);
+        window.gl.texImage2D(window.gl.TEXTURE_2D, 0, window.gl.RGBA, window.gl.RGBA, window.gl.UNSIGNED_BYTE, image);
+
+        window.gl.texParameteri(window.gl.TEXTURE_2D, window.gl.TEXTURE_MIN_FILTER, window.gl.LINEAR_MIPMAP_LINEAR);
+        window.gl.texParameteri(window.gl.TEXTURE_2D, window.gl.TEXTURE_MAG_FILTER, window.gl.LINEAR);
+
+        window.gl.texParameteri(window.gl.TEXTURE_2D, window.gl.TEXTURE_WRAP_S, window.gl.REPEAT);
+        window.gl.texParameteri(window.gl.TEXTURE_2D, window.gl.TEXTURE_WRAP_T, window.gl.REPEAT);
+
+        window.gl.generateMipmap(window.gl.TEXTURE_2D);
+    }
+
+    assignTexture(texture, type)
+    {
+        this.textures[type] = texture;
     }
 }

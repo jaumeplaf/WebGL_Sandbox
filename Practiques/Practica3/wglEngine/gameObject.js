@@ -3,10 +3,23 @@ class MeshActor
     constructor(inMeshObject)
     {
         this.meshObject = inMeshObject;
+        this.scene = ACTIVE_SCENE;
         this.color = [0.7, 0.7, 0.7, 1.0];
         this.modelMatrixIndex = mat4.create();
 
         this.getBuffers();
+        this.initColors();
+        this.scene.addMeshActor(this);
+    }
+
+    initColors()
+    {      // Create instance-specific color buffer
+      if (this.colors) {
+        this.colors = [...this.colors]; // Create copy of original colors
+        this.idBufferColors = window.gl.createBuffer();
+        window.gl.bindBuffer(window.gl.ARRAY_BUFFER, this.idBufferColors);
+        window.gl.bufferData(window.gl.ARRAY_BUFFER, new Float32Array(this.colors), window.gl.STATIC_DRAW);
+    }
     }
 
     getBuffers() //Copy buffer IDs and data from meshObject if they exist
@@ -68,14 +81,16 @@ class MeshActor
       setColor(newColor) 
       {
         this.color = newColor;
-        for (let i = 0; i < this.colors.length; i += 4) {
-          this.colors[i] = newColor[0];
-          this.colors[i + 1] = newColor[1];
-          this.colors[i + 2] = newColor[2];
-          this.colors[i + 3] = newColor[3];
-        }
-        window.gl.bindBuffer(window.gl.ARRAY_BUFFER, this.idBufferColors);
-        window.gl.bufferSubData(window.gl.ARRAY_BUFFER, 0, new Float32Array(this.colors));
+        if (this.colors) {
+          for (let i = 0; i < this.colors.length; i += 4) {
+              this.colors[i] = newColor[0];
+              this.colors[i + 1] = newColor[1];
+              this.colors[i + 2] = newColor[2];
+              this.colors[i + 3] = newColor[3];
+          }
+          window.gl.bindBuffer(window.gl.ARRAY_BUFFER, this.idBufferColors);
+          window.gl.bufferData(window.gl.ARRAY_BUFFER, new Float32Array(this.colors), window.gl.STATIC_DRAW);
+      }
       }
 
       drawMeshActor()

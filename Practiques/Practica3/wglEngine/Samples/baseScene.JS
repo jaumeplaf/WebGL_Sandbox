@@ -1,4 +1,5 @@
 //Initialize server: "python -m http.server 8000"
+//Navigate to http://localhost:8000/baseScene.html
 
 //Initialize camera
 const camera01 = new Camera(0.1, 500.0, [15,15,15], [0,15,-1]);

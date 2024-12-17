@@ -1,3 +1,5 @@
+//TODO: Add lighting (phong...), ambient/diffuse/specular, multiple lights
+
 window.canvas = null;
 window.gl = null;
 

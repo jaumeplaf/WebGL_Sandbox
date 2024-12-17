@@ -14,6 +14,7 @@ class MeshObject
     this.initAttributeBuffer('vertices', 'ARRAY_BUFFER', Float32Array);
     this.initAttributeBuffer('normals', 'ARRAY_BUFFER', Float32Array);
     this.initAttributeBuffer('colors', 'ARRAY_BUFFER', Float32Array); 
+    //TODO: check how to implement UVs correctly, respecting seams (duplicate vertices)
     this.initAttributeBuffer('texcoords1', 'ARRAY_BUFFER', Float32Array); 
   }
 

@@ -1,0 +1,24 @@
+Global Illumination
+    ·Raytracing/Radiosity
+    (?) repassar teoria integrals i derivades!!!
+    ·Solving the Rendering Equation
+        ·Differential solid angles
+        ·Irradiance: how much light is hitting a surface from all possible directions
+        ·BRDF: bidirectional reflectance distribution functions -> how much light is reflected
+        ·Reflection equation:
+            Integrate over hemisphere
+            fr is the BRDF
+        ·Light transport equation
+            Indefinite derivatives, we must use numerical solutions:
+                Finite elements methods (FEM)
+                Monte Carlo methods: 
+                Simplifications
+        ·Algorythms that solve the RE:
+            Path tracing: chose only a "path" on a ray tracing tree
+            Bidirectional path tracing
+            Photon maps: more efficient for caustics, 
+            Radiosity
+            Irradiance cache method
+            ...
+
+(!)check SSAO in Rewild -> maybe it's the thing causing problems in groundBlend

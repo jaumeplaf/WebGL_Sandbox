@@ -110,7 +110,8 @@
                 float correctedDepth = saturate(pow(depth * fogAmount, fogPower));
                 vec4 vDepth = vec4(vec3(correctedDepth), 1.0);
 
-                vec4 vCol2 = vCol * texture(t_baseColor, uv);
+                //vec4 vCol2 = vCol * texture(t_baseColor, uv);
+                vec4 vCol2 = max(texture(t_baseColor, uv), vCol);
 
                 vec4 fogFlatColor = mix(vCol2 + vNorm * 0.001, fogColor, correctedDepth);
 
@@ -178,6 +179,7 @@
   <script src = "wglEngine/scene.js"></script>
   <script src = "wglEngine/gameObject.js"></script>
   <!-- Load current scene script -->
+  <script src = "wglEngine/Samples/initializeResources.js"></script>
   <script src = "wglEngine/Samples/baseScene.JS"></script>
 
 </body>

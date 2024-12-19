@@ -32,5 +32,5 @@ const barrel02 = new MeshActor(base_barrel2);
 barrel02.setMatrix(-45, 5, -5, 10);
 
 window.onload = function(){
-    currentScene.drawScene();
+    ACTIVE_SCENE.drawScene();
 }

@@ -10,9 +10,6 @@ const currentScene = new Scene(camera01, player01);
 const t_woodTrim_basecolor = new TextureObject("wglEngine/Resources/Textures/trim_baseColor.png");
 const t_woodTrim_normal = new TextureObject("wglEngine/Resources/Textures/trim_normal.png");
 const t_painterly01 = new TextureObject("wglEngine/Resources/Textures/PainterlyTexture01.png");
-const t_painterly02 = new TextureObject("wglEngine/Resources/Textures/PainterlyTexture02.png");
-const t_painterly03 = new TextureObject("wglEngine/Resources/Textures/PainterlyTexture03.png"); 
-const t_painterly04 = new TextureObject("wglEngine/Resources/Textures/PainterlyTexture04.png"); 
 
 //Initialize shaders. Shaders must be declared in the HTML document and have an ID
 const m_flat01 = new Material(currentScene, "VS_01", "FS_01", false);

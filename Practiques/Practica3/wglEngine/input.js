@@ -15,8 +15,8 @@ const inFogColor = document.getElementById('fogColor');
 const inFogAmount = document.getElementById('fogAmount');
 const inFogPower = document.getElementById('fogPower');
 const inFov = document.getElementById('fov');
-const inSavePOI = document.getElementById('savePOI');
-const inLoadPOI = document.getElementById('loadPOI');
+//const inSavePOI = document.getElementById('savePOI');
+//const inLoadPOI = document.getElementById('loadPOI');
 
 class InputParameters
 { 
@@ -78,14 +78,6 @@ class InputParameters
       this.mouseLock = true;
     });
 
-    document.addEventListener('pointerlockchange', () => {
-      if (document.pointerLockElement === canvas) {
-          console.log('Pointer lock active');
-      } else {
-          console.log('Pointer lock released');
-      }
-  });
-
     canvas.addEventListener('wheel', (event) => {
       if(this.mouseLock){
         if(event.deltaY < 0){ //SpeedUp
@@ -129,7 +121,7 @@ class InputParameters
     this.fov = event.target.value;
     inScene.player.updateFov(this.fov);
     });
-
+    /*
     inSavePOI.addEventListener('click', (event) => {
       inScene.camera.savePOI(inScene.camera.position, inScene.camera.target);
     });
@@ -137,5 +129,6 @@ class InputParameters
     inLoadPOI.addEventListener('click', (event) => {
       inScene.camera.loadPOI();
     });
+    */
   }
 }

@@ -13,13 +13,19 @@ class MeshActor
     }
 
     initColors()
-    {      // Create instance-specific color buffer
+    {      
       if (this.colors) {
-        this.colors = [...this.colors]; // Create copy of original colors
+        this.colors = [...this.colors];
         this.idBufferColors = window.gl.createBuffer();
         window.gl.bindBuffer(window.gl.ARRAY_BUFFER, this.idBufferColors);
         window.gl.bufferData(window.gl.ARRAY_BUFFER, new Float32Array(this.colors), window.gl.STATIC_DRAW);
-    }
+      }
+      else{
+        this.colors = new Array(this.vertices.length).fill(1);
+        this.idBufferColors = window.gl.createBuffer();
+        window.gl.bindBuffer(window.gl.ARRAY_BUFFER, this.idBufferColors);
+        window.gl.bufferData(window.gl.ARRAY_BUFFER, new Float32Array(this.colors), window.gl.STATIC_DRAW);
+      }
     }
 
     getBuffers() //Copy buffer IDs and data from meshObject if they exist

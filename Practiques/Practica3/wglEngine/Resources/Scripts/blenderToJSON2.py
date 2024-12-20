@@ -43,51 +43,59 @@ class MESH_OT_export_json(Operator):
         if obj.type != 'MESH':
             return None
 
-        # Prepare storage for JSON data
+        mesh = obj.data
         data = {}
 
-        mesh = obj.data
+        # Storage for unique vertex combinations
+        vertex_map = {}
+        new_vertices = []
+        new_normals = []
+        new_texcoords = []
+        new_colors = []
+        new_indices = []
 
-        if settings.export_vertices:
-            data["vertices"] = np.array([
-                coord for vert in mesh.vertices for coord in (vert.co.x, vert.co.y, vert.co.z)
-            ], dtype=np.float32).tolist()
+        # Get UV and color layers
+        uv_layer = mesh.uv_layers.active.data if mesh.uv_layers and settings.export_texcoords1 else None
+        color_layer = mesh.color_attributes["colors"] if "colors" in mesh.color_attributes else None
 
-        if settings.export_normals:
-            data["normals"] = np.array([
-                coord for vert in mesh.vertices for coord in (vert.normal.x, vert.normal.y, vert.normal.z)
-            ], dtype=np.float32).tolist()
+        # Process each polygon
+        for poly in mesh.polygons:
+            if len(poly.vertices) != 3:
+                continue
 
-        if settings.export_indices:
-            data["indices"] = np.array([
-                index for poly in mesh.polygons if len(poly.vertices) == 3 for index in poly.vertices
-            ], dtype=np.uint16).tolist()
+            for loop_idx in poly.loop_indices:
+                vert_idx = mesh.loops[loop_idx].vertex_index
+                vertex = mesh.vertices[vert_idx]
 
-        if settings.export_texcoords1 or settings.export_texcoords2 or settings.export_texcoords3:
-            uv_layers = mesh.uv_layers
-            for i in range(3):  # Up to 3 UV layers
-                if i < len(uv_layers):
-                    if getattr(settings, f"export_texcoords{i+1}"):
-                        uv_data = np.array([
-                            coord for loop in uv_layers[i].data for coord in (loop.uv.x, loop.uv.y)
-                        ], dtype=np.float32).tolist()
-                        data[f"texcoords{i+1}"] = uv_data
+                # Get UV coordinates
+                uv = tuple(uv_layer[loop_idx].uv) if uv_layer else (0, 0)
+                
+                # Get color or default
+                color = tuple(color_layer.data[vert_idx].color) if color_layer else (0, 0, 0, 1)
 
-        if settings.export_colors:
-            if "colors" in mesh.color_attributes:
-                color_layer = mesh.color_attributes["colors"]
-                data["colors"] = np.array([
-                    color for i in range(len(mesh.vertices)) for color in (
-                        color_layer.data[i].color[0],
-                        color_layer.data[i].color[1],
-                        color_layer.data[i].color[2],
-                        color_layer.data[i].color[3]
-                    )
-                ], dtype=np.float32).tolist()
-            else:
-                data["colors"] = np.array([
-                    0.0 for _ in range(len(mesh.vertices) * 4)
-                ], dtype=np.float32).tolist()
+                # Create unique vertex key
+                vertex_key = (
+                    tuple(vertex.co),
+                    tuple(vertex.normal),
+                    uv
+                )
+
+                if vertex_key not in vertex_map:
+                    vertex_map[vertex_key] = len(new_vertices) // 3
+                    new_vertices.extend([vertex.co.x, vertex.co.y, vertex.co.z])
+                    new_normals.extend([vertex.normal.x, vertex.normal.y, vertex.normal.z])
+                    new_texcoords.extend([uv[0], uv[1]])
+                    new_colors.extend(color)
+
+                new_indices.append(vertex_map[vertex_key])
+
+        # Store processed data
+        data["vertices"] = new_vertices
+        data["normals"] = new_normals
+        data["indices"] = new_indices
+        data["texcoords1"] = new_texcoords
+        data["colors"] = new_colors
+
         return data
 
     def execute(self, context):

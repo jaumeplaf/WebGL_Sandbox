@@ -69,9 +69,6 @@ class Scene
                     objectMaterial.setTexture(objectMaterial.textures['normalMap'], 1, objectMaterial.program.normalSampler);
                 }
             }
-            else {
-                console.log("Material already in use");
-            }
 
             objectMaterial.setProjection(this.camera.getProjectionMatrix());
             objectMaterial.setView(this.camera.getViewMatrix());

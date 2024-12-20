@@ -12,13 +12,13 @@ const t_woodTrim_normal = new TextureObject("wglEngine/Resources/Textures/trim_n
 const t_painterly01 = new TextureObject("wglEngine/Resources/Textures/PainterlyTexture01.png");
 
 //Initialize shaders. Shaders must be declared in the HTML document and have an ID
-const m_flat01 = new Material(currentScene, "VS_01", "FS_01", false);
+const m_flat01 = new Material(currentScene, "VS_01", "FS_01", false, false, false);
 
-const m_WoodTrim01 = new Material(currentScene, "VS_01", "FS_01", true);
+const m_WoodTrim01 = new Material(currentScene, "VS_01", "FS_01", true, false, true);
 m_WoodTrim01.assignTexture(t_woodTrim_basecolor, 'baseColor');
 m_WoodTrim01.assignTexture(t_woodTrim_normal, 'normalMap');
 
-const m_ExampleText01 = new Material(currentScene, "VS_01", "FS_01", true);
+const m_ExampleText01 = new Material(currentScene, "VS_01", "FS_01", true, false, true);
 m_ExampleText01.assignTexture(t_painterly01, 'baseColor');
 
 

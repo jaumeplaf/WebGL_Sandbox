@@ -73,9 +73,13 @@
                 mat3 normalMatrix = mat3(transpose(inverse(modelMatrix)));
             #endif
             vNorm = vec4(normalize(normalMatrix * VertexNormal), 1.0);
-        
+            
             #ifdef USE_TEXTURE_BASECOLOR
-                uv = TexCoords1;
+                #ifdef USE_FLIP_V
+                    uv = vec2(TexCoords1.x, 1.0 - TexCoords1.y);
+                #else
+                    uv = TexCoords1;
+                #endif
             #endif
         }
         

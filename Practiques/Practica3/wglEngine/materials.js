@@ -1,8 +1,9 @@
 class Material 
 {
-    constructor(inScene, vsSource, fsSource, inTextureBaseColor = false, inTextureNormal = false) 
+    constructor(inScene, vsSource, fsSource, inTextureBaseColor = false, inTextureNormal = false, flipVcoord = true) 
     {
         this.scene = inScene;
+        this.flipV = flipVcoord;
         this.useTextureBaseColor = inTextureBaseColor;
         this.useTextureNormal = inTextureNormal;
         this.useFog = true;
@@ -18,6 +19,9 @@ class Material
     preprocessShaderSource(inSource) {
         const source = document.getElementById(inSource).text;
         const versionDirective = '#version 300 es';
+        if (this.flipV) {
+            this.shaderFeatures += '#define USE_FLIP_V\n';
+        }
         if (this.useTextureBaseColor) {
             this.shaderFeatures += '#define USE_TEXTURE_BASECOLOR\n';
         }

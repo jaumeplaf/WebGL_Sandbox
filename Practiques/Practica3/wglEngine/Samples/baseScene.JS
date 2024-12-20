@@ -31,6 +31,10 @@ barrel01.setMatrix(-15, 5, -5, 10);
 const barrel02 = new MeshActor(base_barrel2);
 barrel02.setMatrix(-45, 5, -5, 10);
 
+const shark01A = new MeshActor(base_shark01A);
+shark01A.setMatrix(27.5, 7.5, -17.5, 15);
+shark01A.setRotation(90, [0, 1, 0]);
+
 window.onload = function(){
     ACTIVE_SCENE.drawScene();
 }

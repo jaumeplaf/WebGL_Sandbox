@@ -43,14 +43,16 @@ function initRendering()
     window.gl.enable(gl.CULL_FACE);
 }
 
-function drawModel(model)
+function drawModel(model, drawPoints = false)
 {
     const inShader = model.meshObject.material.program;
+    model.meshObject.material.scene.camera.saveCameraPosition(inShader);
+    
     window.gl.bindBuffer(window.gl.ELEMENT_ARRAY_BUFFER, model.idBufferIndices);
-
+    
     window.gl.bindBuffer(window.gl.ARRAY_BUFFER, model.idBufferVertices);
     window.gl.vertexAttribPointer(inShader.vertexPositionAttribute, 3, window.gl.FLOAT, false, 0, 0);
-  
+    
     window.gl.bindBuffer(window.gl.ARRAY_BUFFER, model.idBufferNormals);
     window.gl.vertexAttribPointer(inShader.vertexNormalAttribute, 3, window.gl.FLOAT, false, 0, 0);
     
@@ -60,9 +62,17 @@ function drawModel(model)
     window.gl.bindBuffer(window.gl.ARRAY_BUFFER, model.idBufferTexcoords1);
     window.gl.vertexAttribPointer(inShader.texCoords1Attribute, 2, window.gl.FLOAT, false, 0, 0);
     
-    window.gl.polygonOffset(0.0, 0.0);
+    if(drawPoints) window.gl.uniform1f(inShader.isPoint, 0.0);
     
     window.gl.drawElements(window.gl.TRIANGLES, model.indices.length, window.gl.UNSIGNED_SHORT, 0);
+    
+    if(drawPoints) {
+        window.gl.uniform1f(inShader.isPoint, 1.0); //Enable point rendering
+
+        window.gl.drawElements(window.gl.POINTS, model.indices.length, window.gl.UNSIGNED_SHORT, 0);
+        
+        window.gl.uniform1f(inShader.isPoint, 0.0); //Disable point rendering
+    }
 }
 
 // Initiate WebGL 2.0 API

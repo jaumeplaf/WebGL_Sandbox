@@ -100,6 +100,8 @@ class Material
         this.program.progNearPlane = window.gl.getUniformLocation(this.program, "nPlane");
         this.program.progFarPlane = window.gl.getUniformLocation(this.program, "fPlane");
 
+        this.program.isPoint = window.gl.getUniformLocation(this.program, "isPoint");
+
         // Texture uniforms
         this.program.baseColorSampler = window.gl.getUniformLocation(this.program, "t_baseColor");
         this.program.normalSampler = window.gl.getUniformLocation(this.program, "t_normal");

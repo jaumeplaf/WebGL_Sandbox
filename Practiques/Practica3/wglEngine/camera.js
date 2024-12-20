@@ -27,6 +27,11 @@ class Camera
         this.initializeCamera();
     }
 
+    saveCameraPosition(program)
+    {
+        window.gl.uniform3f(gl.getUniformLocation(program, "cameraPosition"), this.position[0], this.position[1], this.position[2]);
+    }
+
     initializeCamera()
     {
         this.setProjectionMatrix();

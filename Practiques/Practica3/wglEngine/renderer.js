@@ -59,7 +59,7 @@ function bindModelBuffers(model, inShader) {
     window.gl.vertexAttribPointer(inShader.texCoords1Attribute, 2, window.gl.FLOAT, false, 0, 0);
 }
 
-function drawModel(model, drawMode = 0) //Mode 0:Triangles, 1:Wireframe, 2:Points, 3:Triangles+Points, 4:Triangles+Wireframe, 5:Triangles+Wireframe+Points
+function drawModel(model, drawMode = 0) //Mode 0:Triangles, 1:Wireframe, 2:Points, 3:Triangles+Wireframe, 4:Triangles+Points, 5:Triangles+Wireframe+Points
 {
     const inShader = model.meshObject.material.program;
     model.meshObject.material.scene.camera.saveCameraPosition(inShader); //Save camera position
@@ -74,11 +74,11 @@ function drawModel(model, drawMode = 0) //Mode 0:Triangles, 1:Wireframe, 2:Point
         case 2: drawPoints(model, inShader); break;
         case 3: 
             drawTriangles(model); 
-            drawPoints(model, inShader); 
+            drawWireframe(model, inShader); 
         break;
         case 4: 
             drawTriangles(model); 
-            drawWireframe(model, inShader); 
+            drawPoints(model, inShader); 
         break;
         case 5: 
             drawTriangles(model); 

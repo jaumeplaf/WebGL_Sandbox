@@ -102,6 +102,6 @@ class MeshActor
       drawMeshActor()
       {
         this.meshObject.material.setModelMatrix(this.modelMatrixIndex);
-        drawModel(this);
+        drawModel(this, this.scene.drawMode);
       }
 }

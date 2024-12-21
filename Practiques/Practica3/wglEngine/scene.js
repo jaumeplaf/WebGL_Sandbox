@@ -8,11 +8,13 @@ class Scene
         this.meshActors = [];
         this.textures = [];
         this.currentMaterial = null;
+        this.drawMode = 0;
         
         this.previousTime = performance.now();
 
         this.input = new InputParameters(this.camera);
         this.input.initializeEventListeners(this);
+
     }
 
     addMeshActor(inMeshActor)

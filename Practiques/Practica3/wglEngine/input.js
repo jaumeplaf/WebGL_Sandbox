@@ -6,6 +6,12 @@ const keyRight = 'd';
 const keyUp = ' ';
 const keyDown = 'q';
 const keySprint = 'shift';
+const keyDrawMode0 = '1';
+const keyDrawMode1 = '2';
+const keyDrawMode2 = '3';
+const keyDrawMode3 = '4';
+const keyDrawMode4 = '5';
+const keyDrawMode5 = '6';
 
 //Initialize HTML inputs
 const inShadingMode = document.getElementById('shadingMode');
@@ -57,6 +63,12 @@ class InputParameters
       if(key === keyUp) inScene.player.moveUp = true;
       if(key === keyDown) inScene.player.moveDown = true;
       if(key === keySprint) inScene.player.sprint = true;
+      if(key === keyDrawMode0) inScene.drawMode = 0;
+      if(key === keyDrawMode1) inScene.drawMode = 1;
+      if(key === keyDrawMode2) inScene.drawMode = 2;
+      if(key === keyDrawMode3) inScene.drawMode = 3;
+      if(key === keyDrawMode4) inScene.drawMode = 4;
+      if(key === keyDrawMode5) inScene.drawMode = 5;
     });
 
     window.addEventListener('keyup', (event) => {

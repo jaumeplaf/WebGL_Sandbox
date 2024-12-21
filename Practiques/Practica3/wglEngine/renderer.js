@@ -43,11 +43,7 @@ function initRendering()
     window.gl.enable(gl.CULL_FACE);
 }
 
-function drawModel(model, drawPoints = false)
-{
-    const inShader = model.meshObject.material.program;
-    model.meshObject.material.scene.camera.saveCameraPosition(inShader);
-    
+function bindModelBuffers(model, inShader) {
     window.gl.bindBuffer(window.gl.ELEMENT_ARRAY_BUFFER, model.idBufferIndices);
     
     window.gl.bindBuffer(window.gl.ARRAY_BUFFER, model.idBufferVertices);
@@ -61,18 +57,62 @@ function drawModel(model, drawPoints = false)
     
     window.gl.bindBuffer(window.gl.ARRAY_BUFFER, model.idBufferTexcoords1);
     window.gl.vertexAttribPointer(inShader.texCoords1Attribute, 2, window.gl.FLOAT, false, 0, 0);
-    
-    if(drawPoints) window.gl.uniform1f(inShader.isPoint, 0.0);
-    
-    window.gl.drawElements(window.gl.TRIANGLES, model.indices.length, window.gl.UNSIGNED_SHORT, 0);
-    
-    if(drawPoints) {
-        window.gl.uniform1f(inShader.isPoint, 1.0); //Enable point rendering
+}
 
-        window.gl.drawElements(window.gl.POINTS, model.indices.length, window.gl.UNSIGNED_SHORT, 0);
-        
-        window.gl.uniform1f(inShader.isPoint, 0.0); //Disable point rendering
+function drawModel(model, drawMode = 0) //Mode 0:Triangles, 1:Wireframe, 2:Points, 3:Triangles+Points, 4:Triangles+Wireframe, 5:Triangles+Wireframe+Points
+{
+    const inShader = model.meshObject.material.program;
+    model.meshObject.material.scene.camera.saveCameraPosition(inShader); //Save camera position
+    window.gl.uniform1f(inShader.isPoint, 0.0); 
+
+    bindModelBuffers(model, inShader); //Bind buffers
+
+    switch(drawMode)
+    {
+        case 0: drawTriangles(model); break;
+        case 1: drawWireframe(model, inShader); break;
+        case 2: drawPoints(model, inShader); break;
+        case 3: 
+            drawTriangles(model); 
+            drawPoints(model, inShader); 
+        break;
+        case 4: 
+            drawTriangles(model); 
+            drawWireframe(model, inShader); 
+        break;
+        case 5: 
+            drawTriangles(model); 
+            drawWireframe(model, inShader); 
+            drawPoints(model, inShader);
     }
+
+}
+
+function drawTriangles(model)
+{
+    window.gl.drawElements(window.gl.TRIANGLES, model.indices.length, window.gl.UNSIGNED_SHORT, 0); //Draw triangles
+}
+
+function drawPoints(model, inShader)
+{
+    window.gl.uniform1f(inShader.isPoint, 1.0); //Enable point rendering
+
+    window.gl.drawElements(window.gl.POINTS, model.indices.length, window.gl.UNSIGNED_SHORT, 0);
+    
+    window.gl.uniform1f(inShader.isPoint, 0.0); //Disable point rendering
+}
+
+function drawWireframe(model, inShader)
+{
+    window.gl.uniform1f(inShader.isPoint, 1.0); //Enable line rendering
+    window.gl.polygonOffset(1.0, 1.0);
+
+    for (var i = 0; i < model.indices.length; i += 3){
+          window.gl.drawElements (window.gl.LINE_LOOP, 3, window.gl.UNSIGNED_SHORT, i*2);
+    }
+    
+    window.gl.uniform1f(inShader.isPoint, 0.0); //Disable line rendering
+    window.gl.polygonOffset(0.0, 0.0);
 }
 
 // Initiate WebGL 2.0 API

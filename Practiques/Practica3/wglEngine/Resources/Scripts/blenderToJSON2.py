@@ -44,6 +44,13 @@ class MESH_OT_export_json(Operator):
             return None
 
         mesh = obj.data
+
+        # Check for non-triangulated faces
+        for poly in mesh.polygons:
+            if len(poly.vertices) != 3:
+                self.report({'ERROR'}, f"Object '{obj.name}' contains non-triangulated faces. Please triangulate the mesh first.")
+                return None
+
         data = {}
 
         # Storage for unique vertex combinations
@@ -98,6 +105,15 @@ class MESH_OT_export_json(Operator):
 
         return data
 
+    def check_triangulation(self, obj):
+        if obj.type != 'MESH':
+            return True
+            
+        for poly in obj.data.polygons:
+            if len(poly.vertices) != 3:
+                return False
+        return True
+
     def execute(self, context):
         settings = context.scene.json_export_settings
         selected_objects = [obj for obj in context.selected_objects if obj.type == 'MESH']
@@ -105,6 +121,12 @@ class MESH_OT_export_json(Operator):
         if not selected_objects:
             self.report({'WARNING'}, "No mesh objects selected")
             return {'CANCELLED'}
+
+        # Check all meshes first
+        for obj in selected_objects:
+            if not self.check_triangulation(obj):
+                self.report({'ERROR'}, f"Object '{obj.name}' contains non-triangulated faces. Please triangulate all meshes first.")
+                return {'CANCELLED'}
 
         export_path = bpy.path.abspath(settings.export_path) if settings.export_path.strip() else bpy.path.abspath("//")
         os.makedirs(export_path, exist_ok=True)

@@ -12,8 +12,10 @@ class Material
 
         this.program = this.compileAndLinkShaders(this.preprocessShaderSource(vsSource), this.preprocessShaderSource(fsSource));
         
+        this.setMaterialAttributes();
         this.initializeUniforms();
         this.textures = {};
+
     }
     
     preprocessShaderSource(inSource) {
@@ -76,6 +78,14 @@ class Material
         }
         else console.error("Can't use material, program is null");
     }
+
+    setMaterialAttributes(inMa = [ 0.5, 0.5, 0.5 ], inMd = [ 0.5, 0.5, 0.5 ], inMs = [ 1.0, 1.0, 1.0 ], inShininess = 10.0)
+    {
+        this.Ma = inMa;
+        this.Md = inMd;
+        this.Ms = inMs;
+        this.shininess = inShininess;
+    }
     
     initializeUniforms()
     {
@@ -100,11 +110,25 @@ class Material
         this.program.progNearPlane = window.gl.getUniformLocation(this.program, "nPlane");
         this.program.progFarPlane = window.gl.getUniformLocation(this.program, "fPlane");
 
+        //Point/line rendering
         this.program.isPoint = window.gl.getUniformLocation(this.program, "isPoint");
 
         // Texture uniforms
         this.program.baseColorSampler = window.gl.getUniformLocation(this.program, "t_baseColor");
         this.program.normalSampler = window.gl.getUniformLocation(this.program, "t_normal");
+
+        //Light attributes
+        this.program.progLa = window.gl.getUniformLocation(this.program, "La");
+        this.program.progLd = window.gl.getUniformLocation(this.program, "Ld");
+        this.program.progLs = window.gl.getUniformLocation(this.program, "Ls");
+        this.program.progLposition = window.gl.getUniformLocation(this.program, "Lposition");
+        this.program.progLintensity = window.gl.getUniformLocation(this.program, "Lintensity");
+
+        //Material attributes
+        this.program.progMa = window.gl.getUniformLocation(this.program, "Ma");
+        this.program.progMd = window.gl.getUniformLocation(this.program, "Md");
+        this.program.progMs = window.gl.getUniformLocation(this.program, "Ms");
+        this.program.progShininess = window.gl.getUniformLocation(this.program, "shininess");
     }
 
     setProjection(projectionMatrix)
@@ -146,5 +170,19 @@ class Material
     assignTexture(texture, type)
     {
         this.textures[type] = texture;
+    }
+
+    setLightUniforms(light) 
+    {
+        window.gl.uniform4f(this.program.progLa, light.La[0], light.La[1], light.La[2], 1.0);
+        window.gl.uniform4f(this.program.progLd, light.Ld[0], light.Ld[1], light.Ld[2], 1.0);
+        window.gl.uniform4f(this.program.progLs, light.Ls[0], light.Ls[1], light.Ls[2], 1.0);
+        window.gl.uniform1f(this.program.progLintensity, light.intensity);
+        window.gl.uniform4f(this.program.progLposition, light.position[0], light.position[1], light.position[2], 1.0);
+        
+        window.gl.uniform4f(this.program.progMa, this.Ma[0], this.Ma[1], this.Ma[2], 1.0);  
+        window.gl.uniform4f(this.program.progMd, this.Md[0], this.Md[1], this.Md[2], 1.0);
+        window.gl.uniform4f(this.program.progMs, this.Ms[0], this.Ms[1], this.Ms[2], 1.0);
+        window.gl.uniform1f(this.program.progShininess, this.shininess);
     }
 }

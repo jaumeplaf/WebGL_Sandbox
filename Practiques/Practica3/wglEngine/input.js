@@ -155,7 +155,7 @@ class InputParameters
     inLa.addEventListener('input', (event) => { //Update selected light when any color changes
       const selected = parseInt(inLights.value);
       this.activeLight = inScene.lights[selected];
-      this.activeLight.setLa(hexToRgb(event.target.value));
+      this.activeLight.setLa(hexToRgb(event.target.value), true);
       this.activeLight.proxyUpdateColor();
     });
 

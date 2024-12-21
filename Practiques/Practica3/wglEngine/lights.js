@@ -10,8 +10,29 @@ class Light
         this.Ld = LDiffuse;
         this.Ls = LSpecular;
         
-        this.scene.addLight(this);
+        this.addToScene();
         this.ID = this.scene.lights.length - 1;
+    }
+    addToScene()
+    {
+        this.scene.addLight(this);
+        if(this.scene.lights.length === 1) updateLightUI(this.scene.lights[parseInt(inLights.value)]);
+    }
+    setLa(inLa)
+    {
+        this.La = inLa;
+        console.log("NEW La: " + this.La);
+        this.proxy.setColor(this.La);
+    }
+
+    setLd(inLd)
+    {
+        this.Ld = inLd;
+    }
+
+    setLs(inLs)
+    {
+        this.Ls = inLs;
     }
     
     addProxy(model)
@@ -20,8 +41,13 @@ class Light
        this.proxy.setMatrix(this.position[0], this.position[1], this.position[2], this.modelScale);
        this.proxy.setColor(this.La);    
     }
+
+    proxyUpdateColor()
+    {
+        this.proxy.setColor(this.La);
+    }
     
-    faceDirection(object, direction)
+    proxyFaceDirection(object, direction)
     {
         let planeNormal = [0, 1, 0];
         let normDir = vec3.create();
@@ -57,7 +83,7 @@ class SpotLight extends Light
         this.angle = inAngle;
         this.proxyMesh = new MeshObject(Spotlight01, this.proxyMaterial);
         this.addProxy(this.proxyMesh);
-        this.faceDirection(this.proxy, this.direction);
+        this.proxyFaceDirection(this.proxy, this.direction);
     }
 }
 
@@ -72,6 +98,6 @@ class AreaLight extends Light
         this.proxyMesh = new MeshObject(Arealight01, this.proxyMaterial);
         this.addProxy(this.proxyMesh);
         this.proxy.setScale(this.width, this.height, 1);
-        this.faceDirection(this.proxy, this.direction);
+        this.proxyFaceDirection(this.proxy, this.direction);
     }
 }

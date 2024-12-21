@@ -1,5 +1,24 @@
 //Utility library script, handles miscelanious reusable functions
 
+function rgbToHex(r, g, b) {
+    //clamp & convert each float 0..1 to 0..255 if needed
+    return '#' + [r,g,b].map(c=> {
+      let hex = Math.round(c * 255).toString(16).padStart(2,'0');
+      return hex;
+    }).join('');
+}
+
+function hexToRgb(hexColor){
+    //converts #000000 to [r,g,b]
+    hexColor = hexColor.replace('#','');
+    
+    let r = parseInt(hexColor.substring(0, 2), 16) / 255;
+    let g = parseInt(hexColor.substring(2, 4), 16) / 255;
+    let b = parseInt(hexColor.substring(4, 6), 16) / 255;
+    
+    return [r, g, b];
+}
+
 function hexToRgba(hexColor, alpha){
     //converts #000000 + float alpha to [r,g,b,a]
     hexColor = hexColor.replace('#','');
@@ -11,13 +30,6 @@ function hexToRgba(hexColor, alpha){
     return [r, g, b, alpha];
 }
 
-function rgbToHex(r, g, b) {
-    //clamp & convert each float 0..1 to 0..255 if needed
-    return '#' + [r,g,b].map(c=> {
-      let hex = Math.round(c * 255).toString(16).padStart(2,'0');
-      return hex;
-    }).join('');
-  }
 
 function clamp(value, min, max) 
 {

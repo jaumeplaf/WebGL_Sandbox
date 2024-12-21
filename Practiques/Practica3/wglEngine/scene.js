@@ -15,7 +15,6 @@ class Scene
 
         this.input = new InputParameters(this.camera);
         this.input.initializeEventListeners(this);
-
     }
 
     addMeshActor(inMeshActor)

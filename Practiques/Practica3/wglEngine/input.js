@@ -40,6 +40,8 @@ class InputParameters
     this.fov = degToRad(inFov.value);
     this.nearPlane = inCamera.nearPlane;
     this.farPlane = inCamera.farPlane;
+
+    this.activeLight = null;
   }
 
   setUniforms(inProgram)
@@ -138,25 +140,29 @@ class InputParameters
     });
 
     //Lights
-    
     inLights.addEventListener('change', () => { //Whenever the dropdown changes, update the color pickers
       const selected = parseInt(inLights.value);
       updateLightUI(inScene.lights[selected]);
+      this.activeLight = selected;
     });
     
     inLa.addEventListener('input', (event) => { //Update selected light when any color changes
       const selected = parseInt(inLights.value);
-      inScene.lights[selected].La = hexToRgb(event.target.value);
+      this.activeLight = inScene.lights[selected];
+      this.activeLight.setLa(hexToRgb(event.target.value));
+      this.activeLight.proxyUpdateColor();
     });
 
     inLd.addEventListener('input', (event) => {
       const selected = parseInt(inLights.value);
-      inScene.lights[selected].Ld = hexToRgb(event.target.value);
+      this.activeLight = inScene.lights[selected];
+      this.activeLight.setLd(hexToRgb(event.target.value));
     });
 
     inLs.addEventListener('input', (event) => {
       const selected = parseInt(inLights.value);
-      inScene.lights[selected].Ls = hexToRgb(event.target.value);
-    });
+      this.activeLight = inScene.lights[selected];
+      this.activeLight.setLs(hexToRgb(event.target.value));
+    }); 
   }
 }

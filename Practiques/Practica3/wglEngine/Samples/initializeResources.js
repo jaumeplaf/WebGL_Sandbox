@@ -35,6 +35,8 @@ const base_arrowX = new MeshObject(SM_DebugArrow_X, m_flat01);
 const base_arrowY = new MeshObject(SM_DebugArrow_Y, m_flat01);
 const base_arrowZ = new MeshObject(SM_DebugArrow_Z, m_flat01);
 const base_suzanne = new MeshObject(SM_Suzanne, m_flat01);
+const base_lightBulb = new MeshObject(Lightbulb01, m_flat01);
+const base_testPolygon = new MeshObject(TEST01, m_flat01);
 
 const base_barrel = new MeshObject(Barrel01, m_WoodTrim01);
 const base_barrel2 = new MeshObject(Barrel02, m_ExampleText01);

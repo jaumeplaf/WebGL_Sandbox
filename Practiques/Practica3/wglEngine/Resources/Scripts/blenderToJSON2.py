@@ -63,7 +63,10 @@ class MESH_OT_export_json(Operator):
 
         # Get UV and color layers
         uv_layer = mesh.uv_layers.active.data if mesh.uv_layers and settings.export_texcoords1 else None
-        color_layer = mesh.color_attributes["colors"] if "colors" in mesh.color_attributes else None
+        if "colors" not in mesh.color_attributes:
+            self.report({'ERROR'}, "Active vertex color attribute must be named 'colors'.")
+            return None
+        color_layer = mesh.color_attributes["colors"]
 
         # Process each polygon
         for poly in mesh.polygons:
@@ -78,13 +81,14 @@ class MESH_OT_export_json(Operator):
                 uv = tuple(uv_layer[loop_idx].uv) if uv_layer else (0, 0)
                 
                 # Get color or default
-                color = tuple(color_layer.data[vert_idx].color) if color_layer else (0, 0, 0, 1)
+                color = tuple(color_layer.data[loop_idx].color) if color_layer else (0, 0, 0, 1)
 
                 # Create unique vertex key
                 vertex_key = (
                     tuple(vertex.co),
                     tuple(vertex.normal),
-                    uv
+                    uv,
+                    color  # Add color to make vertices with different colors unique
                 )
 
                 if vertex_key not in vertex_map:

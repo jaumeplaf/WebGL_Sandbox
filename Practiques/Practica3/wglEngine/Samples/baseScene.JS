@@ -35,6 +35,12 @@ const shark01A = new MeshActor(base_shark01A);
 shark01A.setMatrix(27.5, 7.5, -17.5, 15);
 shark01A.setRotation(90, [0, 1, 0]);
 
+const light01 = new MeshActor(base_lightBulb);
+light01.setMatrix(0, 20, 0, 10);
+
+const testPoly = new MeshActor(base_testPolygon);
+testPoly.setMatrix(-40, -10, 10, 10);
+
 window.onload = function(){
     ACTIVE_SCENE.drawScene();
 }

@@ -1,4 +1,4 @@
-//Initialize server: "python -m http.server 8000"
+//Use launcher or initialize server running: "python -m http.server 8000" on the project folder
 //Navigate to http://localhost:8000/baseScene.html
 
 //Set scene as active
@@ -40,6 +40,10 @@ light01.setMatrix(0, 20, 0, 10);
 
 const testPoly = new MeshActor(base_testPolygon);
 testPoly.setMatrix(-40, -10, 10, 10);
+
+const L01 = new PointLight([0, 40, 0], [1.0, 0.0, 0.0], [0.8, 0.8, 0.8], [1.0, 1.0, 1.0]);
+const L02 = new SpotLight([20, 40, 0], [0.0, 1.0, 0.0], [0.8, 0.8, 0.8], [1.0, 1.0, 1.0], [0.0, -1.0, 0.0], 30.0);
+const L03 = new AreaLight([40, 40, 0], [0.0, 0.0, 1.0], [0.8, 0.8, 0.8], [1.0, 1.0, 1.0], [0.0, -1.0, 0.0], 3.0, 1.0);
 
 window.onload = function(){
     ACTIVE_SCENE.drawScene();

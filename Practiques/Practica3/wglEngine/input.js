@@ -1,4 +1,5 @@
 //Initialize key inputs
+//Movement
 const keyForward = 'w';
 const keyLeft = 'a';
 const keyBackward = 's';
@@ -6,6 +7,7 @@ const keyRight = 'd';
 const keyUp = ' ';
 const keyDown = 'q';
 const keySprint = 'shift';
+//Draw modes
 const keyDrawMode0 = '1';
 const keyDrawMode1 = '2';
 const keyDrawMode2 = '3';
@@ -14,15 +16,16 @@ const keyDrawMode4 = '5';
 const keyDrawMode5 = '6';
 
 //Initialize HTML inputs
-const inShadingMode = document.getElementById('shadingMode');
-const inWireframeIgnoreFog = document.getElementById('wireframeIgnoreFog');
-const inWireframeOpacity = document.getElementById('wireframeOpacity');
+//Fog
 const inFogColor = document.getElementById('fogColor');
 const inFogAmount = document.getElementById('fogAmount');
 const inFogPower = document.getElementById('fogPower');
 const inFov = document.getElementById('fov');
-//const inSavePOI = document.getElementById('savePOI');
-//const inLoadPOI = document.getElementById('loadPOI');
+//Lights
+const inLights = document.getElementById('lights');
+const inLa = document.getElementById('La');
+const inLd = document.getElementById('Ld');
+const inLs = document.getElementById('Ls');
 
 class InputParameters
 { 
@@ -133,14 +136,27 @@ class InputParameters
     this.fov = event.target.value;
     inScene.player.updateFov(this.fov);
     });
-    /*
-    inSavePOI.addEventListener('click', (event) => {
-      inScene.camera.savePOI(inScene.camera.position, inScene.camera.target);
+
+    //Lights
+    
+    inLights.addEventListener('change', () => { //Whenever the dropdown changes, update the color pickers
+      const selected = parseInt(inLights.value);
+      updateLightUI(inScene.lights[selected]);
+    });
+    
+    inLa.addEventListener('input', (event) => { //Update selected light when any color changes
+      const selected = parseInt(inLights.value);
+      inScene.lights[selected].La = hexToRgb(event.target.value);
     });
 
-    inLoadPOI.addEventListener('click', (event) => {
-      inScene.camera.loadPOI();
+    inLd.addEventListener('input', (event) => {
+      const selected = parseInt(inLights.value);
+      inScene.lights[selected].Ld = hexToRgb(event.target.value);
     });
-    */
+
+    inLs.addEventListener('input', (event) => {
+      const selected = parseInt(inLights.value);
+      inScene.lights[selected].Ls = hexToRgb(event.target.value);
+    });
   }
 }

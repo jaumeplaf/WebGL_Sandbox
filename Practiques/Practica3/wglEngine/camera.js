@@ -14,9 +14,6 @@ class Camera
         this.maxRadius = 95;
         this.constraints = false;
 
-        this.positionPOI = null;
-        this.targetPOI = null;
-
         this.nearPlane = inNearPlane;
         this.farPlane = inFarPlane;
         this.fov = degToRad(inFov.value);
@@ -157,21 +154,5 @@ class Camera
         }
     
         this.setViewMatrix();
-    }
-
-    savePOI(position, target)
-    {
-        this.positionPOI = [...this.position];
-        this.targetPOI = [...this.target];
-        updatePOI(this);
-    }
-
-    loadPOI()
-    {
-        if (this.positionPOI && this.targetPOI) {
-            this.position = [...this.positionPOI];
-            this.target = [...this.targetPOI];
-            this.setViewMatrix();
-        }
     }
 }

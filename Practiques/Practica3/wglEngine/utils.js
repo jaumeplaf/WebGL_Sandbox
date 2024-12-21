@@ -11,9 +11,22 @@ function hexToRgba(hexColor, alpha){
     return [r, g, b, alpha];
 }
 
+function rgbToHex(r, g, b) {
+    //clamp & convert each float 0..1 to 0..255 if needed
+    return '#' + [r,g,b].map(c=> {
+      let hex = Math.round(c * 255).toString(16).padStart(2,'0');
+      return hex;
+    }).join('');
+  }
+
 function clamp(value, min, max) 
 {
     return Math.min(Math.max(value, min), max);
+}
+
+function saturate(value)
+{
+    return Math.min(Math.max(value, 0), 1);
 }
 
 function remapRange(value, low1, high1, low2, high2) {

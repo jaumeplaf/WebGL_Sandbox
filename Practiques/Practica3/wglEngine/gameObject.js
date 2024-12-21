@@ -96,7 +96,7 @@ class MeshActor
           }
           window.gl.bindBuffer(window.gl.ARRAY_BUFFER, this.idBufferColors);
           window.gl.bufferData(window.gl.ARRAY_BUFFER, new Float32Array(this.colors), window.gl.STATIC_DRAW);
-      }
+        }
       }
 
       drawMeshActor()

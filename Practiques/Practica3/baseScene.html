@@ -174,34 +174,46 @@
                     <span>fps: </span><span class ="counter" id="fpsCounter">"fps" </span><br>
                     <span>frame time: </span><span class="counter" id ="frameTime">"frame time" </span><br>
                 </div>
-            <!-- Fog controls -->
-            <span class="separator">Fog:</span>
-            <div class="indent">
-                <input type="color" id="fogColor" value="#444444">
-                <label for="fogColor">Fog color</label>
-            </div>
-            <div class="slidercontainer indent">
-                <label for="fogAmount">Fog amount:</label>
-                <input type="range" min="0.0" max="20.0" value="0.1" step="0.01" class="slider" id="fogAmount">
-            </div>
-            <div class="slidercontainer indent">
-                <label for="fogPower">Fog power:</label>
-                <input type="range" min="0.05" max="2.0" value="0.2" step="0.01" class="slider" id="fogPower">
-            </div>
-            <span class="separator">Camera:</span>
-            <div class="indent">
-                <div class="slidercontainer" id="wireframeOpacityContainer">
-                    <label for="fov">FOV: </label><span id="displayFov">"fov" </span><br>
-         </div>           <input type="range" min="20.0" max="120.0" value="70.0" step="0.01" class="slider" id="fov">
+                <!-- Fog controls -->
+                <span class="separator">Fog:</span>
+                <div class="indent">
+                    <input type="color" id="fogColor" value="#444444">
+                    <label for="fogColor">Fog color</label>
                 </div>
-                <!--
-                <button id="savePOI">Save camera POI</button><br>
-                <span>POI: </span><span id="POIdisplay">"empty" </span><br>
-                <button id="loadPOI">Load camera POI</button>
-                --> 
+                <div class="slidercontainer indent">
+                    <label for="fogAmount">Fog amount:</label>
+                    <input type="range" min="0.0" max="20.0" value="0.1" step="0.01" class="slider" id="fogAmount">
+                </div>
+                <div class="slidercontainer indent">
+                    <label for="fogPower">Fog power:</label>
+                    <input type="range" min="0.05" max="2.0" value="0.2" step="0.01" class="slider" id="fogPower">
+                </div>
+                <span class="separator">Camera:</span>
+                <div class="indent">
+                    <div class="slidercontainer" id="wireframeOpacityContainer">
+                        <label for="fov">FOV: </label><span id="displayFov">"fov" </span><br>
+                    </div>           
+                <input type="range" min="20.0" max="120.0" value="70.0" step="0.01" class="slider" id="fov">
+                </div>
+                <span class="separator">Lighting:</span>
+                <div class="indent">
+                    <select id="lights">
+                        <option selected value="0">Light00</option>
+                        <option value="1">Light01</option>
+                        <option value="2">Light02</option>
+                    </select>
+                    <br>
+                    <label for="La">Ambient value</label>
+                    <input type="color" id="La" value="#ff0000">
+                    <br>
+                    <label for="Ld">Diffuse value</label>
+                    <input type="color" id="Ld" value="#00ff00">
+                    <br>
+                    <label for="Ls">Specular value</label>
+                    <input type="color" id="Ls" value="#0000ff">
+                </div>
             </div>
         </div>
-    </div>
 
   <!-- Load external libraries -->
   <script src = "wglEngine/Resources/Scripts/gl-matrix-min.js"></script>
@@ -223,6 +235,7 @@
   <script src = "wglEngine/player.js"></script>
   <script src = "wglEngine/scene.js"></script>
   <script src = "wglEngine/gameObject.js"></script>
+  <script src = "wglEngine/lights.js"></script>
   <!-- Load current scene script -->
   <script src = "wglEngine/Samples/initializeResources.js"></script>
   <script src = "wglEngine/Samples/baseScene.JS"></script>

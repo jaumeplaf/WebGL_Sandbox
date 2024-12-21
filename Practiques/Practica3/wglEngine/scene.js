@@ -7,6 +7,7 @@ class Scene
 
         this.meshActors = [];
         this.textures = [];
+        this.lights = [];
         this.currentMaterial = null;
         this.drawMode = 0;
         
@@ -34,6 +35,11 @@ class Scene
     {
         const texture = new TextureObject(texturePath);
         this.textures.push(texture);
+    }
+
+    addLight(inLight)
+    {
+        this.lights.push(inLight);
     }
     
     updateDeltaTime() 
@@ -76,7 +82,6 @@ class Scene
             objectMaterial.setView(this.camera.getViewMatrix());
             
             object.drawMeshActor();
-
         }
 
         //We need to use "requestAnimationFrame(() => scene.drawScene())" instead of "requestAnimationFrame(scene.drawScene)" to have access to "this", and it's properties

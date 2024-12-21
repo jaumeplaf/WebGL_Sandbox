@@ -190,10 +190,10 @@
                 </div>
                 <span class="separator">Camera:</span>
                 <div class="indent">
-                    <div class="slidercontainer" id="wireframeOpacityContainer">
+                    <div class="slidercontainer">
                         <label for="fov">FOV: </label><span id="displayFov">"fov" </span><br>
                     </div>           
-                <input type="range" min="20.0" max="120.0" value="70.0" step="0.01" class="slider" id="fov">
+                    <input type="range" min="20.0" max="120.0" value="70.0" step="0.01" class="slider" id="fov">
                 </div>
                 <span class="separator">Lighting:</span>
                 <div class="indent">
@@ -203,13 +203,18 @@
                         <option value="2">Light02</option>
                     </select>
                     <br>
-                    <label for="La">Ambient value</label>
+                    <div class="slidercontainer">
+                        <label for="fov">Intensity: </label><span id="displayLightIntensity">"Int" </span><br>
+                    </div>           
+                    <input type="range" min="0.0" max="100.0" value="10.0" step="0.01" class="slider" id="lightIntensity">
+                    <br>
+                    <label for="La">Ambient value: </label>
                     <input type="color" id="La" value="#ffffff">
                     <br>
-                    <label for="Ld">Diffuse value</label>
+                    <label for="Ld">Diffuse value: </label>
                     <input type="color" id="Ld" value="#ffffff">
                     <br>
-                    <label for="Ls">Specular value</label>
+                    <label for="Ls">Specular value: </label>
                     <input type="color" id="Ls" value="#ffffff">
                 </div>
             </div>

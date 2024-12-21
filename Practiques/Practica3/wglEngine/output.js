@@ -2,6 +2,7 @@
 const outFps = document.getElementById('fpsCounter');
 const outFrameTime = document.getElementById('frameTime');
 const outFov = document.getElementById('displayFov');
+const outLightIntensity = document.getElementById('displayLightIntensity');
 
 function updateFpsCounter(deltaTime, precision) 
 {
@@ -19,9 +20,10 @@ function updateFovDisplay(fov)
     outFov.textContent = fov + "º";
 }
 
-function updatePOI(inCamera)
+function updateLightIntensityDisplay(intensity)
 {
-    outPoi.textContent = inCamera.positionPOI[0].toFixed(2) + ", " + inCamera.positionPOI[1].toFixed(2) + ", " + inCamera.positionPOI[0].toFixed(2);
+    inLightIntensity.value = intensity;
+    outLightIntensity.textContent = intensity;
 }
 
 function updateLightUI(light) {

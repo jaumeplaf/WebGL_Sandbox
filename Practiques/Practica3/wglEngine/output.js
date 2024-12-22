@@ -3,6 +3,7 @@ const outFps = document.getElementById('fpsCounter');
 const outFrameTime = document.getElementById('frameTime');
 const outFov = document.getElementById('displayFov');
 const outLightIntensity = document.getElementById('displayLightIntensity');
+const outLightRadius = document.getElementById('displayLightRadius');
 const outLightPosX = document.getElementById('displaylightPositionX');
 const outLightPosY = document.getElementById('displaylightPositionY');
 const outLightPosZ = document.getElementById('displaylightPositionZ');
@@ -27,6 +28,12 @@ function updateLightIntensityDisplay(intensity)
 {
     inLightIntensity.value = intensity;
     outLightIntensity.textContent = intensity;
+}
+
+function updateLightRadiusDisplay(radius)
+{
+    inLightRadius.value = radius;
+    outLightRadius.textContent = radius;
 }
 
 function updateLightPositions(inX, inY, inZ)

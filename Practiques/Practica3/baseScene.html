@@ -127,6 +127,7 @@
 
         uniform vec4 La, Ld, Ls;
         uniform float Lintensity;
+        uniform float Lradius;
         uniform vec4 Ma, Md, Ms;
         uniform float shininess;
 
@@ -176,9 +177,8 @@
             vec4 mixedDiffuse = Md * vCol;
             diffuse = NdotL * (Ld * mixedDiffuse) * Lintensity;
             specular = RdotV * (Ls * Ms) * Lintensity;
-            float lRadius = 500.0;
-            float cDist = clamp(dist, 0.0, lRadius); //Clamp distance to light radius
-            float nDist = remap(cDist, 0.0, lRadius, 1.0, 0.0); //Remap distance to 0-1
+            float cDist = clamp(dist, 0.0, Lradius); //Clamp distance to light radius
+            float nDist = remap(cDist, 0.0, Lradius, 1.0, 0.0); //Remap distance to 0-1
             return (ambient * nDist + diffuse * nDist + specular* nDist);
         }
 
@@ -275,14 +275,19 @@
                 <div class="indent">
                     <select id="lights">
                         <option selected value="0">Light00</option>
-                        <option value="1">Light01</option>
-                        <option value="2">Light02</option>
+                        <!-- <option value="1">Light01</option> -->
+                        <!-- <option value="2">Light02</option> -->
                     </select>
                     <br>
                     <div class="slidercontainer">
                         <label for="lightIntensity">Intensity: </label><span id="displayLightIntensity">"Int" </span><br>
                     </div>           
                     <input type="range" min="0.0" max="10.0" value="1.0" step="0.005" class="slider" id="lightIntensity">
+                    <br>
+                    <div class="slidercontainer">
+                        <label for="lightRadius">Radius: </label><span id="displayLightRadius">"Rad" </span><br>
+                    </div>           
+                    <input type="range" min="10.0" max="1000.0" value="400.0" step="0.01" class="slider" id="lightRadius">
                     <br>
                     <div class="slidercontainer">
                         <label for="lightPositionX">Position X: </label><span id="displaylightPositionX">"PosX" </span><br>

@@ -25,6 +25,7 @@ const inFov = document.getElementById('fov');
 //Lights
 const inLights = document.getElementById('lights');
 const inLightIntensity = document.getElementById('lightIntensity');
+const inLightRadius = document.getElementById('lightRadius');
 const inLightPosX = document.getElementById('lightPositionX');
 const inLightPosY = document.getElementById('lightPositionY');
 const inLightPosZ = document.getElementById('lightPositionZ');
@@ -155,6 +156,10 @@ class InputParameters
     
     inLightIntensity.addEventListener('input', (event) => {
       this.activeLight.setIntensity(event.target.value);
+    });
+
+    inLightRadius.addEventListener('input', (event) => {
+      this.activeLight.setRadius(event.target.value);
     });
 
     inLightPosX.addEventListener('input', (event) => {

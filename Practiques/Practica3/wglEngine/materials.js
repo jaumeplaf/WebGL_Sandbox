@@ -127,6 +127,7 @@ class Material
         this.program.progLs = window.gl.getUniformLocation(this.program, "Ls");
         this.program.progLposition = window.gl.getUniformLocation(this.program, "Lposition");
         this.program.progLintensity = window.gl.getUniformLocation(this.program, "Lintensity");
+        this.program.progLradius = window.gl.getUniformLocation(this.program, "Lradius");
 
         //Material attributes
         this.program.progMa = window.gl.getUniformLocation(this.program, "Ma");
@@ -182,6 +183,7 @@ class Material
         window.gl.uniform4f(this.program.progLd, light.Ld[0], light.Ld[1], light.Ld[2], 1.0);
         window.gl.uniform4f(this.program.progLs, light.Ls[0], light.Ls[1], light.Ls[2], 1.0);
         window.gl.uniform1f(this.program.progLintensity, light.intensity);
+        window.gl.uniform1f(this.program.progLradius, light.radius);
         window.gl.uniform4f(this.program.progLposition, light.position[0], light.position[1], light.position[2], 1.0);
         
         window.gl.uniform4f(this.program.progMa, this.Ma[0], this.Ma[1], this.Ma[2], 1.0);  

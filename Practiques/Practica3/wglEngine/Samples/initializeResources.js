@@ -48,6 +48,23 @@ m_flat01.setMaterialAttributes(
     [0.4, 0.4, 0.4], // Specular
     10.0 // Shininess
 );
+
+//Initialize Materials. Shaders must be declared in the HTML document and have an ID
+const m_flat02 = new Material(
+    currentScene, // Scene
+    "VS_01", // Vertex Shader ID
+    "FS_01", // Fragment Shader ID
+    false, //Base color texture
+    false, //Normal map texture
+    false //Flip V coords
+);
+m_flat02.setMaterialAttributes(
+    [10.0, 10.0, 10.0], // Ambient
+    [10.0, 10.0, 10.0], // Diffuse
+    [0, 0, 0], // Specular
+    1.0 // Shininess
+);
+
 const m_concrete01 = new Material(
     currentScene, // Scene
     "VS_01", // Vertex Shader ID
@@ -87,10 +104,10 @@ const m_WoodTrim01 = new Material(
     );
 m_WoodTrim01.assignTexture(t_woodTrim_basecolor, 'baseColor');
 m_WoodTrim01.setMaterialAttributes(
-    [.7, .7, .7], // Ambient
-    [.5, .5, .5], // Diffuse
-    [.1, .1, .1], // Specular
-    10.0 // Shininess
+    [1.0, 1.0, 1.0], // Ambient
+    [1.0, 1.0, 1.0], // Diffuse
+    [.2, .2, .2], // Specular
+    1.0 // Shininess
 );
 
 const m_ExampleText01 = new Material(
@@ -141,15 +158,15 @@ const base_cube = new MeshObject(
 );
 const base_arrowX = new MeshObject(
     SM_DebugArrow_X, //Mesh origin
-    m_flat01 //Material
+    m_flat02 //Material
 );
 const base_arrowY = new MeshObject(
     SM_DebugArrow_Y, //Mesh origin
-    m_flat01 //Material
+    m_flat02 //Material
 );
 const base_arrowZ = new MeshObject(
     SM_DebugArrow_Z, //Mesh origin
-    m_flat01 //Material
+    m_flat02 //Material
 );
 const base_suzanne = new MeshObject(
     SM_Suzanne, //Mesh origin
@@ -170,7 +187,12 @@ const base_barrel = new MeshObject(
 );
 const base_barrel2 = new MeshObject(
     Barrel02, //Mesh origin
-    m_ExampleText01 //Material
+    m_WoodTrim01 //Material
+);
+
+const base_cart01 = new MeshObject(
+    Cart01, //Mesh origin
+    m_WoodTrim01 //Material
 );
 
 const base_shark01A = new MeshObject(

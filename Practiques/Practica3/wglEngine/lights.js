@@ -1,13 +1,13 @@
 class Light
 {
-    constructor(intensity, position, LAmbient, LDiffuse, LSpecular)
+    constructor(intensity, radius, position, LAmbient, LDiffuse, LSpecular)
     {
         this.scene = ACTIVE_SCENE;
         this.proxyMaterial = new Material(this.scene, "VS_01", "FS_01", false, false, false);
         this.emissive = 10;
         this.modelScale = 20;
 
-        this.initializeLightAttributes(LAmbient, LDiffuse, LSpecular, intensity, position);
+        this.initializeLightAttributes(LAmbient, LDiffuse, LSpecular, intensity, radius, position);
 
         this.addToScene();
         this.ID = this.scene.lights.length - 1;
@@ -30,15 +30,18 @@ class Light
             this.scene.input.activeLight = this;
             updateLightUI(this.scene.lights[parseInt(inLights.value)]);
             updateLightIntensityDisplay(this.intensity);
+            updateLightRadiusDisplay(this.radius);
+            updateLightPositions(this.position[0], this.position[1], this.position[2]);
         } 
     }
 
-    initializeLightAttributes(inLa, inLd, inLs, inIntensity, inPosition)
+    initializeLightAttributes(inLa, inLd, inLs, inIntensity, inRadius, inPosition)
     {
         this.setLa(inLa, false);
         this.setLd(inLd);
         this.setLs(inLs);
         this.setIntensity(inIntensity);
+        this.setRadius(inRadius);
         this.setPostion(inPosition);
     }
 
@@ -62,6 +65,12 @@ class Light
     {
         this.intensity = inIntensity;
         updateLightIntensityDisplay(inIntensity);
+    }
+    
+    setRadius(inRadius)
+    {
+        this.radius = inRadius;
+        updateLightRadiusDisplay(inRadius);
     }
 
     setPostion(inPosition)
@@ -109,9 +118,9 @@ class Light
 
 class PointLight extends Light
 {
-    constructor(inIntensity, position, LAmbient, LDiffuse, LSpecular)
+    constructor(inIntensity, radius, position, LAmbient, LDiffuse, LSpecular)
     {
-        super(inIntensity, position, LAmbient, LDiffuse, LSpecular); 
+        super(inIntensity, radius, position, LAmbient, LDiffuse, LSpecular); 
         this.proxyMesh = new MeshObject(Lightbulb01, this.proxyMaterial);
         this.addProxy(this.proxyMesh);
     }
@@ -119,9 +128,9 @@ class PointLight extends Light
 
 class SpotLight extends Light
 {
-    constructor(inIntensity, position, LAmbient, LDiffuse, LSpecular, inDirection = [0, -1, 0], inAngle = 30.0)
+    constructor(inIntensity, radius, position, LAmbient, LDiffuse, LSpecular, inDirection = [0, -1, 0], inAngle = 30.0)
     {
-        super(inIntensity, position, LAmbient, LDiffuse, LSpecular);
+        super(inIntensity, radius, position, LAmbient, LDiffuse, LSpecular);
         this.direction = inDirection;
         this.angle = inAngle;
         this.proxyMesh = new MeshObject(Spotlight01, this.proxyMaterial);
@@ -132,9 +141,9 @@ class SpotLight extends Light
 
 class AreaLight extends Light
 {
-    constructor(inIntensity, position, LAmbient, LDiffuse, LSpecular, inDirection = [0, -1, 0], inWidth = 4.0, inHeight = 2.0)
+    constructor(inIntensity, radius, position, LAmbient, LDiffuse, LSpecular, inDirection = [0, -1, 0], inWidth = 4.0, inHeight = 2.0)
     {
-        super(inIntensity, position, LAmbient, LDiffuse, LSpecular);
+        super(inIntensity, radius, position, LAmbient, LDiffuse, LSpecular);
         this.direction = inDirection;
         this.width = inWidth;
         this.height = inHeight;

@@ -155,11 +155,18 @@
 
         vec4 phong(vec3 N, vec3 L, vec3 V, float dist) //Uniforms: Ma, Md, Ms, shininess, La, Ld, Ls, Lintensity
         {
+            N = normalize(N);
+            L = normalize(L);
+            V = normalize(V);
+
             vec4 ambient = La * Ma;
             vec4 diffuse = vec4(0.0);
             vec4 specular = vec4(0.0);
+
             float NdotL = saturate(dot(N, L));
-            vec3 R = reflect(-L, N);
+            
+            vec3 R = reflect(L, N);
+
             float RdotV = pow(max(dot(R, V), 0.0), shininess);
             vec4 mixedDiffuse = Md * vCol;
             diffuse = NdotL * (Ld * mixedDiffuse) * Lintensity;
@@ -181,8 +188,6 @@
             vec3 V = normalize(-vPos.xyz);
             vec3 N = normalize(vNorm.xyz); // Ensure normal is normalized
             vec3 phongColor = phong(N, L, V, absDist).xyz;
-
-    vec3 debugColor = L;
 
             #ifdef USE_TEXTURE_BASECOLOR
                 vec3 baseColor = texture(t_baseColor, uv).xyz;
@@ -224,8 +229,6 @@
             else{
                 fragmentColor = finalColor;
             }
-            
-            //fragmentColor = vec4(debugColor, 1.0);
         }
 
         </script>

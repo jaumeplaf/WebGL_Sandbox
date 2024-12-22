@@ -1,5 +1,5 @@
 //Initialize camera
-const camera01 = new Camera(0.1, 500.0, [15,15,15], [0,15,-1]);
+const camera01 = new Camera(0.1, 5000.0, [15,15,15], [0,15,-1]);
 
 //Initialize player
 const player01 = new Player(camera01);
@@ -14,6 +14,10 @@ const t_fish01 = new TextureObject("wglEngine/Resources/Textures/FishAtlas01.png
 
 //Initialize shaders. Shaders must be declared in the HTML document and have an ID
 const m_flat01 = new Material(currentScene, "VS_01", "FS_01", false, false, false);
+const m_concrete01 = new Material(currentScene, "VS_01", "FS_01", false, false, false);
+m_concrete01.setMaterialAttributes([0.5, 0.5, 0.5], [0.8, 0.8, 0.8], [0.8, 0.8, 0.8], 1.0);
+const m_shiny01 = new Material(currentScene, "VS_01", "FS_01", false, false, false);
+m_shiny01.setMaterialAttributes([1.0, 1.0, 1.0], [1.0, 1.0, 1.0], [1.0, 1.0, 1.0], 64.0);
 
 const m_WoodTrim01 = new Material(currentScene, "VS_01", "FS_01", true, false, true);
 m_WoodTrim01.assignTexture(t_woodTrim_basecolor, 'baseColor');
@@ -29,6 +33,7 @@ m_Fish01.assignTexture(t_fish01, 'baseColor');
 
 
 //Initialize MeshObject
+const base_floor = new MeshObject(SM_Floor01, m_concrete01);
 const base_plane = new MeshObject(SM_Plane, m_flat01);
 const base_cube = new MeshObject(SM_Cube, m_ExampleText01);
 const base_arrowX = new MeshObject(SM_DebugArrow_X, m_flat01);
@@ -36,7 +41,7 @@ const base_arrowY = new MeshObject(SM_DebugArrow_Y, m_flat01);
 const base_arrowZ = new MeshObject(SM_DebugArrow_Z, m_flat01);
 const base_suzanne = new MeshObject(SM_Suzanne, m_flat01);
 const base_lightBulb = new MeshObject(Lightbulb01, m_flat01);
-const base_testPolygon = new MeshObject(TEST01, m_flat01);
+const base_testPolygon = new MeshObject(TEST01, m_shiny01);
 
 const base_barrel = new MeshObject(Barrel01, m_WoodTrim01);
 const base_barrel2 = new MeshObject(Barrel02, m_ExampleText01);

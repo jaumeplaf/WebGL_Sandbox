@@ -4,6 +4,7 @@ class Light
     {
         this.scene = ACTIVE_SCENE;
         this.proxyMaterial = new Material(this.scene, "VS_01", "FS_01", false, false, false);
+        //this.proxyMaterial.setMaterialAttributes([.5,.5,.5], [.5,.5,.5], [.5,.5,.5], 1.0);
         this.modelScale = 5;
 
         this.initializeLightAttributes(LAmbient, LDiffuse, LSpecular, intensity, position);

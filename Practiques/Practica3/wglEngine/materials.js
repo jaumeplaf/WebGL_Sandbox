@@ -8,6 +8,7 @@ class Material
         this.useTextureNormal = inTextureNormal;
         this.useFog = true;
         this.useAdjugateNormal = true;
+        this.vertexColorTint = true;
         this.shaderFeatures = '';
 
         this.program = this.compileAndLinkShaders(this.preprocessShaderSource(vsSource), this.preprocessShaderSource(fsSource));
@@ -35,6 +36,9 @@ class Material
         }
         if (this.useAdjugateNormal) {
             this.shaderFeatures += '#define USE_ADJUGATE_NORMALS\n';
+        }
+        if(this.vertexColorTint){
+            this.shaderFeatures += '#define USE_VERTEX_COLOR_TINT\n';
         }
         return `${versionDirective}\n${this.shaderFeatures}\n${source}`;
     }

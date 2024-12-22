@@ -6,8 +6,8 @@ const ACTIVE_SCENE = currentScene;
 
 //Initialize object instances
 
-const floor = new MeshActor(base_plane);
-floor.setMatrix(0, -10, -5, 1000);
+const floor = new MeshActor(base_floor);
+floor.setMatrix(0, -10, -5, 100);
 floor.setColor([0.6, 0.6, 0.6, 1.0]);
 
 const arrowX = new MeshActor(base_arrowX);
@@ -20,10 +20,12 @@ arrowZ.setMatrix(0, 0, -5, 100);
 const suz01 = new MeshActor(base_suzanne);
 suz01.setMatrix(-15, 30, -5, 10);
 suz01.setColor([0.3, 0.7, 0.7, 1.0]);
+suz01.setRotation(180, [0, 1, 0]);
 
 const suz02 = new MeshActor(base_suzanne);
 suz02.setMatrix(-45, 30, -5, 10);
 suz02.setColor([0.8, 0.3, 0.3, 1.0]);
+suz02.setRotation(180, [0, 1, 0]);
 
 const barrel01 = new MeshActor(base_barrel);
 barrel01.setMatrix(-15, 5, -5, 10);
@@ -38,7 +40,7 @@ shark01A.setRotation(90, [0, 1, 0]);
 const testPoly = new MeshActor(base_testPolygon);
 testPoly.setMatrix(-40, -10, 10, 10);
 
-const L01 = new PointLight(1, [40, 40, 0], [0.7, 0.7, 0.7], [1.0, 0.8, 0.0], [1.0, 1.0, 0.8]);
+const L01 = new PointLight(1, [40, 40, 60], [0.7, 0.7, 0.7], [1.0, 0.8, 0.0], [1.0, 1.0, 0.8]);
 //const L02 = new SpotLight(3,[20, 40, 0], [0.0, 1.0, 0.0], [0.8, 0.8, 0.8], [1.0, 1.0, 1.0], [0.0, -1.0, 0.0], 30.0);
 //const L03 = new AreaLight(10,[40, 40, 0], [0.0, 0.0, 1.0], [0.8, 0.8, 0.8], [1.0, 1.0, 1.0], [0.0, -1.0, 0.0], 3.0, 1.0);
 

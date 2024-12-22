@@ -10,7 +10,7 @@ class Camera
         this.pitch = 0;
 
         this.floor = -9;
-        this.ceiling = 89;
+        this.ceiling = 289;
         this.maxRadius = 95;
         this.constraints = false;
 

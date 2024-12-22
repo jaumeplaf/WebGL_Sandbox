@@ -7,7 +7,7 @@ class Material
         this.useTextureBaseColor = inTextureBaseColor;
         this.useTextureNormal = inTextureNormal;
         this.useFog = true;
-        this.useAdjugateNormal = true;
+        this.useAdjugateNormal = false;
         this.vertexColorTint = true;
         this.shaderFeatures = '';
 

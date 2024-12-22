@@ -3,6 +3,9 @@ const outFps = document.getElementById('fpsCounter');
 const outFrameTime = document.getElementById('frameTime');
 const outFov = document.getElementById('displayFov');
 const outLightIntensity = document.getElementById('displayLightIntensity');
+const outLightPosX = document.getElementById('displaylightPositionX');
+const outLightPosY = document.getElementById('displaylightPositionY');
+const outLightPosZ = document.getElementById('displaylightPositionZ');
 
 function updateFpsCounter(deltaTime, precision) 
 {
@@ -24,6 +27,16 @@ function updateLightIntensityDisplay(intensity)
 {
     inLightIntensity.value = intensity;
     outLightIntensity.textContent = intensity;
+}
+
+function updateLightPositions(inX, inY, inZ)
+{
+    inLightPosX.value = inX;
+    outLightPosX.textContent = inLightPosX.value;
+    inLightPosY.value = inY;
+    outLightPosY.textContent = inLightPosY.value;
+    inLightPosZ.value = inZ;
+    outLightPosZ.textContent = inLightPosZ.value;
 }
 
 function updateLightUI(light) {

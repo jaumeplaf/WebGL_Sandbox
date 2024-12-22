@@ -40,7 +40,11 @@ shark01A.setRotation(90, [0, 1, 0]);
 const testPoly = new MeshActor(base_testPolygon);
 testPoly.setMatrix(-40, -10, 10, 10);
 
-const L01 = new PointLight(1, [40, 40, 60], [0.7, 0.7, 0.7], [1.0, 0.8, 0.0], [1.0, 1.0, 0.8]);
+
+//TODO: IMPLEMENT LIGHT POSITION ATTRIBUTE SLIDER
+//TODO: IMPLEMENT MULTIPLE LIGHTS
+//TODO: CHANGE LIGHT PROXY COLOR FROM La to Ld
+const L01 = new PointLight(1, [20, -5, -17.5], [0.7, 0.7, 0.7], [1.0, 0.8, 0.0], [1.0, 1.0, 0.8]);
 //const L02 = new SpotLight(3,[20, 40, 0], [0.0, 1.0, 0.0], [0.8, 0.8, 0.8], [1.0, 1.0, 1.0], [0.0, -1.0, 0.0], 30.0);
 //const L03 = new AreaLight(10,[40, 40, 0], [0.0, 0.0, 1.0], [0.8, 0.8, 0.8], [1.0, 1.0, 1.0], [0.0, -1.0, 0.0], 3.0, 1.0);
 

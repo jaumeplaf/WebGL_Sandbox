@@ -14,21 +14,53 @@ const t_fish01 = new TextureObject("wglEngine/Resources/Textures/FishAtlas01.png
 
 //Initialize shaders. Shaders must be declared in the HTML document and have an ID
 const m_flat01 = new Material(currentScene, "VS_01", "FS_01", false, false, false);
+m_flat01.setMaterialAttributes(
+    [.5, .5, .5], // Ambient
+    [0.5, 0.5, 0.5], // Diffuse
+    [0.4, 0.4, 0.4], // Specular
+    10.0 // Shininess
+);
 const m_concrete01 = new Material(currentScene, "VS_01", "FS_01", false, false, false);
-m_concrete01.setMaterialAttributes([0.5, 0.5, 0.5], [0.8, 0.8, 0.8], [0.8, 0.8, 0.8], 1.0);
+m_concrete01.setMaterialAttributes(
+    [0.5, 0.5, 0.5], //Ambient
+    [0.8, 0.8, 0.8], //Diffuse
+    [0.8, 0.8, 0.8], //Specular
+    1.0 //Shininess
+);
 const m_shiny01 = new Material(currentScene, "VS_01", "FS_01", false, false, false);
-m_shiny01.setMaterialAttributes([1.0, 1.0, 1.0], [1.0, 1.0, 1.0], [1.0, 1.0, 1.0], 64.0);
+m_shiny01.setMaterialAttributes(
+    [.5, .5, .5], // Ambient
+    [0.6, 0.6, 0.6], // Diffuse
+    [0.9, 0.9, 0.9], // Specular
+    100.0 // Shininess
+);
 
 const m_WoodTrim01 = new Material(currentScene, "VS_01", "FS_01", true, false, true);
 m_WoodTrim01.assignTexture(t_woodTrim_basecolor, 'baseColor');
-m_WoodTrim01.assignTexture(t_woodTrim_normal, 'normalMap');
+m_WoodTrim01.setMaterialAttributes(
+    [.7, .7, .7], // Ambient
+    [.5, .5, .5], // Diffuse
+    [.1, .1, .1], // Specular
+    10.0 // Shininess
+);
 
 const m_ExampleText01 = new Material(currentScene, "VS_01", "FS_01", true, false, true);
 m_ExampleText01.assignTexture(t_painterly01, 'baseColor');
+m_ExampleText01.setMaterialAttributes(
+    [0.9, 0.9, 0.9], // Ambient
+    [0.7, 0.7, 0.7], // Diffuse
+    [0.5, 0.5, 0.5], // Specular
+    25.0 // Shininess
+);
 
 const m_Fish01 = new Material(currentScene, "VS_01", "FS_01", true, false, true);
 m_Fish01.assignTexture(t_fish01, 'baseColor');
-
+m_Fish01.setMaterialAttributes(
+    [.6, .6, .6], // Ambient
+    [0.5, 0.5, 0.5], // Diffuse
+    [.9, .9, .9], // Specular
+    10.0 // Shininess
+);
 
 
 

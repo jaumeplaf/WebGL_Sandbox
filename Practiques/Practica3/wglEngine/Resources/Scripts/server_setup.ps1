@@ -31,6 +31,7 @@ Write-Host "      3: Draw mode Points" -ForegroundColor Cyan
 Write-Host "      4: Draw mode Triangles+Wireframe" -ForegroundColor Cyan
 Write-Host "      5: Draw mode Triangles+Points" -ForegroundColor Cyan
 Write-Host "      6: Draw mode Triangles+Lines+Points" -ForegroundColor Cyan
+Write-Host "      7: Draw mode Normal visualization" -ForegroundColor Cyan
 # Wait a moment to ensure the server starts
 Start-Sleep -Seconds 2
 Write-Host "... Opening webGL2 engine in your browser ... Keep this window open ..." -ForegroundColor Green

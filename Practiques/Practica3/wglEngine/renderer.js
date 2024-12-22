@@ -69,21 +69,30 @@ function drawModel(model, drawMode = 0) //Mode 0:Triangles, 1:Wireframe, 2:Point
 
     switch(drawMode)
     {
-        case 0: drawTriangles(model); break;
-        case 1: drawWireframe(model, inShader); break;
-        case 2: drawPoints(model, inShader); break;
+        case 0: 
+            drawTriangles(model); 
+            break;
+        case 1: 
+            drawWireframe(model, inShader); 
+            break;
+        case 2: 
+            drawPoints(model, inShader); 
+            break;
         case 3: 
             drawTriangles(model); 
             drawWireframe(model, inShader); 
-        break;
+            break;
         case 4: 
             drawTriangles(model); 
             drawPoints(model, inShader); 
-        break;
+            break;
         case 5: 
             drawTriangles(model); 
             drawWireframe(model, inShader); 
             drawPoints(model, inShader);
+            break;
+        case 6:
+            drawTrianglesNormal(model, inShader);
     }
 
 }
@@ -91,6 +100,13 @@ function drawModel(model, drawMode = 0) //Mode 0:Triangles, 1:Wireframe, 2:Point
 function drawTriangles(model)
 {
     window.gl.drawElements(window.gl.TRIANGLES, model.indices.length, window.gl.UNSIGNED_SHORT, 0); //Draw triangles
+}
+
+function drawTrianglesNormal(model, inShader)
+{
+    window.gl.uniform1f(inShader.isPoint, 2.0); 
+    window.gl.drawElements(window.gl.TRIANGLES, model.indices.length, window.gl.UNSIGNED_SHORT, 0); //Draw triangles
+    window.gl.uniform1f(inShader.isPoint, 0.0);
 }
 
 function drawPoints(model, inShader)

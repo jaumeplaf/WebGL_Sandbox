@@ -4,14 +4,25 @@ class Light
     {
         this.scene = ACTIVE_SCENE;
         this.proxyMaterial = new Material(this.scene, "VS_01", "FS_01", false, false, false);
-        //this.proxyMaterial.setMaterialAttributes([.5,.5,.5], [.5,.5,.5], [.5,.5,.5], 1.0);
-        this.modelScale = 5;
+        this.emissive = 10;
+        this.modelScale = 20;
 
         this.initializeLightAttributes(LAmbient, LDiffuse, LSpecular, intensity, position);
 
         this.addToScene();
         this.ID = this.scene.lights.length - 1;
     }
+
+    setProxyMatAttributes()
+    {
+        this.proxyMaterial.setMaterialAttributes(
+            [this.La[0] * this.emissive, this.La[1] * this.emissive, this.La[0] * this.emissive], //Ambient
+            [this.Ld[0] * this.emissive, this.Ld[1] * this.emissive, this.Ld[0] * this.emissive], //Diffuse
+            [0.0, 0.0, 0.0], //Specular
+            300.0 //Shininess
+        );
+    }
+
     addToScene()
     {
         this.scene.addLight(this);
@@ -57,17 +68,25 @@ class Light
     {
         this.position = [inPosition[0], inPosition[1], inPosition[2]];
     }
+
+    updatePosition(inPosition)
+    {
+        this.proxy.setTranslation(this.position[0] + inPosition[0], this.position[1] + inPosition[1], this.position[2] + inPosition[2]);
+        this.setPostion(inPosition);
+    }
     
     addProxy(model)
     {
        this.proxy = new MeshActor(model, this.proxyMaterial);
        this.proxy.setMatrix(this.position[0], this.position[1], this.position[2], this.modelScale);
        this.proxy.setColor(this.La);    
+       this.setProxyMatAttributes();
     }
 
     proxyUpdateColor()
     {
-        this.proxy.setColor(this.La);
+        //this.proxy.setColor(this.La);
+        this.setProxyMatAttributes();
     }
     
     proxyFaceDirection(object, direction)

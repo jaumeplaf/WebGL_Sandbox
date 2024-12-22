@@ -14,6 +14,7 @@ const keyDrawMode2 = '3';
 const keyDrawMode3 = '4';
 const keyDrawMode4 = '5';
 const keyDrawMode5 = '6';
+const keyDrawMode6 = '7';
 
 //Initialize HTML inputs
 //Fog
@@ -24,6 +25,9 @@ const inFov = document.getElementById('fov');
 //Lights
 const inLights = document.getElementById('lights');
 const inLightIntensity = document.getElementById('lightIntensity');
+const inLightPosX = document.getElementById('lightPositionX');
+const inLightPosY = document.getElementById('lightPositionY');
+const inLightPosZ = document.getElementById('lightPositionZ');
 const inLa = document.getElementById('La');
 const inLd = document.getElementById('Ld');
 const inLs = document.getElementById('Ls');
@@ -75,6 +79,7 @@ class InputParameters
       if(key === keyDrawMode3) inScene.drawMode = 3;
       if(key === keyDrawMode4) inScene.drawMode = 4;
       if(key === keyDrawMode5) inScene.drawMode = 5;
+      if(key === keyDrawMode6) inScene.drawMode = 6;
     });
     
     window.addEventListener('keyup', (event) => {
@@ -150,8 +155,23 @@ class InputParameters
     
     inLightIntensity.addEventListener('input', (event) => {
       this.activeLight.setIntensity(event.target.value);
-      });
+    });
+
+    inLightPosX.addEventListener('input', (event) => {
+      this.activeLight.updatePosition([event.target.value, this.activeLight.position[1], this.activeLight.position[2]]);
+      updateLightPositions(this.activeLight.position[0], this.activeLight.position[1], this.activeLight.position[2]);
+    });
     
+    inLightPosY.addEventListener('input', (event) => {
+      this.activeLight.updatePosition([this.activeLight.position[0], event.target.value, this.activeLight.position[2]]);
+      updateLightPositions(this.activeLight.position[0], this.activeLight.position[1], this.activeLight.position[2]);
+    });
+
+    inLightPosZ.addEventListener('input', (event) => {
+      this.activeLight.updatePosition([this.activeLight.position[0], this.activeLight.position[1], event.target.value]);
+      updateLightPositions(this.activeLight.position[0], this.activeLight.position[1], this.activeLight.position[2]);
+    });
+
     inLa.addEventListener('input', (event) => { //Update selected light when any color changes
       const selected = parseInt(inLights.value);
       this.activeLight = inScene.lights[selected];

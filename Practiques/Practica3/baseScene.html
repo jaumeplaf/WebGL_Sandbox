@@ -22,7 +22,6 @@
             uniform mat4 viewMatrix;
             uniform mat4 projectionMatrix;
 
-            uniform float isPoint;
             uniform vec3 cameraPosition;
 
             uniform vec4 Lposition;
@@ -72,19 +71,12 @@
 
         void main()
         {
-            if(isPoint == 1.0){
                 gl_PointSize = 7.0;
 
                 gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(VertexPosition, 1.0);
                 vPos = gl_Position;
-                vCol = vec4(1.0, 1.0, 0.0, 1.0);
-            }
-            else{
-                gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(VertexPosition, 1.0);
-                vPos = gl_Position;
                 vCol = VertexColor;
-            }
-        
+
             #ifdef USE_ADJUGATE_NORMALS
                 mat3 normalMatrix = mat3(cofactorMatrix(modelMatrix));
             #else
@@ -137,6 +129,8 @@
         uniform float Lintensity;
         uniform vec4 Ma, Md, Ms;
         uniform float shininess;
+
+        uniform float isPoint;
         
         //Out fragment color
         out vec4 fragmentColor;
@@ -187,7 +181,9 @@
             vec3 V = normalize(-vPos.xyz);
             vec3 N = normalize(vNorm.xyz); // Ensure normal is normalized
             vec3 phongColor = phong(N, L, V, absDist).xyz;
-            
+
+    vec3 debugColor = L;
+
             #ifdef USE_TEXTURE_BASECOLOR
                 vec3 baseColor = texture(t_baseColor, uv).xyz;
             #else
@@ -219,7 +215,17 @@
                 vec4 finalColor = midColor;
             #endif
         
-            fragmentColor = finalColor;
+            if(isPoint == 1.0){
+                fragmentColor = vec4(1.0, 1.0, 0.0, 1.0);
+            }
+            else if(isPoint == 2.0){
+                fragmentColor = vec4(N, 1.0);
+            }
+            else{
+                fragmentColor = finalColor;
+            }
+            
+            //fragmentColor = vec4(debugColor, 1.0);
         }
 
         </script>
@@ -266,9 +272,24 @@
                     </select>
                     <br>
                     <div class="slidercontainer">
-                        <label for="fov">Intensity: </label><span id="displayLightIntensity">"Int" </span><br>
+                        <label for="lightIntensity">Intensity: </label><span id="displayLightIntensity">"Int" </span><br>
                     </div>           
                     <input type="range" min="0.0" max="10.0" value="1.0" step="0.005" class="slider" id="lightIntensity">
+                    <br>
+                    <div class="slidercontainer">
+                        <label for="lightPositionX">Position X: </label><span id="displaylightPositionX">"PosX" </span><br>
+                    </div>           
+                    <input type="range" min="-1000.0" max="1000.0" value="1.0" step="0.005" class="slider" id="lightPositionX">
+                    <br>
+                    <div class="slidercontainer">
+                        <label for="lightPositionY">Position Y: </label><span id="displaylightPositionY">"PosY" </span><br>
+                    </div>           
+                    <input type="range" min="-1000.0" max="1000.0" value="1.0" step="0.005" class="slider" id="lightPositionY">
+                    <br>
+                    <div class="slidercontainer">
+                        <label for="lightPositionZ">Position Z: </label><span id="displaylightPositionZ">"PosZ" </span><br>
+                    </div>           
+                    <input type="range" min="-1000.0" max="1000.0" value="1.0" step="0.005" class="slider" id="lightPositionZ">
                     <br>
                     <label for="La">Ambient value: </label>
                     <input type="color" id="La" value="#ffffff">

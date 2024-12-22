@@ -67,6 +67,8 @@ class Scene
             if(objectMaterial != this.currentMaterial){
                 objectMaterial.use(this.input);
                 this.currentMaterial = objectMaterial;
+                
+                this.currentMaterial.setLightUniforms(this.lights[0]);
 
                 // Set textures
                 if (objectMaterial.useTextureBaseColor) {

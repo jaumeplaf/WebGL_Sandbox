@@ -24,9 +24,13 @@
 
             uniform float isPoint;
             uniform vec3 cameraPosition;
+
+            uniform vec4 Lposition;
             
+            out vec4 vPos;
             out vec4 vCol;
             out vec4 vNorm;
+            out vec4 finalLpos;
             #ifdef USE_TEXTURE_BASECOLOR
                 out vec2 uv;
             #endif
@@ -70,10 +74,12 @@
                 gl_PointSize = 7.0;
 
                 gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(VertexPosition, 1.0);
+                vPos = gl_Position;
                 vCol = vec4(1.0, 1.0, 0.0, 1.0);
             }
             else{
                 gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(VertexPosition, 1.0);
+                vPos = gl_Position;
                 vCol = VertexColor;
             }
         
@@ -82,7 +88,7 @@
             #else
                 mat3 normalMatrix = mat3(transpose(inverse(modelMatrix)));
             #endif
-            vNorm = vec4(normalize(normalMatrix * VertexNormal), 1.0);
+            vNorm = vec4(normalMatrix * VertexNormal, 1.0);
             
             #ifdef USE_TEXTURE_BASECOLOR
                 #ifdef USE_FLIP_V
@@ -91,6 +97,8 @@
                     uv = TexCoords1;
                 #endif
             #endif
+
+            finalLpos = Lposition;
         }
         
         </script>
@@ -99,26 +107,31 @@
         type="x-shader/x-fragment">
         precision mediump float;
 
-        //TODO: phong, lambert, multiple lights...
-
         //Attributes
         in vec4 vCol;
         in vec4 vNorm;
+        in vec4 vPos;
         #ifdef USE_TEXTURE_BASECOLOR
-            in vec2 uv;
+        in vec2 uv;
         #endif
+        in vec4 finalLpos;
         
         //Uniforms
         #ifdef USE_FOG
-            uniform vec4 fogColor;
-            uniform float nPlane;
-            uniform float fPlane;
-            uniform float fogAmount;
-            uniform float fogPower;
+        uniform vec4 fogColor;
+        uniform float nPlane;
+        uniform float fPlane;
+        uniform float fogAmount;
+        uniform float fogPower;
         #endif
         
         uniform sampler2D t_baseColor;
         uniform sampler2D t_normalMap;
+
+        uniform vec4 La, Ld, Ls;
+        uniform float Lintensity;
+        uniform vec4 Ma, Md, Ms;
+        uniform float shininess;
         
         //Out fragment color
         out vec4 fragmentColor;
@@ -128,6 +141,11 @@
             return clamp(value, 0.0, 1.0);
         }
 
+        float remap(float value, float low1, float high1, float low2, float high2)
+        {
+            return low2 + (value - low1) * (high2 - low2) / (high1 - low1);
+        }
+
         #ifdef USE_FOG
             float linearDepth(float inDepth)
             {
@@ -135,9 +153,44 @@
                 return (2.0 * nPlane * fPlane) / (fPlane + nPlane - z * (fPlane - nPlane));
             }
         #endif
-        
+
+        vec4 phong(vec3 N, vec3 L, vec3 V, float dist) //Uniforms: Ma, Md, Ms, shininess, La, Ld, Ls, Lintensity
+        {
+            vec4 ambient = La * Ma;
+            vec4 diffuse = vec4(0.0);
+            vec4 specular = vec4(0.0);
+            float NdotL = dot(N, L);
+            if(NdotL > 0.0)
+            {
+                vec3 R = reflect(-L, N);
+                float RdotV = pow(max(dot(R, V), 0.0), shininess);
+                diffuse = NdotL * (Ld * Md) * Lintensity;
+                specular = RdotV * (Ls * Ms) * Lintensity;
+            }
+            float lRadius = 250.0;
+            float cDist = clamp(dist, 0.0, lRadius);
+            float nDist = remap(cDist, 0.0, lRadius, 1.0, 0.0);
+            return (ambient + diffuse + specular) * nDist;
+        }
+
         void main() 
         {
+            //Phong
+            vec3 lightPath = finalLpos.xyz - vPos.xyz;
+            float lDist = length(lightPath);
+            vec3 L = normalize(lightPath);
+            vec3 V = normalize(-vPos.xyz);
+            vec3 N = normalize(vNorm.xyz); // Ensure normal is normalized
+            vec3 phongColor = phong(N, L, V, lDist).xyz;
+            
+            #ifdef USE_TEXTURE_BASECOLOR
+                vec3 baseColor = texture(t_baseColor, uv).xyz;
+            #else
+                vec3 baseColor = vCol.xyz;
+            #endif
+
+            vec3 combinedColor = baseColor * phongColor;
+
             #ifdef USE_FOG
                 float depth = linearDepth(gl_FragCoord.z) / fPlane;
                 float correctedDepth = saturate(pow(depth * fogAmount, fogPower));
@@ -145,19 +198,19 @@
             #endif
         
             #ifdef USE_TEXTURE_BASECOLOR
-                vec4 fCol = max(texture(t_baseColor, uv), vCol);
+                vec4 midColor = vec4(combinedColor, 1.0);
             #else
-                vec4 fCol = vCol;
+                vec4 midColor = vec4(phongColor, 1.0);
             #endif
 
             
             #ifdef USE_FOG
-                vec4 fMixedCol = mix(fCol + vNorm * 0.001, fogColor, correctedDepth);
+                vec4 finalColor = mix(midColor, fogColor, correctedDepth);
             #else
-                vec4 fMixedCol = fCol + vNorm * 0.001;
+                vec4 finalColor = midColor;
             #endif
         
-            fragmentColor = fMixedCol;
+            fragmentColor = vec4(combinedColor, 1.0);
         }
 
         </script>

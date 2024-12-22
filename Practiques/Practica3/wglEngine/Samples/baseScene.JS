@@ -35,15 +35,12 @@ const shark01A = new MeshActor(base_shark01A);
 shark01A.setMatrix(27.5, 7.5, -17.5, 15);
 shark01A.setRotation(90, [0, 1, 0]);
 
-const light01 = new MeshActor(base_lightBulb);
-light01.setMatrix(0, 20, 0, 10);
-
 const testPoly = new MeshActor(base_testPolygon);
 testPoly.setMatrix(-40, -10, 10, 10);
 
-const L01 = new PointLight([0, 40, 0], 5, [1.0, 0.0, 0.0], [0.8, 0.8, 0.8], [1.0, 1.0, 1.0]);
-const L02 = new SpotLight([20, 40, 0], 3, [0.0, 1.0, 0.0], [0.8, 0.8, 0.8], [1.0, 1.0, 1.0], [0.0, -1.0, 0.0], 30.0);
-const L03 = new AreaLight([40, 40, 0], 10, [0.0, 0.0, 1.0], [0.8, 0.8, 0.8], [1.0, 1.0, 1.0], [0.0, -1.0, 0.0], 3.0, 1.0);
+const L01 = new PointLight(1, [40, 40, 0], [0.7, 0.7, 0.7], [1.0, 0.8, 0.0], [1.0, 1.0, 0.8]);
+//const L02 = new SpotLight(3,[20, 40, 0], [0.0, 1.0, 0.0], [0.8, 0.8, 0.8], [1.0, 1.0, 1.0], [0.0, -1.0, 0.0], 30.0);
+//const L03 = new AreaLight(10,[40, 40, 0], [0.0, 0.0, 1.0], [0.8, 0.8, 0.8], [1.0, 1.0, 1.0], [0.0, -1.0, 0.0], 3.0, 1.0);
 
 window.onload = function(){
     ACTIVE_SCENE.drawScene();

@@ -71,7 +71,8 @@ class Light
 
     updatePosition(inPosition)
     {
-        this.proxy.setTranslation(this.position[0] + inPosition[0], this.position[1] + inPosition[1], this.position[2] + inPosition[2]);
+        // Set absolute position instead of relative translation
+        this.proxy.setMatrix(inPosition[0], inPosition[1], inPosition[2], this.modelScale);
         this.setPostion(inPosition);
     }
     

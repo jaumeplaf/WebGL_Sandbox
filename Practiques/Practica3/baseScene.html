@@ -163,18 +163,23 @@
             vec4 diffuse = vec4(0.0);
             vec4 specular = vec4(0.0);
 
-            float NdotL = saturate(dot(N, L));
+            float NdotL = max(dot(N, L), 0.0);
             
             vec3 R = reflect(L, N);
 
-            float RdotV = pow(max(dot(R, V), 0.0), shininess);
+            //float RdotV = pow(saturate(dot(R, V)), shininess);
+            float RdotV = 0.0;
+            if(NdotL > 0.0) {
+                float specBase = max(dot(R, V), 0.0);
+                RdotV = pow(specBase, shininess) * smoothstep(0.0, 0.1, NdotL);
+            }
             vec4 mixedDiffuse = Md * vCol;
             diffuse = NdotL * (Ld * mixedDiffuse) * Lintensity;
             specular = RdotV * (Ls * Ms) * Lintensity;
             float lRadius = 500.0;
             float cDist = clamp(dist, 0.0, lRadius); //Clamp distance to light radius
             float nDist = remap(cDist, 0.0, lRadius, 1.0, 0.0); //Remap distance to 0-1
-            return (ambient * nDist + diffuse * nDist + specular* nDist) ;
+            return (ambient * nDist + diffuse * nDist + specular* nDist);
         }
 
         void main() 

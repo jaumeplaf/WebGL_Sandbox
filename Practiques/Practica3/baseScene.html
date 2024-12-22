@@ -27,6 +27,7 @@
 
             uniform vec4 Lposition;
             
+            out vec4 vPos;
             out vec4 vCol;
             out vec4 vNorm;
             out vec4 finalLpos;
@@ -73,10 +74,12 @@
                 gl_PointSize = 7.0;
 
                 gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(VertexPosition, 1.0);
+                vPos = gl_Position;
                 vCol = vec4(1.0, 1.0, 0.0, 1.0);
             }
             else{
                 gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(VertexPosition, 1.0);
+                vPos = gl_Position;
                 vCol = VertexColor;
             }
         
@@ -85,7 +88,7 @@
             #else
                 mat3 normalMatrix = mat3(transpose(inverse(modelMatrix)));
             #endif
-            vNorm = vec4(normalize(normalMatrix * VertexNormal), 1.0);
+            vNorm = vec4(normalMatrix * VertexNormal, 1.0);
             
             #ifdef USE_TEXTURE_BASECOLOR
                 #ifdef USE_FLIP_V
@@ -95,7 +98,7 @@
                 #endif
             #endif
 
-            finalLpos = viewMatrix * projectionMatrix * Lposition;
+            finalLpos = Lposition;
         }
         
         </script>
@@ -107,6 +110,7 @@
         //Attributes
         in vec4 vCol;
         in vec4 vNorm;
+        in vec4 vPos;
         #ifdef USE_TEXTURE_BASECOLOR
         in vec2 uv;
         #endif
@@ -137,6 +141,11 @@
             return clamp(value, 0.0, 1.0);
         }
 
+        float remap(float value, float low1, float high1, float low2, float high2)
+        {
+            return low2 + (value - low1) * (high2 - low2) / (high1 - low1);
+        }
+
         #ifdef USE_FOG
             float linearDepth(float inDepth)
             {
@@ -144,23 +153,35 @@
                 return (2.0 * nPlane * fPlane) / (fPlane + nPlane - z * (fPlane - nPlane));
             }
         #endif
-        
-        vec3 phong(vec3 inNorm, vec3 inL, vec3 La, vec3 Ld, vec3 Ls, vec3 Ma, vec3 Md, vec3 Ms, float shininess, float intensity){
-            vec3 N = inNorm.xyz;
-            vec3 L = normalize(inL);
-            vec3 V = normalize(-gl_FragCoord.xyz);
-            vec3 R = reflect(-L, N);
-            vec3 ambient = La * Ma;
-            vec3 diffuse = Ld * Md * max(dot(N, L), 0.0) * intensity;
-            vec3 specular = Ls * Ms * pow(max(dot(R, V), 0.0), shininess) * intensity;
-            return ambient + diffuse + specular;
+
+        vec4 phong(vec3 N, vec3 L, vec3 V, float dist) //Uniforms: Ma, Md, Ms, shininess, La, Ld, Ls, Lintensity
+        {
+            vec4 ambient = La * Ma;
+            vec4 diffuse = vec4(0.0);
+            vec4 specular = vec4(0.0);
+            float NdotL = dot(N, L);
+            if(NdotL > 0.0)
+            {
+                vec3 R = reflect(-L, N);
+                float RdotV = pow(max(dot(R, V), 0.0), shininess);
+                diffuse = NdotL * (Ld * Md) * Lintensity;
+                specular = RdotV * (Ls * Ms) * Lintensity;
+            }
+            float lRadius = 250.0;
+            float cDist = clamp(dist, 0.0, lRadius);
+            float nDist = remap(cDist, 0.0, lRadius, 1.0, 0.0);
+            return (ambient + diffuse + specular) * nDist;
         }
 
         void main() 
         {
             //Phong
-            vec3 lightDir = finalLpos.xyz - gl_FragCoord.xyz;
-            vec3 phongColor = phong(vNorm.xyz, lightDir, La.xyz, Ld.xyz, Ls.xyz, Ma.xyz, Md.xyz, Ms.xyz, shininess, Lintensity);
+            vec3 lightPath = finalLpos.xyz - vPos.xyz;
+            float lDist = length(lightPath);
+            vec3 L = normalize(lightPath);
+            vec3 V = normalize(-vPos.xyz);
+            vec3 N = normalize(vNorm.xyz); // Ensure normal is normalized
+            vec3 phongColor = phong(N, L, V, lDist).xyz;
             
             #ifdef USE_TEXTURE_BASECOLOR
                 vec3 baseColor = texture(t_baseColor, uv).xyz;
@@ -189,7 +210,7 @@
                 vec4 finalColor = midColor;
             #endif
         
-            fragmentColor = vec4(phongColor, 1.0);
+            fragmentColor = vec4(combinedColor, 1.0);
         }
 
         </script>

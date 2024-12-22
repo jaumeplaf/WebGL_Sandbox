@@ -79,7 +79,7 @@ class Material
         else console.error("Can't use material, program is null");
     }
 
-    setMaterialAttributes(inMa = [ 0.5, 0.5, 0.5 ], inMd = [ 0.5, 0.5, 0.5 ], inMs = [ 1.0, 1.0, 1.0 ], inShininess = 10.0)
+    setMaterialAttributes(inMa = [ 1.0, 1.0, 1.0 ], inMd = [ 1.0, 1.0, 1.0 ], inMs = [ 1.0, 1.0, 1.0 ], inShininess = 10.0)
     {
         this.Ma = inMa;
         this.Md = inMd;

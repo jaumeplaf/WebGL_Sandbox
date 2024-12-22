@@ -10,7 +10,6 @@ class Light
 
         this.addToScene();
         this.ID = this.scene.lights.length - 1;
-        //console.log("La: " + this.La + " Ld: " + this.Ld + " Ls: " + this.Ls + " Intensity: " + this.intensity + " Position: " + this.position);
     }
     addToScene()
     {
@@ -55,7 +54,7 @@ class Light
 
     setPostion(inPosition)
     {
-        this.position = inPosition;
+        this.position = [inPosition[0], inPosition[1], inPosition[2]];
     }
     
     addProxy(model)

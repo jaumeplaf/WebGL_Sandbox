@@ -27,9 +27,11 @@
 
             uniform vec4 Lposition;
             
+            out vec4 origPos;
             out vec4 vPos;
             out vec4 vCol;
             out vec4 vNorm;
+            out vec4 origLpos;
             out vec4 finalLpos;
             #ifdef USE_TEXTURE_BASECOLOR
                 out vec2 uv;
@@ -97,8 +99,9 @@
                     uv = TexCoords1;
                 #endif
             #endif
-
-            finalLpos = Lposition;
+            origPos = modelMatrix * vec4(VertexPosition, 1.0);
+            origLpos = Lposition;
+            finalLpos = viewMatrix * Lposition;
         }
         
         </script>
@@ -110,10 +113,12 @@
         //Attributes
         in vec4 vCol;
         in vec4 vNorm;
+        in vec4 origPos;
         in vec4 vPos;
         #ifdef USE_TEXTURE_BASECOLOR
         in vec2 uv;
         #endif
+        in vec4 origLpos;
         in vec4 finalLpos;
         
         //Uniforms
@@ -170,18 +175,19 @@
             float lRadius = 250.0;
             float cDist = clamp(dist, 0.0, lRadius);
             float nDist = remap(cDist, 0.0, lRadius, 1.0, 0.0);
-            return (ambient + diffuse + specular) * nDist;
+            return (ambient + diffuse* nDist + specular* nDist) ;
         }
 
         void main() 
         {
             //Phong
+            float absDist = length(origLpos.xyz - origPos.xyz);
             vec3 lightPath = finalLpos.xyz - vPos.xyz;
             float lDist = length(lightPath);
             vec3 L = normalize(lightPath);
             vec3 V = normalize(-vPos.xyz);
             vec3 N = normalize(vNorm.xyz); // Ensure normal is normalized
-            vec3 phongColor = phong(N, L, V, lDist).xyz;
+            vec3 phongColor = phong(N, L, V, absDist).xyz;
             
             #ifdef USE_TEXTURE_BASECOLOR
                 vec3 baseColor = texture(t_baseColor, uv).xyz;

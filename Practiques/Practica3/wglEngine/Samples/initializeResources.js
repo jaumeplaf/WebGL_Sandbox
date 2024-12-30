@@ -65,6 +65,21 @@ m_flat02.setMaterialAttributes(
     1.0 // Shininess
 );
 
+const m_bounce01 = new Material(
+    currentScene, // Scene
+    "VS_02_bounce", // Vertex Shader ID
+    "FS_01", // Fragment Shader ID
+    false, //Base color texture
+    false, //Normal map texture
+    false //Flip V coords
+);
+m_flat01.setMaterialAttributes(
+    [.5, .5, .5], // Ambient
+    [0.5, 0.5, 0.5], // Diffuse
+    [0.4, 0.4, 0.4], // Specular
+    10.0 // Shininess
+);
+
 const m_concrete01 = new Material(
     currentScene, // Scene
     "VS_01", // Vertex Shader ID
@@ -170,7 +185,7 @@ const base_arrowZ = new MeshObject(
 );
 const base_suzanne = new MeshObject(
     SM_Suzanne, //Mesh origin
-    m_flat01 //Material
+    m_bounce01 //Material
 );
 const base_lightBulb = new MeshObject(
     Lightbulb01, //Mesh origin

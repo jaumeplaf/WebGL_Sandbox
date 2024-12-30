@@ -114,6 +114,8 @@ class Material
         this.program.progNearPlane = window.gl.getUniformLocation(this.program, "nPlane");
         this.program.progFarPlane = window.gl.getUniformLocation(this.program, "fPlane");
 
+        this.program.progTime = window.gl.getUniformLocation(this.program, "time");
+
         //Point/line rendering
         this.program.isPoint = window.gl.getUniformLocation(this.program, "isPoint");
 

@@ -67,6 +67,8 @@ function drawModel(model, drawMode = 0) //Mode 0:Triangles, 1:Wireframe, 2:Point
 
     bindModelBuffers(model, inShader); //Bind buffers
 
+    window.gl.uniform1f(inShader.progTime, model.meshObject.material.scene.input.time); //Set time
+
     switch(drawMode)
     {
         case 0: 

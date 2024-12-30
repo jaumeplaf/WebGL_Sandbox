@@ -8,7 +8,7 @@
 
     <!-- Load all shaders here, get them by ID in current scene script-->
 
-    <script id="VS_01" 
+    <script id="VS_02_bounce" 
             type="x-shader/x-vertex">
             //Attributes
             in vec3 VertexPosition;
@@ -23,6 +23,8 @@
             uniform mat4 projectionMatrix;
 
             uniform vec3 cameraPosition;
+
+            uniform float time;
 
             uniform vec4 Lposition;
             
@@ -69,11 +71,24 @@
                 }
             #endif
 
+        //Declare random float (0-1)
+        float random(float seed)
+        {
+            return fract(sin(seed) * 43758.5453);
+        }
+
         void main()
         {
                 gl_PointSize = 7.0;
+                
+                float bounceFreq = 0.75;
+                float bounceAmount = 0.25;
+                float randAmount = 2.0;
+                float timeOffset = random(VertexColor.x * VertexColor.y * VertexColor.z) * randAmount;
+                float bounce = sin((time + timeOffset) * bounceFreq) * bounceAmount;
 
-                gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(VertexPosition, 1.0);
+                vec3 newPos = vec3(VertexPosition.x, VertexPosition.y + bounce, VertexPosition.z);
+                gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(newPos, 1.0);
                 vPos = gl_Position;
                 vCol = VertexColor;
 
@@ -91,12 +106,103 @@
                     uv = TexCoords1;
                 #endif
             #endif
-            origPos = modelMatrix * vec4(VertexPosition, 1.0);
+            origPos = modelMatrix * vec4(newPos, 1.0);
             origLpos = Lposition;
             finalLpos = viewMatrix * Lposition;
         }
         
         </script>
+
+        <script id="VS_01" 
+        type="x-shader/x-vertex">
+        //Attributes
+        in vec3 VertexPosition;
+        in vec4 VertexColor;
+        in vec3 VertexNormal;
+        #ifdef USE_TEXTURE_BASECOLOR
+            in vec2 TexCoords1;
+        #endif
+    
+        uniform mat4 modelMatrix;
+        uniform mat4 viewMatrix;
+        uniform mat4 projectionMatrix;
+
+        uniform vec3 cameraPosition;
+
+        uniform vec4 Lposition;
+        
+        out vec4 origPos;
+        out vec4 vPos;
+        out vec4 vCol;
+        out vec4 vNorm;
+        out vec4 origLpos;
+        out vec4 finalLpos;
+        #ifdef USE_TEXTURE_BASECOLOR
+            out vec2 uv;
+        #endif
+    
+        #ifdef USE_ADJUGATE_NORMALS 
+        //Alternative normals calculation taken from https://github.com/graphitemaster/normals_revisited
+            
+            //Calculate the minor of a 3x3 matrix
+            float minor(mat4 m, int r0, int r1, int r2, int c0, int c1, int c2) {
+                return m[r0][c0] * (m[r1][c1] * m[r2][c2] - m[r2][c1] * m[r1][c2]) -
+                    m[r0][c1] * (m[r1][c0] * m[r2][c2] - m[r2][c0] * m[r1][c2]) +
+                    m[r0][c2] * (m[r1][c0] * m[r2][c1] - m[r2][c0] * m[r1][c1]);
+            }
+    
+            //Calculate the cofactor matrix of a 4x4 matrix
+            mat4 cofactorMatrix(mat4 m) {
+                mat4 cof;
+                cof[0][0] =  minor(m, 1, 2, 3, 1, 2, 3);
+                cof[0][1] = -minor(m, 1, 2, 3, 0, 2, 3);
+                cof[0][2] =  minor(m, 1, 2, 3, 0, 1, 3);
+                cof[0][3] = -minor(m, 1, 2, 3, 0, 1, 2);
+                cof[1][0] = -minor(m, 0, 2, 3, 1, 2, 3);
+                cof[1][1] =  minor(m, 0, 2, 3, 0, 2, 3);
+                cof[1][2] = -minor(m, 0, 2, 3, 0, 1, 3);
+                cof[1][3] =  minor(m, 0, 2, 3, 0, 1, 2);
+                cof[2][0] =  minor(m, 0, 1, 3, 1, 2, 3);
+                cof[2][1] = -minor(m, 0, 1, 3, 0, 2, 3);
+                cof[2][2] =  minor(m, 0, 1, 3, 0, 1, 3);
+                cof[2][3] = -minor(m, 0, 1, 3, 0, 1, 2);
+                cof[3][0] = -minor(m, 0, 1, 2, 1, 2, 3);
+                cof[3][1] =  minor(m, 0, 1, 2, 0, 2, 3);
+                cof[3][2] = -minor(m, 0, 1, 2, 0, 1, 3);
+                cof[3][3] =  minor(m, 0, 1, 2, 0, 1, 2);
+                return cof;
+            }
+        #endif
+
+    void main()
+    {
+            gl_PointSize = 7.0;
+
+            
+            gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(VertexPosition, 1.0);
+            vPos = gl_Position;
+            vCol = VertexColor;
+
+        #ifdef USE_ADJUGATE_NORMALS
+            mat3 normalMatrix = mat3(cofactorMatrix(modelMatrix));
+        #else
+            mat3 normalMatrix = mat3(transpose(inverse(modelMatrix)));
+        #endif
+        vNorm = vec4(normalMatrix * VertexNormal, 1.0);
+        
+        #ifdef USE_TEXTURE_BASECOLOR
+            #ifdef USE_FLIP_V
+                uv = vec2(TexCoords1.x, 1.0 - TexCoords1.y);
+            #else
+                uv = TexCoords1;
+            #endif
+        #endif
+        origPos = modelMatrix * vec4(VertexPosition, 1.0);
+        origLpos = Lposition;
+        finalLpos = viewMatrix * Lposition;
+    }
+    
+    </script>
 
         <script id="FS_01"
         type="x-shader/x-fragment">

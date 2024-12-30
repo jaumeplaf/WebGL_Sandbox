@@ -47,6 +47,8 @@ class InputParameters
     this.nearPlane = inCamera.nearPlane;
     this.farPlane = inCamera.farPlane;
 
+    this.time = 0;
+
     this.activeLight = null;
   }
   

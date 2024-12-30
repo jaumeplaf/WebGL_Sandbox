@@ -48,6 +48,7 @@ class Scene
         this.previousTime = now;
 
         this.input.time = now / 1000;
+        
     }
 
      drawScene() //Main rendering loop

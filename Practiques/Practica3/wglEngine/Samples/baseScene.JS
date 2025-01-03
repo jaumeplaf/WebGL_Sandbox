@@ -49,10 +49,13 @@ shark01A.setRotation(90, [0, 1, 0]);
 const testPoly = new MeshActor(base_testPolygon);
 testPoly.setMatrix(40, -10, 10, 10);
 
+const cube1 = new MeshActor(base_cube);
+cube1.setMatrix(-80, 0, 5, 10);
+
 
 //TODO: IMPLEMENT MULTIPLE LIGHTS
-//TODO: CHANGE LIGHT PROXY COLOR FROM La to Ld
-const L01 = new PointLight(3, 100, [-30, 20, 10], [0.7, 0.7, 0.7], [1.0, 0.8, 0.0], [1.0, 1.0, 0.8]);
+
+const L01 = new PointLight(3, 5000, [-30, 80, 10], [1.0, 1.0, 1.0], [1.0, 0.8, 0.0], [1.0, 1.0, 0.8]);
 //const L02 = new SpotLight(3,[20, 40, 0], [0.0, 1.0, 0.0], [0.8, 0.8, 0.8], [1.0, 1.0, 1.0], [0.0, -1.0, 0.0], 30.0);
 //const L03 = new AreaLight(10,[40, 40, 0], [0.0, 0.0, 1.0], [0.8, 0.8, 0.8], [1.0, 1.0, 1.0], [0.0, -1.0, 0.0], 3.0, 1.0);
 

@@ -20,6 +20,7 @@ class Material
     }
     
     preprocessShaderSource(inSource) {
+        const mLights = this.scene.maxLights - 1; // 0 based index
         const source = document.getElementById(inSource).text;
         const versionDirective = '#version 300 es';
         if (this.flipV) {
@@ -40,6 +41,8 @@ class Material
         if(this.vertexColorTint){
             this.shaderFeatures += '#define USE_VERTEX_COLOR_TINT\n';
         }
+        this.shaderFeatures += `#define MAX_LIGHTS ${mLights}\n`;
+
         return `${versionDirective}\n${this.shaderFeatures}\n${source}`;
     }
 
@@ -123,19 +126,37 @@ class Material
         this.program.baseColorSampler = window.gl.getUniformLocation(this.program, "t_baseColor");
         this.program.normalSampler = window.gl.getUniformLocation(this.program, "t_normal");
 
+
+/*TODO: set multiple lights, example code:
+
+        
+// Lights
+program.uNumLightsIndex = gl.getUniformLocation(program, "uNumLights");
+program.uLights = [];
+for (let i = 0; i < NUM_LIGHTS; i++) {
+    program.uLights.push({
+        La: gl.getUniformLocation(program, `uLights[${i}].La`),
+        Ld: gl.getUniformLocation(program, `uLights[${i}].Ld`),
+        Ls: gl.getUniformLocation(program, `uLights[${i}].Ls`),
+        Position: gl.getUniformLocation(program, `uLights[${i}].Position`)
+    });
+}
+
+*/
+
         //Light attributes
-        this.program.progLa = window.gl.getUniformLocation(this.program, "La");
-        this.program.progLd = window.gl.getUniformLocation(this.program, "Ld");
-        this.program.progLs = window.gl.getUniformLocation(this.program, "Ls");
-        this.program.progLposition = window.gl.getUniformLocation(this.program, "Lposition");
-        this.program.progLintensity = window.gl.getUniformLocation(this.program, "Lintensity");
-        this.program.progLradius = window.gl.getUniformLocation(this.program, "Lradius");
+        this.program.progLa = window.gl.getUniformLocation(this.program, "Light.La");
+        this.program.progLd = window.gl.getUniformLocation(this.program, "Light.Ld");
+        this.program.progLs = window.gl.getUniformLocation(this.program, "Light.Ls");
+        this.program.progLposition = window.gl.getUniformLocation(this.program, "Light.Lposition");
+        this.program.progLintensity = window.gl.getUniformLocation(this.program, "Light.Lintensity");
+        this.program.progLradius = window.gl.getUniformLocation(this.program, "Light.Lradius");
 
         //Material attributes
-        this.program.progMa = window.gl.getUniformLocation(this.program, "Ma");
-        this.program.progMd = window.gl.getUniformLocation(this.program, "Md");
-        this.program.progMs = window.gl.getUniformLocation(this.program, "Ms");
-        this.program.progShininess = window.gl.getUniformLocation(this.program, "shininess");
+        this.program.progMa = window.gl.getUniformLocation(this.program, "Material.Ma");
+        this.program.progMd = window.gl.getUniformLocation(this.program, "Material.Md");
+        this.program.progMs = window.gl.getUniformLocation(this.program, "Material.Ms");
+        this.program.progShininess = window.gl.getUniformLocation(this.program, "Material.shininess");
     }
 
     setProjection(projectionMatrix)

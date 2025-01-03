@@ -22,6 +22,9 @@ const inFogColor = document.getElementById('fogColor');
 const inFogAmount = document.getElementById('fogAmount');
 const inFogPower = document.getElementById('fogPower');
 const inFov = document.getElementById('fov');
+
+        //TODO: Setup selected light
+
 //Lights
 const inLights = document.getElementById('lights');
 const inLightIntensity = document.getElementById('lightIntensity');

@@ -4,6 +4,7 @@ class Scene
     {
         this.camera = inCamera;
         this.player = inPlayer;
+        this.maxLights = 4; //Max number of lights allowed per material
 
         this.meshActors = [];
         this.textures = [];

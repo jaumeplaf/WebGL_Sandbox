@@ -32,8 +32,7 @@
             out vec4 vPos;
             out vec4 vCol;
             out vec4 vNorm;
-            out vec4 origLpos;
-            out vec4 finalLpos;
+            out mat4 viewMat;
             #ifdef USE_TEXTURE_BASECOLOR
                 out vec2 uv;
             #endif
@@ -107,8 +106,7 @@
                 #endif
             #endif
             origPos = modelMatrix * vec4(newPos, 1.0);
-            origLpos = Lposition;
-            finalLpos = viewMatrix * Lposition;
+            viewMat = viewMatrix;
         }
         
         </script>
@@ -129,14 +127,11 @@
 
         uniform vec3 cameraPosition;
 
-        uniform vec4 Lposition;
-        
         out vec4 origPos;
         out vec4 vPos;
         out vec4 vCol;
         out vec4 vNorm;
-        out vec4 origLpos;
-        out vec4 finalLpos;
+        out mat4 viewMat;
         #ifdef USE_TEXTURE_BASECOLOR
             out vec2 uv;
         #endif
@@ -198,8 +193,7 @@
             #endif
         #endif
         origPos = modelMatrix * vec4(VertexPosition, 1.0);
-        origLpos = Lposition;
-        finalLpos = viewMatrix * Lposition;
+        viewMat = viewMatrix;
     }
     
     </script>
@@ -208,16 +202,31 @@
         type="x-shader/x-fragment">
         precision mediump float;
 
+        //Structs
+        struct LightData {
+            vec4 La;
+            vec4 Ld;
+            vec4 Ls;
+            float Lintensity;
+            float Lradius;
+        };
+
+        struct MaterialData {
+            vec4 Ma;
+            vec4 Md;
+            vec4 Ms;
+            float shininess;
+        };
+        
         //Attributes
         in vec4 vCol;
         in vec4 vNorm;
         in vec4 origPos;
         in vec4 vPos;
+        in mat4 viewMat;
         #ifdef USE_TEXTURE_BASECOLOR
         in vec2 uv;
         #endif
-        in vec4 origLpos;
-        in vec4 finalLpos;
         
         //Uniforms
         #ifdef USE_FOG
@@ -231,11 +240,9 @@
         uniform sampler2D t_baseColor;
         uniform sampler2D t_normalMap;
 
-        uniform vec4 La, Ld, Ls;
-        uniform float Lintensity;
-        uniform float Lradius;
-        uniform vec4 Ma, Md, Ms;
-        uniform float shininess;
+        uniform MaterialData Material; //Material data
+        uniform LightData Lights[NUM_LIGHTS]; //Array of lights, of size NUM_LIGHTS (defined in the shader preprocessor)
+        uniform int numLights; //Number of lights in the scene
 
         uniform float isPoint;
         
@@ -260,42 +267,55 @@
             }
         #endif
 
-        vec4 phong(vec3 N, vec3 L, vec3 V, float dist) //Uniforms: Ma, Md, Ms, shininess, La, Ld, Ls, Lintensity
+        vec4 phong(vec3 N, vec3 L, vec3 V, float dist) //Ma, Md, Ms, shininess, La, Ld, Ls, Lintensity
         {
             N = normalize(N);
             L = normalize(L);
             V = normalize(V);
 
-            vec4 ambient = La * Ma;
-            vec4 diffuse = vec4(0.0);
-            vec4 specular = vec4(0.0);
+            vec4 fAmbient = vec4(0.0);
+            vec4 fDiffuse = vec4(0.0);
+            vec4 fSpecular = vec4(0.0);
 
-            float NdotL = max(dot(N, L), 0.0);
-            
-            vec3 R = reflect(L, N);
+            for(int i = 0; i < numLights; i++){
+                
+                vec4 ambient = Lights[i].La * Material.Ma;
+                vec4 diffuse = vec4(0.0);
+                vec4 specular = vec4(0.0);
+                
+                float NdotL = max(dot(N, L), 0.0);
+                
+                vec3 R = reflect(L, N);
+                
+                float RdotV = 0.0;
+                if(NdotL > 0.0) {
+                    float specBase = max(dot(R, V), 0.0);
+                    RdotV = pow(specBase, Material.shininess) * smoothstep(0.0, 0.1, NdotL);
+                }
+                vec4 mixedDiffuse = Material.Md * vCol;
+                diffuse = NdotL * (Lights[i].Ld * mixedDiffuse) * Lights[i].Lintensity;
+                specular = RdotV * (Lights[i].Ls * Material.Ms) * Lights[i].Lintensity;
+                float cDist = clamp(dist, 0.0, Lights[i].Lradius); //Clamp distance to light radius
+                float nDist = remap(cDist, 0.0, Lights[i].Lradius, 1.0, 0.0); //Remap distance to 0-1
 
-            //float RdotV = pow(saturate(dot(R, V)), shininess);
-            float RdotV = 0.0;
-            if(NdotL > 0.0) {
-                float specBase = max(dot(R, V), 0.0);
-                RdotV = pow(specBase, shininess) * smoothstep(0.0, 0.1, NdotL);
-            }
-            vec4 mixedDiffuse = Md * vCol;
-            diffuse = NdotL * (Ld * mixedDiffuse) * Lintensity;
-            specular = RdotV * (Ls * Ms) * Lintensity;
-            float cDist = clamp(dist, 0.0, Lradius); //Clamp distance to light radius
-            float nDist = remap(cDist, 0.0, Lradius, 1.0, 0.0); //Remap distance to 0-1
-            return (ambient * nDist + diffuse * nDist + specular* nDist);
+                fAmbient += ambient * nDist;
+                fDiffuse += diffuse * nDist;
+                fSpecular += specular * nDist;
+                }
+
+            return (fAmbient + fDiffuse + fSpecular);
         }
 
         void main() 
         {
+
+//TODO: Lpos for each light, phong using for each (function already implemented)
+
             //Phong
             float absDist = length(origLpos.xyz - origPos.xyz);
-            //vec3 lightPath = finalLpos.xyz - vPos.xyz;
             vec3 lightPath = origLpos.xyz - origPos.xyz;
             float lDist = length(lightPath);
-            vec3 L = normalize(lightPath);
+            vec3 L = normalize(lightPath); 
             vec3 V = normalize(-vPos.xyz);
             vec3 N = normalize(vNorm.xyz); // Ensure normal is normalized
             vec3 phongColor = phong(N, L, V, absDist).xyz;

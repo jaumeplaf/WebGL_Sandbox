@@ -67,7 +67,7 @@ m_flat02.setMaterialAttributes(
 
 const m_bounce01 = new Material(
     currentScene, // Scene
-    "VS_02_bounce", // Vertex Shader ID
+    "VS_01", // Vertex Shader ID
     "FS_01", // Fragment Shader ID
     false, //Base color texture
     false, //Normal map texture

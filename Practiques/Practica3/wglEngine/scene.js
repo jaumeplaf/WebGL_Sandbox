@@ -4,7 +4,7 @@ class Scene
     {
         this.camera = inCamera;
         this.player = inPlayer;
-        this.maxLights = 4; //Max number of lights allowed per material
+        this.maxLights = 8; //Max number of lights allowed per material
 
         this.meshActors = [];
         this.textures = [];
@@ -70,7 +70,7 @@ class Scene
                 objectMaterial.use(this.input);
                 this.currentMaterial = objectMaterial;
                 
-                this.currentMaterial.setLightUniforms(this.lights[0]);
+                this.currentMaterial.setLightUniforms();
 
                 // Set textures
                 if (objectMaterial.useTextureBaseColor) {

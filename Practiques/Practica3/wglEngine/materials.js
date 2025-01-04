@@ -19,8 +19,8 @@ class Material
 
     }
     
-    preprocessShaderSource(inSource) {
-        const mLights = this.scene.maxLights - 1; // 0 based index
+    preprocessShaderSource(inSource) 
+    {
         const source = document.getElementById(inSource).text;
         const versionDirective = '#version 300 es';
         if (this.flipV) {
@@ -41,7 +41,7 @@ class Material
         if(this.vertexColorTint){
             this.shaderFeatures += '#define USE_VERTEX_COLOR_TINT\n';
         }
-        this.shaderFeatures += `#define MAX_LIGHTS ${mLights}\n`;
+        this.shaderFeatures += `#define MAX_LIGHTS ${this.scene.maxLights}\n`;
 
         return `${versionDirective}\n${this.shaderFeatures}\n${source}`;
     }
@@ -127,36 +127,25 @@ class Material
         this.program.normalSampler = window.gl.getUniformLocation(this.program, "t_normal");
 
 
-/*TODO: set multiple lights, example code:
-
-        
-// Lights
-program.uNumLightsIndex = gl.getUniformLocation(program, "uNumLights");
-program.uLights = [];
-for (let i = 0; i < NUM_LIGHTS; i++) {
-    program.uLights.push({
-        La: gl.getUniformLocation(program, `uLights[${i}].La`),
-        Ld: gl.getUniformLocation(program, `uLights[${i}].Ld`),
-        Ls: gl.getUniformLocation(program, `uLights[${i}].Ls`),
-        Position: gl.getUniformLocation(program, `uLights[${i}].Position`)
-    });
-}
-
-*/
-
-        //Light attributes
-        this.program.progLa = window.gl.getUniformLocation(this.program, "Light.La");
-        this.program.progLd = window.gl.getUniformLocation(this.program, "Light.Ld");
-        this.program.progLs = window.gl.getUniformLocation(this.program, "Light.Ls");
-        this.program.progLposition = window.gl.getUniformLocation(this.program, "Light.Lposition");
-        this.program.progLintensity = window.gl.getUniformLocation(this.program, "Light.Lintensity");
-        this.program.progLradius = window.gl.getUniformLocation(this.program, "Light.Lradius");
-
-        //Material attributes
-        this.program.progMa = window.gl.getUniformLocation(this.program, "Material.Ma");
-        this.program.progMd = window.gl.getUniformLocation(this.program, "Material.Md");
-        this.program.progMs = window.gl.getUniformLocation(this.program, "Material.Ms");
-        this.program.progShininess = window.gl.getUniformLocation(this.program, "Material.shininess");
+        // Light and Material structs
+        this.program.numLights = window.gl.getUniformLocation(this.program, "numLights");
+        this.program.Lights = [];
+        for (let i = 0; i < this.scene.maxLights; i++) {
+            this.program.Lights.push({
+                La: window.gl.getUniformLocation(this.program, `Lights[${i}].La`),
+                Ld: window.gl.getUniformLocation(this.program, `Lights[${i}].Ld`),
+                Ls: window.gl.getUniformLocation(this.program, `Lights[${i}].Ls`),
+                Lpos: window.gl.getUniformLocation(this.program, `Lights[${i}].Lpos`),
+                Lintensity: window.gl.getUniformLocation(this.program, `Lights[${i}].Lintensity`),
+                Lradius: window.gl.getUniformLocation(this.program, `Lights[${i}].Lradius`)
+            });
+        }
+        this.program.Material = {
+            Ma: window.gl.getUniformLocation(this.program, "Material.Ma"),
+            Md: window.gl.getUniformLocation(this.program, "Material.Md"),
+            Ms: window.gl.getUniformLocation(this.program, "Material.Ms"),
+            shininess: window.gl.getUniformLocation(this.program, "Material.shininess")
+        };
     }
 
     setProjection(projectionMatrix)
@@ -200,18 +189,23 @@ for (let i = 0; i < NUM_LIGHTS; i++) {
         this.textures[type] = texture;
     }
 
-    setLightUniforms(light) 
+    setLightUniforms() 
     {
-        window.gl.uniform4f(this.program.progLa, light.La[0], light.La[1], light.La[2], 1.0);
-        window.gl.uniform4f(this.program.progLd, light.Ld[0], light.Ld[1], light.Ld[2], 1.0);
-        window.gl.uniform4f(this.program.progLs, light.Ls[0], light.Ls[1], light.Ls[2], 1.0);
-        window.gl.uniform1f(this.program.progLintensity, light.intensity);
-        window.gl.uniform1f(this.program.progLradius, light.radius);
-        window.gl.uniform4f(this.program.progLposition, light.position[0], light.position[1], light.position[2], 1.0);
-        
-        window.gl.uniform4f(this.program.progMa, this.Ma[0], this.Ma[1], this.Ma[2], 1.0);  
-        window.gl.uniform4f(this.program.progMd, this.Md[0], this.Md[1], this.Md[2], 1.0);
-        window.gl.uniform4f(this.program.progMs, this.Ms[0], this.Ms[1], this.Ms[2], 1.0);
-        window.gl.uniform1f(this.program.progShininess, this.shininess);
+        const lNum = this.scene.lights.length;
+        window.gl.uniform1i(this.program.numLights, lNum);
+        for (let i = 0; i < lNum; i++) {
+            const currLight = this.scene.lights[i];
+            window.gl.uniform4f(this.program.Lights[i].La, currLight.La[0], currLight.La[1], currLight.La[2], 1.0);
+            window.gl.uniform4f(this.program.Lights[i].Ld, currLight.Ld[0], currLight.Ld[1], currLight.Ld[2], 1.0);
+            window.gl.uniform4f(this.program.Lights[i].Ls, currLight.Ls[0], currLight.Ls[1], currLight.Ls[2], 1.0);
+            window.gl.uniform4f(this.program.Lights[i].Lpos, currLight.position[0], currLight.position[1], currLight.position[2], 1.0);
+            window.gl.uniform1f(this.program.Lights[i].Lintensity, currLight.intensity);
+            window.gl.uniform1f(this.program.Lights[i].Lradius, currLight.radius);
+        }
+    
+        window.gl.uniform4f(this.program.Material.Ma, this.Ma[0], this.Ma[1], this.Ma[2], 1.0);
+        window.gl.uniform4f(this.program.Material.Md, this.Md[0], this.Md[1], this.Md[2], 1.0);
+        window.gl.uniform4f(this.program.Material.Ms, this.Ms[0], this.Ms[1], this.Ms[2], 1.0);
+        window.gl.uniform1f(this.program.Material.shininess, this.shininess);
     }
 }

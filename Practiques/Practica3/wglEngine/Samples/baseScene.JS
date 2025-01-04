@@ -55,9 +55,12 @@ cube1.setMatrix(-80, 0, 5, 10);
 
 //TODO: IMPLEMENT MULTIPLE LIGHTS
 
-const L01 = new PointLight(3, 5000, [-30, 80, 10], [1.0, 1.0, 1.0], [1.0, 0.8, 0.0], [1.0, 1.0, 0.8]);
-//const L02 = new SpotLight(3,[20, 40, 0], [0.0, 1.0, 0.0], [0.8, 0.8, 0.8], [1.0, 1.0, 1.0], [0.0, -1.0, 0.0], 30.0);
-//const L03 = new AreaLight(10,[40, 40, 0], [0.0, 0.0, 1.0], [0.8, 0.8, 0.8], [1.0, 1.0, 1.0], [0.0, -1.0, 0.0], 3.0, 1.0);
+const L00 = new PointLight(3, 5000, [-30, 80, 10], [1.0, 0.0, 0.0], [1.0, 0.0, 0.0], [1.0, 0.0, 0.0]);
+const L01 = new PointLight(10, 1000, [50, 80, -20], [0.0, 1.0, 0.0], [0.0, 1.0, 0.0], [0.0, 1.0, 0.0]);
+const L02 = new PointLight(20, 500, [150, 80, 40], [0.0, 0.0, 1.0], [0.0, 0.0, 1.0], [0.0, 0.0, 1.0]);
+
+
+console.log("Lights: " + ACTIVE_SCENE.lights);
 
 window.onload = function(){
     ACTIVE_SCENE.drawScene();

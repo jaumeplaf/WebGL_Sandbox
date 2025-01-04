@@ -10,6 +10,10 @@ const floor = new MeshActor(base_floor);
 floor.setMatrix(0, -10, -5, 100);
 floor.setColor([0.6, 0.6, 0.6, 1.0]);
 
+const sphere1 = new MeshActor(base_sphere);
+sphere1.setMatrix(-55, 25, 85, 30);
+sphere1.setColor([1.0, 1.0, 1.0, 1.0]);
+
 const arrowX = new MeshActor(base_arrowX);
 arrowX.setMatrix(0, -9, -5, 40);
 const arrowY = new MeshActor(base_arrowY);

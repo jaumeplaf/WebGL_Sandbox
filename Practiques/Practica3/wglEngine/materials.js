@@ -1,6 +1,6 @@
 class Material 
 {
-    constructor(inScene, vsSource, fsSource, inTextureBaseColor = false, inTextureNormal = false, flipVcoord = true) 
+    constructor(inScene, vsSource, fsSource, inTextureBaseColor = false, inTextureNormal = false, flipVcoord = true, inNoise = false) 
     {
         this.scene = inScene;
         this.flipV = flipVcoord;
@@ -8,6 +8,7 @@ class Material
         this.useTextureNormal = inTextureNormal;
         this.useFog = true;
         this.useAdjugateNormal = false;
+        this.useNoise = inNoise;
         this.vertexColorTint = true;
         this.shaderFeatures = '';
 
@@ -40,6 +41,9 @@ class Material
         }
         if(this.vertexColorTint){
             this.shaderFeatures += '#define USE_VERTEX_COLOR_TINT\n';
+        }
+        if(this.useNoise){
+            this.shaderFeatures += '#define USE_NOISE\n';
         }
         this.shaderFeatures += `#define MAX_LIGHTS ${this.scene.maxLights}\n`;
 

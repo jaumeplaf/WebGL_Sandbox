@@ -65,6 +65,23 @@ m_flat02.setMaterialAttributes(
     1.0 // Shininess
 );
 
+//Initialize Materials. Shaders must be declared in the HTML document and have an ID
+const m_flat03 = new Material(
+    currentScene, // Scene
+    "VS_01", // Vertex Shader ID
+    "FS_01", // Fragment Shader ID
+    false, //Base color texture
+    false, //Normal map texture
+    false, //Flip V coords
+    true //Noise
+);
+m_flat03.setMaterialAttributes(
+    [.5, .5, .5], // Ambient
+    [0.5, 0.5, 0.5], // Diffuse
+    [0.4, 0.4, 0.4], // Specular
+    10.0 // Shininess
+);
+
 const m_bounce01 = new Material(
     currentScene, // Scene
     "VS_02_bounce", // Vertex Shader ID
@@ -86,7 +103,8 @@ const m_concrete01 = new Material(
     "FS_01", // Fragment Shader ID
     false, //Base color texture
     false, //Normal map texture
-    false //Flip V coords
+    false, //Flip V coords
+    true //Noise
     );
 m_concrete01.setMaterialAttributes(
     [0.5, 0.5, 0.5], //Ambient
@@ -170,6 +188,10 @@ const base_plane = new MeshObject(
 const base_cube = new MeshObject(
     SM_Cube, //Mesh origin
     m_ExampleText01 //Material
+);
+const base_sphere = new MeshObject(
+    SM_Sphere, //Mesh origin
+    m_flat03 //Material
 );
 const base_arrowX = new MeshObject(
     SM_DebugArrow_X, //Mesh origin

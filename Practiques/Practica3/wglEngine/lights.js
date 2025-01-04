@@ -16,8 +16,8 @@ class Light
     setProxyMatAttributes()
     {
         this.proxyMaterial.setMaterialAttributes(
-            [this.La[0] * this.emissive, this.La[1] * this.emissive, this.La[0] * this.emissive], //Ambient
-            [this.Ld[0] * this.emissive, this.Ld[1] * this.emissive, this.Ld[0] * this.emissive], //Diffuse
+            [Math.max(this.La[0], this.Ld[0]) * this.emissive, Math.max(this.La[1], this.Ld[1]) * this.emissive, Math.max(this.La[2], this.Ld[2]) * this.emissive], //Ambient
+            [Math.max(this.La[0], this.Ld[0]) * this.emissive, Math.max(this.La[1], this.Ld[1]) * this.emissive, Math.max(this.La[2], this.Ld[2]) * this.emissive], //Diffuse
             [0.0, 0.0, 0.0], //Specular
             300.0 //Shininess
         );

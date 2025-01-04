@@ -40,8 +40,19 @@ class Scene
     addLight(inLight)
     {
         this.lights.push(inLight);
+        this.updateLightOptions();
     }
     
+    updateLightOptions()
+    {
+        const lightSelect = document.getElementById('lights');
+        const option = document.createElement('option');
+        const index = this.lights.length - 1;
+        option.value = index;
+        option.text = `Light0${index}`;
+        lightSelect.appendChild(option);
+    }
+
     updateDeltaTime() 
     {
         const now = performance.now();

@@ -42,7 +42,7 @@ class TextureObject {
       image.src = this.imagePath;
 
       image.onload = () => {
-          console.log(`Successfully loaded texture: ${this.imagePath}`);
+          //console.log(`Successfully loaded texture: ${this.imagePath}`);
           this.bindTexture(image);
           this.loaded = true;
       };

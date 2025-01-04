@@ -11,6 +11,11 @@ class Scene
         this.lights = [];
         this.currentMaterial = null;
         this.drawMode = 0;
+        this.celShading = 0;
+        this.celSteps = 3;
+        updateCelStepsDisplay(this.celSteps);
+        this.celContrast = 1.0;
+        updateCelContrastDisplay(this.celContrast);
         
         this.previousTime = performance.now();
 
@@ -60,9 +65,20 @@ class Scene
         this.previousTime = now;
 
         this.input.time = now / 1000;
-        
     }
 
+    updateCelSteps(steps)
+    {
+        this.celSteps = steps;
+        updateCelStepsDisplay(steps);
+    }
+
+    updateCelContrast(contrast)
+    {
+        this.celContrast = contrast;
+        updateCelContrastDisplay(contrast);
+    }
+    
      drawScene() //Main rendering loop
     {
         this.player.moveCamera();

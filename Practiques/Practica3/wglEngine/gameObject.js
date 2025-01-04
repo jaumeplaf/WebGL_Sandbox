@@ -102,6 +102,7 @@ class MeshActor
       drawMeshActor()
       {
         this.meshObject.material.setModelMatrix(this.modelMatrixIndex);
+        this.meshObject.material.setCelShading();
         drawModel(this, this.scene.drawMode);
       }
 }

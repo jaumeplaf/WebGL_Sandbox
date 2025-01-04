@@ -121,6 +121,9 @@ class Material
 
         //Point/line rendering
         this.program.isPoint = window.gl.getUniformLocation(this.program, "isPoint");
+        this.program.celShading = window.gl.getUniformLocation(this.program, "celShading");
+        this.program.celSteps = window.gl.getUniformLocation(this.program, "celSteps");
+        this.program.celContrast = window.gl.getUniformLocation(this.program, "celContrast");
 
         // Texture uniforms
         this.program.baseColorSampler = window.gl.getUniformLocation(this.program, "t_baseColor");
@@ -161,6 +164,18 @@ class Material
     setModelMatrix(matrix)
     {
         window.gl.uniformMatrix4fv(this.program.modelMatrixIndex, false, matrix);
+    }
+
+    setCelShading()
+    {
+        window.gl.uniform1f(this.program.celShading, this.scene.celShading);
+        window.gl.uniform1f(this.program.celSteps, this.scene.celSteps);
+        window.gl.uniform1f(this.program.celContrast, this.scene.celContrast);
+    }
+
+    setTime()
+    {
+        window.gl.uniform1f(this.program.progTime, this.scene.input.time);
     }
 
     setTexture(texture, textureUnit, uniformLocation)

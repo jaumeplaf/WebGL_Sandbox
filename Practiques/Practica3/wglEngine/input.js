@@ -21,9 +21,14 @@ const keyDrawMode6 = '7';
 const inFogColor = document.getElementById('fogColor');
 const inFogAmount = document.getElementById('fogAmount');
 const inFogPower = document.getElementById('fogPower');
+
+//Camera
 const inFov = document.getElementById('fov');
 
-        //TODO: Setup selected light
+//Shading
+const inCelShad = document.getElementById('celShad');
+const inCelSteps = document.getElementById('celSteps');
+const inCelContrast = document.getElementById('celContrast');
 
 //Lights
 const inLights = document.getElementById('lights');
@@ -150,13 +155,33 @@ class InputParameters
     this.fov = event.target.value;
     inScene.player.updateFov(this.fov);
     });
+
+    //Shading
+    inCelShad.addEventListener('input', (event) => {
+      inScene.celShading = event.target.checked;
+    });
+
+    inCelSteps.addEventListener('input', (event) => {
+      inScene.updateCelSteps(event.target.value);
+    });
+
+    inCelContrast.addEventListener('input', (event) => {
+      inScene.updateCelContrast(event.target.value);
+    });
+
     
     //Lights
     inLights.addEventListener('change', () => { //Whenever the dropdown changes, update the color pickers
       const selected = parseInt(inLights.value);
       this.activeLight = inScene.lights[selected];
-      updateLightUI(this.activeLight);
-      updateLightIntensityDisplay(this.activeLight.intensity);
+      updateLightDisplay(
+        this.activeLight, 
+        this.activeLight.intensity,
+        this.activeLight.radius,
+        this.activeLight.position[0],
+        this.activeLight.position[1],
+        this.activeLight.position[2]
+      );
     });
     
     inLightIntensity.addEventListener('input', (event) => {

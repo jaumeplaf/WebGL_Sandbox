@@ -61,8 +61,6 @@ const L02 = new PointLight(3, 2000, [150, 80, 0], [0.0, 0.0, 1.0], [0.0, 0.0, 1.
 const L03 = new PointLight(5, 250, [0, 20, -250], [0.0, 1.0, 1.0], [0.0, 1.0, 1.0], [0.0, 1.0, 1.0]);
 const L04 = new PointLight(5, 250, [0, 20, 250], [1.0, 1.0, 0.0], [1.0, 1.0, 0.0], [1.0, 1.0, 0.0]);
 
-console.log("Lights: " + ACTIVE_SCENE.lights);
-
 window.onload = function(){
     ACTIVE_SCENE.drawScene();
 }

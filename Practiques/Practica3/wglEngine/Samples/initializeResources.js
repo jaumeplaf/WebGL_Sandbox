@@ -67,7 +67,7 @@ m_flat02.setMaterialAttributes(
 
 const m_bounce01 = new Material(
     currentScene, // Scene
-    "VS_01", // Vertex Shader ID
+    "VS_02_bounce", // Vertex Shader ID
     "FS_01", // Fragment Shader ID
     false, //Base color texture
     false, //Normal map texture
@@ -150,11 +150,11 @@ const m_Fish01 = new Material(
     true //Flip V coords
     );
 m_Fish01.assignTexture(t_fish01, 'baseColor');
-m_flat01.setMaterialAttributes(
+m_Fish01.setMaterialAttributes(
     [.5, .5, .5], // Ambient
     [0.5, 0.5, 0.5], // Diffuse
     [0.4, 0.4, 0.4], // Specular
-    10.0 // Shininess
+    25.0 // Shininess
 );
 
 

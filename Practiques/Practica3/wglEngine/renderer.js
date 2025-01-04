@@ -61,13 +61,17 @@ function bindModelBuffers(model, inShader) {
 
 function drawModel(model, drawMode = 0) //Mode 0:Triangles, 1:Wireframe, 2:Points, 3:Triangles+Wireframe, 4:Triangles+Points, 5:Triangles+Wireframe+Points
 {
-    const inShader = model.meshObject.material.program;
+    const inMaterial = model.meshObject.material;
+    const inShader = inMaterial.program;
+    const inScene = model.scene;
     model.meshObject.material.scene.camera.saveCameraPosition(inShader); //Save camera position
-    window.gl.uniform1f(inShader.isPoint, 0.0); 
+
+    window.gl.uniform1f(inShader.isPoint, 0.0);
+    inMaterial.setCelShading();
+    inMaterial.setTime();
 
     bindModelBuffers(model, inShader); //Bind buffers
 
-    window.gl.uniform1f(inShader.progTime, model.meshObject.material.scene.input.time); //Set time
 
     switch(drawMode)
     {

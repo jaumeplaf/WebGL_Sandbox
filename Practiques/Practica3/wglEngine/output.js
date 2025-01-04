@@ -2,6 +2,8 @@
 const outFps = document.getElementById('fpsCounter');
 const outFrameTime = document.getElementById('frameTime');
 const outFov = document.getElementById('displayFov');
+const outCelSteps = document.getElementById('displayCelSteps');
+const outCelContrast = document.getElementById('displayCelContrast');
 const outLightIntensity = document.getElementById('displayLightIntensity');
 const outLightRadius = document.getElementById('displayLightRadius');
 const outLightPosX = document.getElementById('displaylightPositionX');
@@ -19,9 +21,27 @@ function updateFpsCounter(deltaTime, precision)
     }
 }
 
+function updateCelStepsDisplay(steps)
+{
+    outCelSteps.textContent = steps;
+}
+
+function updateCelContrastDisplay(contrast)
+{
+    outCelContrast.textContent = contrast;
+}
+
 function updateFovDisplay(fov)
 {
     outFov.textContent = fov + "º";
+}
+
+function updateLightDisplay(light, intensity, radius, posX, posY, posZ)
+{
+    updateLightIntensityDisplay(intensity);
+    updateLightRadiusDisplay(radius);
+    updateLightPositions(posX, posY, posZ);
+    updateLightUI(light);
 }
 
 function updateLightIntensityDisplay(intensity)

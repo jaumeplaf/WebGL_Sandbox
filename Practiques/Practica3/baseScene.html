@@ -333,6 +333,7 @@
             vec4 fAmbient = vec4(0.0);
             vec4 fDiffuse = vec4(0.0);
             vec4 fSpecular = vec4(0.0);
+            vec4 fDist = vec4(0.0);
             //Loop through all lights
             for(int i = 0; i < numLights; i++){
                 
@@ -341,7 +342,7 @@
                 vec3 lightPath = Lights[i].Lpos.xyz - origPos.xyz;
                 vec3 L = normalize(lightPath); 
 
-                vec4 ambient = Lights[i].La * Material.Ma;
+                vec4 ambient = Lights[i].La * Material.Ma * Lights[i].Lintensity;
                 vec4 diffuse = vec4(0.0);
                 vec4 specular = vec4(0.0);
                 
@@ -495,7 +496,7 @@
                     <div class="slidercontainer">
                         <label for="lightRadius">Radius: </label><span id="displayLightRadius">"Rad" </span><br>
                     </div>           
-                    <input type="range" min="10.0" max="5000.0" value="400.0" step="0.01" class="slider" id="lightRadius">
+                    <input type="range" min="10.0" max="500.0" value="400.0" step="0.01" class="slider" id="lightRadius">
                     <br>
                     <div class="slidercontainer">
                         <label for="lightPositionX">Position X: </label><span id="displaylightPositionX">"PosX" </span><br>

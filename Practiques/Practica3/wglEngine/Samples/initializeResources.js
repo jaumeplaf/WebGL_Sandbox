@@ -91,9 +91,9 @@ const m_bounce01 = new Material(
     false //Flip V coords
 );
 m_flat01.setMaterialAttributes(
-    [.5, .5, .5], // Ambient
-    [0.5, 0.5, 0.5], // Diffuse
-    [0.4, 0.4, 0.4], // Specular
+    [.2, .2, .2], // Ambient
+    [0.4, 0.4, 0.4], // Diffuse
+    [0.2, 0.2, 0.2], // Specular
     10.0 // Shininess
 );
 
@@ -137,9 +137,9 @@ const m_WoodTrim01 = new Material(
     );
 m_WoodTrim01.assignTexture(t_woodTrim_basecolor, 'baseColor');
 m_WoodTrim01.setMaterialAttributes(
-    [1.0, 1.0, 1.0], // Ambient
-    [1.0, 1.0, 1.0], // Diffuse
-    [.2, .2, .2], // Specular
+    [0.6, 0.6, 0.6], // Ambient
+    [0.8, 0.8, 0.8], // Diffuse
+    [0.4, 0.4, 0.4], // Specular
     1.0 // Shininess
 );
 
@@ -169,10 +169,10 @@ const m_Fish01 = new Material(
     );
 m_Fish01.assignTexture(t_fish01, 'baseColor');
 m_Fish01.setMaterialAttributes(
-    [.5, .5, .5], // Ambient
-    [0.5, 0.5, 0.5], // Diffuse
-    [0.4, 0.4, 0.4], // Specular
-    25.0 // Shininess
+    [0.7, 0.7, 0.7], // Ambient
+    [0.7, 0.7, 0.7], // Diffuse
+    [0.9, 0.9, 0.9], // Specular
+    100.0 // Shininess
 );
 
 

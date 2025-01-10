@@ -1,4 +1,3 @@
-
 ////////////////////////////////
 // RAY TRACING - example 24-25//
 ////////////////////////////////
@@ -149,15 +148,49 @@ function IntersectScene(scene, ray, origin, depth){
 				light = vec3.add(light, vec3.multiply(vec3.fromValues(hit.specularCoeff, hit.specularCoeff, hit.specularCoeff), colorVec3));
 			}
 			return [light[0], light[1], light[2]];
+			//return [1.0, 0.0, 0.0];
 		}
 	}
-	return [0.3, 0.4, 1.0];
+	return [0.5, 0.5, 0.5];
 }
 
 //Function to compute light
-function computeLight(scene, hit, ray, depth){
-	// TO BE IMPLEMENTED
-	return [0, 0, 0];
+function computeLight(scene, hit, ray, depth) {
+    var ambientLight = vec3.fromValues(0.1, 0.1, 0.1); // Ambient light contribution
+    var lightContribution = vec3.clone(ambientLight);
+
+    for (var light of scene.Lights) {
+        var lightDir = vec3.subtract(vec3.create(), light.position, hit.point);
+        vec3.normalize(lightDir, lightDir);
+
+        // Check for shadows
+        var shadowRay = vec3.clone(lightDir);
+        var shadowHit = computeShadowing(scene, shadowRay, hit.point, hit.surfaceId);
+        if (shadowHit) {
+            continue; // Skip this light if the point is in shadow
+        }
+
+        // Diffuse lighting (Lambertian reflectance)
+        var diffuseFactor = Math.max(0, vec3.dot(hit.normal, lightDir));
+        var diffuse = vec3.multiply(vec3.create(), hit.material.mat_diffuse, light.color);
+        vec3.scale(diffuse, diffuse, diffuseFactor);
+
+        // Specular lighting (Phong reflection model)
+        var specular = vec3.fromValues(0, 0, 0);
+        if (hit.specular) {
+            var viewDir = vec3.negate(vec3.create(), ray);
+            var reflectDir = computeReflectionDirection(hit, lightDir);
+            var specFactor = Math.pow(Math.max(0, vec3.dot(viewDir, reflectDir)), hit.material.alpha[0]);
+            specular = vec3.multiply(vec3.create(), hit.material.mat_specular, light.color);
+            vec3.scale(specular, specular, specFactor);
+        }
+
+        // Add contributions to the light
+        vec3.add(lightContribution, lightContribution, diffuse);
+        vec3.add(lightContribution, lightContribution, specular);
+    }
+
+    return lightContribution;
 }
 
 //Function to compute the reflected ray

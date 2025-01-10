@@ -173,3 +173,71 @@ var Scene = {
         }
     ]
 };
+
+//Function to intersect whole scene
+function IntersectScene(scene, ray, origin, depth){
+    //We get the first hit information
+    var hit = computeFirstHit(scene, ray, origin);
+    //Check if it's not undefined neither null
+    if (hit){
+        if (hit.t !== null){
+            //Compute light
+            var light = computeLight(scene, hit, ray, depth);
+            //Check if surface we hit is specular and if we can proceed (necessary to stop recursivity)
+            if (hit.specular && depth < 4){
+                //Compute reflected ray
+                var d1 = computeReflectionDirection(hit, ray); //The new ray will be the vector d1 and origin hit.point
+                //Get a little bit modified origin point in order to have correct specular behaviour (avoid "self-specularity")
+                var newHitPoint = vec3.add(vec3.create(), hit.point, vec3.scale(vec3.create(), d1, 0.01));
+                //Re-intersect whole scene with new vector and ray
+                var color = IntersectScene(scene, d1, newHitPoint, depth + 1);
+                //Convert into vec3 from gl-matrix
+                var colorVec3 = vec3.fromValues(color[0], color[1], color[2]);
+                //We add new specular property to light
+                var specularContribution = vec3.multiply(vec3.create(), colorVec3, vec3.fromValues(hit.specularCoeff, hit.specularCoeff, hit.specularCoeff));
+                light = vec3.add(vec3.create(), light, specularContribution);
+            }
+            return [light[0], light[1], light[2]];
+        }
+    }
+    return [0.5, 0.5, 0.5];
+}
+
+//Function to compute light
+function computeLight(scene, hit, ray, depth) {
+    var ambientLight = vec3.fromValues(0.1, 0.1, 0.1); // Ambient light contribution
+    var lightContribution = vec3.clone(ambientLight);
+
+    for (var light of scene.Lights) {
+        var lightDir = vec3.subtract(vec3.create(), light.position, hit.point);
+        vec3.normalize(lightDir, lightDir);
+
+        // Check for shadows
+        var shadowRay = vec3.clone(lightDir);
+        var shadowHit = computeShadowing(scene, shadowRay, hit.point, hit.surfaceId);
+        if (shadowHit) {
+            continue; // Skip this light if the point is in shadow
+        }
+
+        // Diffuse lighting (Lambertian reflectance)
+        var diffuseFactor = Math.max(0, vec3.dot(hit.normal, lightDir));
+        var diffuse = vec3.multiply(vec3.create(), hit.material.mat_diffuse, light.color);
+        vec3.scale(diffuse, diffuse, diffuseFactor);
+
+        // Specular lighting (Phong reflection model)
+        var specular = vec3.fromValues(0, 0, 0);
+        if (hit.specular) {
+            var viewDir = vec3.negate(vec3.create(), ray);
+            var reflectDir = computeReflectionDirection(hit, lightDir);
+            var specFactor = Math.pow(Math.max(0, vec3.dot(viewDir, reflectDir)), hit.material.alpha[0]);
+            specular = vec3.multiply(vec3.create(), hit.material.mat_specular, light.color);
+            vec3.scale(specular, specular, specFactor);
+        }
+
+        // Add contributions to the light
+        vec3.add(lightContribution, lightContribution, diffuse);
+        vec3.add(lightContribution, lightContribution, specular);
+    }
+
+    return lightContribution;
+}

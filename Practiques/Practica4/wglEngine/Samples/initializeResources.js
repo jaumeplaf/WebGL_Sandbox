@@ -18,7 +18,7 @@ const currentScene = new Scene(
 );
 
 //Initialize Materials. Shaders must be declared in the HTML document and have an ID
-const m_flat01 = new Material(
+const m_matte01 = new Material(
     currentScene, // Scene
     "VS_01", // Vertex Shader ID
     "FS_01", // Fragment Shader ID
@@ -26,61 +26,13 @@ const m_flat01 = new Material(
     false, //Normal map texture
     false //Flip V coords
 );
-m_flat01.setMaterialAttributes(
-    [.5, .5, .5], // Ambient
+m_matte01.setMaterialAttributes(
+    [0.5, 0.5, 0.5], // Ambient
     [0.5, 0.5, 0.5], // Diffuse
-    [0.4, 0.4, 0.4], // Specular
+    [0.5, 0.5, 0.5], // Specular
     10.0 // Shininess
 );
 
-//Initialize Materials. Shaders must be declared in the HTML document and have an ID
-const m_flat02 = new Material(
-    currentScene, // Scene
-    "VS_01", // Vertex Shader ID
-    "FS_01", // Fragment Shader ID
-    false, //Base color texture
-    false, //Normal map texture
-    false //Flip V coords
-);
-m_flat02.setMaterialAttributes(
-    [10.0, 10.0, 10.0], // Ambient
-    [10.0, 10.0, 10.0], // Diffuse
-    [0, 0, 0], // Specular
-    1.0 // Shininess
-);
-
-//Initialize Materials. Shaders must be declared in the HTML document and have an ID
-const m_flat03 = new Material(
-    currentScene, // Scene
-    "VS_01", // Vertex Shader ID
-    "FS_01", // Fragment Shader ID
-    false, //Base color texture
-    false, //Normal map texture
-    false, //Flip V coords
-    true //Noise
-);
-m_flat03.setMaterialAttributes(
-    [.5, .5, .5], // Ambient
-    [0.5, 0.5, 0.5], // Diffuse
-    [0.4, 0.4, 0.4], // Specular
-    10.0 // Shininess
-);
-
-const m_concrete01 = new Material(
-    currentScene, // Scene
-    "VS_01", // Vertex Shader ID
-    "FS_01", // Fragment Shader ID
-    false, //Base color texture
-    false, //Normal map texture
-    false, //Flip V coords
-    true //Noise
-    );
-m_concrete01.setMaterialAttributes(
-    [0.5, 0.5, 0.5], //Ambient
-    [0.8, 0.8, 0.8], //Diffuse
-    [0.8, 0.8, 0.8], //Specular
-    1.0 //Shininess
-);
 const m_shiny01 = new Material(
     currentScene, // Scene
     "VS_01", // Vertex Shader ID
@@ -99,41 +51,33 @@ m_shiny01.setMaterialAttributes(
 //Initialize MeshObjects
 const base_floor = new MeshObject(
     SM_Floor01, //Mesh origin
-    m_flat01 //Material
-);
-const base_plane = new MeshObject(
-    SM_Plane, //Mesh origin
-    m_flat01 //Material
+    m_matte01 //Material
 );
 const base_cube = new MeshObject(
     SM_Cube, //Mesh origin
-    m_flat02 //Material
+    m_matte01 //Material
 );
 const base_sphere = new MeshObject(
     SM_Sphere, //Mesh origin
-    m_flat03 //Material
+    m_matte01 //Material
 );
 const base_arrowX = new MeshObject(
     SM_DebugArrow_X, //Mesh origin
-    m_flat02 //Material
+    m_matte01 //Material
 );
 const base_arrowY = new MeshObject(
     SM_DebugArrow_Y, //Mesh origin
-    m_flat02 //Material
+    m_matte01 //Material
 );
 const base_arrowZ = new MeshObject(
     SM_DebugArrow_Z, //Mesh origin
-    m_flat02 //Material
+    m_matte01 //Material
 );
 const base_suzanne = new MeshObject(
     SM_Suzanne, //Mesh origin
-    m_shiny01 //Material
+    m_matte01 //Material
 );
 const base_lightBulb = new MeshObject(
     Lightbulb01, //Mesh origin
-    m_flat01 //Material
-);
-const base_testPolygon = new MeshObject(
-    TEST01, //Mesh origin
-    m_shiny01 //Material
+    m_matte01 //Material
 );

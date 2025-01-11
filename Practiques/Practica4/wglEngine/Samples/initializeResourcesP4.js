@@ -2,8 +2,8 @@
 const camera01 = new Camera(
     0.1, // Near plane
     5000.0, // Far plane
-    [15, 15, 15], // Initial Position
-    [0, 15, -1] // Initial Target
+    [20, 15, -55], // Initial Position
+    [0, 20, -1] // Initial Target
 );
 
 //Initialize player
@@ -49,35 +49,19 @@ m_shiny01.setMaterialAttributes(
 );
 
 //Initialize MeshObjects
-const base_floor = new MeshObject(
-    SM_Floor01, //Mesh origin
-    m_matte01 //Material
-);
-const base_cube = new MeshObject(
-    SM_Cube, //Mesh origin
+const base_plane = new MeshObject(
+    SM_Plane, //Mesh origin
     m_matte01 //Material
 );
 const base_sphere = new MeshObject(
     SM_Sphere, //Mesh origin
     m_matte01 //Material
 );
-const base_arrowX = new MeshObject(
-    SM_DebugArrow_X, //Mesh origin
-    m_matte01 //Material
-);
-const base_arrowY = new MeshObject(
-    SM_DebugArrow_Y, //Mesh origin
-    m_matte01 //Material
-);
-const base_arrowZ = new MeshObject(
-    SM_DebugArrow_Z, //Mesh origin
-    m_matte01 //Material
-);
-const base_suzanne = new MeshObject(
-    SM_Suzanne, //Mesh origin
+const base_triangle = new MeshObject(
+    SM_Triangle, //Mesh origin
     m_matte01 //Material
 );
 const base_lightBulb = new MeshObject(
-    Lightbulb01, //Mesh origin
+    SM_Sphere, //Mesh origin
     m_matte01 //Material
 );

@@ -39,70 +39,86 @@ class MeshActor
             this[attr] = this.meshObject[attr];
           }
         });
-      }
+    }
 
-      setMatrix(tx, ty, tz, uniformS)
-      {
-        //Initilaize ModelView, translation, scale matrix 
-        let M = mat4.create();
-        let T = mat4.create();
-        let S = mat4.create ();
+    getPosition() {
+        return [
+            this.modelMatrixIndex[12],
+            this.modelMatrixIndex[13],
+            this.modelMatrixIndex[14]
+        ];
+    }
     
-        mat4.fromScaling(S, [uniformS, uniformS, uniformS]);
-        mat4.fromTranslation(T, [tx, ty, tz]);
-        mat4.multiply(M, T, S);
-    
-        this.modelMatrixIndex = M;
+    getScale() {
+        return [
+            this.modelMatrixIndex[0],
+            this.modelMatrixIndex[5],
+            this.modelMatrixIndex[10]
+        ];
+  }
+
+  setMatrix(tx, ty, tz, uniformS)
+  {
+    //Initilaize ModelView, translation, scale matrix 
+    let M = mat4.create();
+    let T = mat4.create();
+    let S = mat4.create ();
+
+    mat4.fromScaling(S, [uniformS, uniformS, uniformS]);
+    mat4.fromTranslation(T, [tx, ty, tz]);
+    mat4.multiply(M, T, S);
+
+    this.modelMatrixIndex = M;
+  }
+
+  setTranslation(tx, ty, tz)
+  {
+    let M = mat4.create();
+    let T = mat4.create();
+
+    mat4.fromTranslation(T, [tx, ty, tz]);
+    mat4.multiply(M, this.modelMatrixIndex, T);
+
+    this.modelMatrixIndex = M;
+  }
+
+  setScale(sx, sy, sz)
+  {
+    let M = mat4.create();
+    let S = mat4.create ();
+
+    mat4.fromScaling(S, [sx, sy, sz]);
+    mat4.multiply(M, this.modelMatrixIndex, S);
+
+    this.modelMatrixIndex = M;
+  }
+
+  setRotation(angle, axis)
+  {
+    let R = mat4.create();
+    mat4.fromRotation(R, degToRad(angle), axis);
+    mat4.multiply(this.modelMatrixIndex, this.modelMatrixIndex, R);
+  }
+
+  setColor(newColor) 
+  {
+    this.color = newColor;
+    if (this.colors) {
+      for (let i = 0; i < this.colors.length; i += 4) {
+          this.colors[i] = newColor[0];
+          this.colors[i + 1] = newColor[1];
+          this.colors[i + 2] = newColor[2];
+          this.colors[i + 3] = newColor[3];
       }
+      window.gl.bindBuffer(window.gl.ARRAY_BUFFER, this.idBufferColors);
+      window.gl.bufferData(window.gl.ARRAY_BUFFER, new Float32Array(this.colors), window.gl.STATIC_DRAW);
+    }
+  }
 
-      setTranslation(tx, ty, tz)
-      {
-        let M = mat4.create();
-        let T = mat4.create();
-    
-        mat4.fromTranslation(T, [tx, ty, tz]);
-        mat4.multiply(M, this.modelMatrixIndex, T);
-    
-        this.modelMatrixIndex = M;
-      }
-
-      setScale(sx, sy, sz)
-      {
-        let M = mat4.create();
-        let S = mat4.create ();
-
-        mat4.fromScaling(S, [sx, sy, sz]);
-        mat4.multiply(M, this.modelMatrixIndex, S);
-
-        this.modelMatrixIndex = M;
-      }
-
-      setRotation(angle, axis)
-      {
-        let R = mat4.create();
-        mat4.fromRotation(R, degToRad(angle), axis);
-        mat4.multiply(this.modelMatrixIndex, this.modelMatrixIndex, R);
-      }
-
-      setColor(newColor) 
-      {
-        this.color = newColor;
-        if (this.colors) {
-          for (let i = 0; i < this.colors.length; i += 4) {
-              this.colors[i] = newColor[0];
-              this.colors[i + 1] = newColor[1];
-              this.colors[i + 2] = newColor[2];
-              this.colors[i + 3] = newColor[3];
-          }
-          window.gl.bindBuffer(window.gl.ARRAY_BUFFER, this.idBufferColors);
-          window.gl.bufferData(window.gl.ARRAY_BUFFER, new Float32Array(this.colors), window.gl.STATIC_DRAW);
-        }
-      }
-
-      drawMeshActor()
-      {
-        this.meshObject.material.setModelMatrix(this.modelMatrixIndex);
-        this.meshObject.material.setCelShading();
-        drawModel(this, this.scene.drawMode);
-      }
+  drawMeshActor()
+  {
+    this.meshObject.material.setModelMatrix(this.modelMatrixIndex);
+    this.meshObject.material.setCelShading();
+    drawModel(this, this.scene.drawMode);
+  }
 }

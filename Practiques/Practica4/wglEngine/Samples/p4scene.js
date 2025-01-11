@@ -6,32 +6,18 @@ const ACTIVE_SCENE = currentScene;
 
 //Initialize object instances
 
-const floor = new MeshActor(base_floor);
-floor.setMatrix(0, -10, -5, 100);
+const floor = new MeshActor(base_plane);
+floor.setMatrix(0, -10, -5, 200);
 floor.setColor([1.0, 1.0, 1.0, 1.0]);
 
 const sphere1 = new MeshActor(base_sphere);
 sphere1.setMatrix(-55, 25, 85, 30);
 sphere1.setColor([1.0, 1.0, 1.0, 1.0]);
 
-
 const sphere2 = new MeshActor(base_sphere);
 sphere2.setMatrix(0, 20, 0, 5);
 sphere2.setColor([1.0, 1.0, 1.0, 1.0]);
 
-const arrowX = new MeshActor(base_arrowX);
-arrowX.setMatrix(0, -9, -5, 40);
-const arrowY = new MeshActor(base_arrowY);
-arrowY.setMatrix(0, -9, -5, 40);
-const arrowZ = new MeshActor(base_arrowZ);
-arrowZ.setMatrix(0, -9, -5, 40);
-
-
-
-
-
-
-//TODO: IMPLEMENT MULTIPLE LIGHTS
 
 const L00 = new PointLight(1.45, 90, [-45, 11, 0], [1.0, 1.0, 1.0], [1.0, 1.0, 1.0], [1.0, 1.0, 1.0]);
 const L01 = new PointLight(2, 100, [27, 19.5, -66], [0.0, 1.0, 1.0], [0.0, 1.0, 1.0], [0.0, 1.0, 1.0]);

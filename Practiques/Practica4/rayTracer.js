@@ -22,7 +22,8 @@ function getScene()
 {
     rtScene = ACTIVE_SCENE; //Get scene from wglEngine
     rtCamera = rtScene.camera; //Can access .fov, .position, .forwardVec, .upVec, .rightVec    
-    rtObjects = rtScene.meshActors;
+    //For this exercise we will be using only spheres, planes and triangles
+    rtObjects = rtScene.meshActors; //Can access rtObjects[i].meshObject.material, .getPosition(), .getScale()
     rtLights = rtScene.lights;
 }
 

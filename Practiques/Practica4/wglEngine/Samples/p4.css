@@ -8,21 +8,41 @@ body, html {
     overflow: hidden; /* Prevent scrollbars */
     font-family: "Lucida Sans Unicode", sans-serif;
     font-size: small;
-  }
-  
-  #container {
+}
+
+#container {
     display: flex;
     flex-direction: row;
     width: 100%;
     height: 100%;
-  }
-  
-  #wglCanvas {
-    flex: 1;
+}
+
+#canvasContainer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+
+#canvases {
+    width: 100%;
+}
+
+#wglCanvas, #rtCanvas {
+    width: 700px;
+    height: 700px;
     background-color: #000;
-  }
-  
-  #menu {
+    margin: 5px;
+}
+
+#rtButton {
+    margin-top: 10px;
+    padding: 10px 20px;
+    font-size: 16px;
+}
+
+#menu {
     width: 22.5%;
     min-width: 250px;
     max-width: 300px;
@@ -32,17 +52,17 @@ body, html {
     flex-direction: column;
     padding: 10px;
     overflow-y: auto;
-  }
-  
-  #menu label, #menu select, #menu input {
+}
+
+#menu label, #menu select, #menu input {
     margin-bottom: 15px;
-  }
-  
-  .slidercontainer {
+}
+
+.slidercontainer {
     width: 100%;
-  }
-  
-  .slider {
+}
+
+.slider {
     -webkit-appearance: none;
     width: 50%;
     height: 10px;
@@ -51,9 +71,9 @@ body, html {
     outline: none;
     opacity: 0.7;
     transition: opacity 0.2s;
-  }
-  
-  .slider::-webkit-slider-thumb {
+}
+
+.slider::-webkit-slider-thumb {
     -webkit-appearance: none;
     appearance: none;
     width: 10px;
@@ -61,45 +81,45 @@ body, html {
     border-radius: 30%;
     background: rgb(10, 75, 200);
     cursor: pointer;
-  }
-  
-  .slider::-moz-range-thumb {
+}
+
+.slider::-moz-range-thumb {
     width: 10px;
     height: 10px;
     border-radius: 30%;
     background: rgb(10, 75, 200);
     cursor: pointer;
-  }
-  
-  .slider:hover {
+}
+
+.slider:hover {
     opacity: 1;
-  }
-  
-  .separator {
+}
+
+.separator {
     padding-top: 15px;
     padding-bottom: 15px;
-  }
-  
-  .indent {
+}
+
+.indent {
     padding-left: 15px;
-  }
-  
-  .UI_counter {
+}
+
+.UI_counter {
     padding-bottom: 10px;
-  }
-  
-  .counter {
+}
+
+.counter {
     color: red;
-  }
-  
-  @media (max-width: 768px) {
+}
+
+@media (max-width: 768px) {
     #menu {
         width: 30%;
         min-width: 200px;
     }
-  }
-  
-  @media (max-width: 480px) {
+}
+
+@media (max-width: 480px) {
     #menu {
         width: 100%;
         position: absolute;
@@ -109,5 +129,4 @@ body, html {
     #webglCanvas {
         display: none;
     }
-  }
-  
+}

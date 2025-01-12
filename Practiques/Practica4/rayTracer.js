@@ -1,4 +1,4 @@
-//Global objects
+//Global structures
 let Screen = {
     width 	: 0,
     height 	: 0,
@@ -19,7 +19,19 @@ let rt = {
     incX : null,
     incY : null,
     objects : [],
-    lights : []
+    lights : [],
+    defaultColor : [1, 0, 1],
+    bgColor : ACTIVE_SCENE.input.fogColor
+}
+let hitResult = {
+    t : 0,
+    normal: [0, 1, 0],
+	point: [0, 0, 0],
+	surfaceId: "",
+	type : "",
+	material : null,
+	specular : false,
+	specularCoeff : null
 }
 
 function initHandlers()
@@ -70,8 +82,8 @@ function getScene()
     rt.camera = rt.scene.camera; //Can access .fov, .position, .forwardVec, .upVec, .rightVec    
     rt.objects = rt.scene.meshActors; //Can access rt.objects[i].meshObject.material, .getPosition(), .getScale()
     rt.objects = rt.objects.filter(object => { //Remove objects that are not spheres, planes or triangles from the intersectable objects list
-        const tags = object.meshObject.tags;
-        return tags.includes("sphere") || tags.includes("plane") || tags.includes("triangle");
+        const tag = object.meshObject.tags[0];
+        return tag === "sphere" || tag === "plane" || tag === "triangle";
     });
     rt.lights = rt.scene.lights;
 }
@@ -87,7 +99,7 @@ function render() //Start rendering
     rt.incY = calcIncrement(rt.camera, Screen, "y");
     rt.P0 = calcP0(rt.incX, rt.incY, rt.camera, Screen);
 
-    rayTracing(rt.scene, Screen);
+    rayTracing();
 
     Screen.context.putImageData(Screen.buffer, 0, 0);
 }
@@ -118,11 +130,12 @@ function calcP0(incX, incY, cam, scr)
     return vec3.add(aux, hY); //top left
 }
 
-function rayTracing(scene, screen)
+function rayTracing()
 {
-    for(let x = 0; x < screen.width; x++){
-        for(let y = 0; y < screen.height; y++){
+    for(let x = 0; x < Screen.width; x++){
+        for(let y = 0; y < Screen.height; y++){
             let rayDir = computeRay(x, y);
+            let color = intersectScene(rayDir, 0);
         }
     }
 }
@@ -137,6 +150,55 @@ function computeRay(x, y)
     return vec3.normalize(ray);
 }
 
+function intersectScene(rayDir, depth)
+{
+    let hit = computeFirstHit(rayDir);
+}
+
+function computeFirstHit(rayDir)
+{
+    let center = rt.camera.position;
+    let minT = null;
+    for(let obj of rt.objects){
+        let hit = intersect(obj, rayDir, center);
+        if(hit !== null || hit.t != null){
+            if(minT === null || hit.t < minT.t){
+                minT = hit;
+            }
+        }
+    }
+}
+
+function intersect(obj, rayDir, center)
+{
+    switch(obj.meshObject.tags[0]){
+        case "sphere":
+            return intersectSphere(obj, rayDir, center);
+        case "plane":
+            return intersectPlane(obj, rayDir, center);
+        case "triangle":
+            return intersectTriangle(obj, rayDir, center);
+        default:
+            return null;
+    }
+}
+
+function intersectSphere(sphere, rayDir, center)
+{
+    let a = vec3.dot(rayDir, rayDir);
+    
+}
+
+function intersectPlane(obj, rayDir, center)
+{
+
+}
+
+function intersectTriangle(obj, rayDir, center)
+{
+
+}
+
 function main()
 {
     //Initialize handlers
@@ -145,3 +207,23 @@ function main()
 
 //Run code
 main();
+
+//Helper functions
+function rtMaterial(material, spec = false, specCoef = 0.5) //Converts wglEngine material to rayTracer material
+{
+    material.rtCol = material.Ma;
+    material.spec = spec;
+    if(specular){
+        material.specCoef = specCoef;
+    }
+    else{
+        material.specCoef = null;
+    }
+    return material;
+}
+
+function rtObject(object, id, shadow = true) //Converts wglEngine object to rayTracer object
+{
+    object.id = id;
+    object.shadow = shadow;
+}

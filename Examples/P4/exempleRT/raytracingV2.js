@@ -105,9 +105,9 @@ function rayTracing(Scene, Screen) {
 			var rDirection = computeRay(incX,incY,P0,Scene.Camera,x,y);
 			
 			//We set default color
-			var color = [0.3,0.4,1];
+			var color = [1.0,0.4,1];
 			//We calculate the intersection with all objects
-			color = IntersectScene(Scene, rDirection, Scene.Camera.position, 0);
+			color = IntersectScene(Scene, rDirection, Scene.Camera.position, 4);
 			plot(x,y,color);
 		}
 	}
@@ -151,7 +151,7 @@ function IntersectScene(scene, ray, origin, depth){
 			return [light[0], light[1], light[2]];
 		}
 	}
-	return [0.3, 0.4, 1.0];
+	return [1.0, 0.4, 1.0];
 }
 
 //Function to compute light

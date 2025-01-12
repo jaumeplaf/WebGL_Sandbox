@@ -58,6 +58,10 @@ body, html {
     margin-bottom: 15px;
 }
 
+.hidden {
+    display: none;
+}
+
 .slidercontainer {
     width: 100%;
 }

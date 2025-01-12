@@ -51,17 +51,21 @@ m_shiny01.setMaterialAttributes(
 //Initialize MeshObjects
 const base_plane = new MeshObject(
     SM_Plane, //Mesh origin
-    m_matte01 //Material
+    m_matte01, //Material
+    "plane" //Tag
 );
 const base_sphere = new MeshObject(
     SM_Sphere, //Mesh origin
-    m_matte01 //Material
+    m_matte01, //Material
+    "sphere" //Tag
 );
 const base_triangle = new MeshObject(
     SM_Triangle, //Mesh origin
-    m_matte01 //Material
+    m_matte01, //Material
+    "triangle" //Tag
 );
 const base_lightBulb = new MeshObject(
     SM_Sphere, //Mesh origin
-    m_matte01 //Material
+    m_matte01, //Material
+    "ignore" //Tag
 );

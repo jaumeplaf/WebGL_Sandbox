@@ -1,9 +1,11 @@
 class MeshObject 
 {
-  constructor(inModel, inMaterial)
+  constructor(inModel, inMaterial, tag = null)
   {
     this.model = inModel;
     this.material = inMaterial;
+    this.tags = [];
+    this.addTag(tag);
 
     this.initializeBuffers();
   }
@@ -25,6 +27,11 @@ class MeshObject
     this[bufferIdName] = window.gl.createBuffer();
     window.gl.bindBuffer(window.gl[bufferType], this[bufferIdName]);
     window.gl.bufferData(window.gl[bufferType], new arrayType(data), window.gl.STATIC_DRAW);
+  }
+
+  addTag(tag) 
+  {
+    if(tag) this.tags.push(tag);
   }
 }
 

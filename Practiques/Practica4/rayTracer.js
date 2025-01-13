@@ -21,7 +21,8 @@ let rt = {
     objects : [],
     lights : [],
     defaultColor : [1, 0, 1],
-    bgColor : ACTIVE_SCENE.input.fogColor
+    bgColor : ACTIVE_SCENE.input.fogColor,
+    maxDepth : 5
 }
 let hitResult = {
     t : 0,
@@ -153,6 +154,38 @@ function computeRay(x, y)
 function intersectScene(rayDir, depth)
 {
     let hit = computeFirstHit(rayDir);
+
+    if(hit){
+        if(hit.t !== null){
+            let light = computeLight(hit, rayDir, depth)
+
+            if(hit.specular && depth < rt.maxDepth){
+                let r = computeReflection(hit, rayDir);
+                let newHitPoint = vec3.add(hit.point, vec3.multiply(vec3.fromValues(0.001, 0.001, 0.001), r));
+                let col = intersectScene(r, depth + 1);
+                let vCol = vec3.fromValues(col[0], col[1], col[2]);
+                light = vec3.add(light, vec3.multiply(vec3.fromValues(hit.specularCoeff, hit.specularCoeff, hit.specularCoeff), vCol));
+            }
+            return [light[0], light[1], light[2]];
+        }
+    }
+    return rt.bgColor;
+}
+
+function computeLight(hit, ray, depth)
+{
+    
+}
+
+function computeReflection(hit, rayDir)
+{
+    let n = hit.normal;
+
+    let a = vec3.multiply(vec3.fromValues(2, 2, 2), n);
+    let b = vec3.dot(rayDir, n);
+    let c = vec3.multiply(a, vec3.fromValues(b, b, b));
+
+    return vec3.normalize(vec3.subtract(rayDir, c));
 }
 
 function computeFirstHit(rayDir)
@@ -167,6 +200,7 @@ function computeFirstHit(rayDir)
             }
         }
     }
+    return minT;
 }
 
 function intersect(obj, rayDir)

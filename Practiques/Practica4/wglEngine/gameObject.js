@@ -41,7 +41,8 @@ class MeshActor
         });
     }
 
-    getPosition() {
+    getPosition() 
+    {
         return [
             this.modelMatrixIndex[12],
             this.modelMatrixIndex[13],
@@ -49,12 +50,26 @@ class MeshActor
         ];
     }
     
-    getScale() {
+    getScale() 
+    {
         return [
             this.modelMatrixIndex[0],
             this.modelMatrixIndex[5],
             this.modelMatrixIndex[10]
         ];
+  }
+
+  getUniformScale()
+  {
+    let vScale = this.getScale();
+    return Math.max(vScale[0], vScale[1], vScale[2]);
+  }
+
+  getPlaneNormal()
+  {
+    let vNormal = vec3.fromValues(0, 1, 0); // Assuming the plane's normal is initially (0, 1, 0)
+    vec3.transformMat4(vNormal, vNormal, this.modelMatrixIndex);
+    return vec3.normalize(vNormal, vNormal);
   }
 
   setMatrix(tx, ty, tz, uniformS)

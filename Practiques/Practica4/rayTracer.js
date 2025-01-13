@@ -157,10 +157,10 @@ function intersectScene(rayDir, depth)
 
 function computeFirstHit(rayDir)
 {
-    let center = rt.camera.position;
     let minT = null;
     for(let obj of rt.objects){
-        let hit = intersect(obj, rayDir, center);
+        let rtObject = rtObject(obj, `object_${rt.objects.indexOf(obj)}`);
+        let hit = intersect(obj, rayDir);
         if(hit !== null || hit.t != null){
             if(minT === null || hit.t < minT.t){
                 minT = hit;
@@ -169,34 +169,139 @@ function computeFirstHit(rayDir)
     }
 }
 
-function intersect(obj, rayDir, center)
+function intersect(obj, rayDir)
 {
     switch(obj.meshObject.tags[0]){
         case "sphere":
-            return intersectSphere(obj, rayDir, center);
+            return intersectSphere(obj, rayDir);
         case "plane":
-            return intersectPlane(obj, rayDir, center);
+            return intersectPlane(obj, rayDir);
         case "triangle":
-            return intersectTriangle(obj, rayDir, center);
+            return intersectTriangle(obj, rayDir);
         default:
             return null;
     }
 }
 
-function intersectSphere(sphere, rayDir, center)
+function intersectSphere(sphere, rayDir)
 {
     let a = vec3.dot(rayDir, rayDir);
+
+    let sRad = sphere.meshObject.getUniformScale() / 2; //Sphere radius
+    let sPos = sphere.meshObject.getPosition();
+    let sCenter = vec3.fromValues(sPos[0], sPos[1], sPos[2]); //Sphere center
+    let cCenter = vec3.fromValues(rt.camera.position[0], rt.camera.position[1], rt.camera.position[2]); //Camera position
+
+    let diff = vec3.subtract(cCenter, sCenter); //Vector from camera to sphere center
+    let mult = vec3.dot(rayDir, diff); 
+    let b = 2 * mult;
+
+    let diffTot = vec3.dot(diff, diff);
+    let c = diffTot - Math.pow(sRad, 2);
+
+    let discrim = Math.pow(b, 2) - (4 * a * c);
+    if(discrim < 0) return null;
+    let t1 = (-b + Math.sqrt(discrim)) / (2 * a);
+    let t2 = (-b - Math.sqrt(discrim)) / (2 * a);
+    let t = 0;
+
+    if(t1 > 0 || t2 > 0){
+        if(t1 < t2 && t1 > 0) t = t1;
+        else if(t2 > 0) t = t2;
+        else t = null;
+    }
     
+    let point = null;
+    let normal = null;
+    if(t !== null){
+        point = vec3.add(cCenter, vec3.multiply(vec3.fromValues(t, t, t), rayDir));
+        normal = vec3.divide(vec3.subtract(point, sCenter), vec3.fromValues(sRad, sRad, sRad));
+    }
+
+    let hit = {... hitResult };
+    hit.t = t;
+    hit.normal = normal;
+    hit.point = point;
+    hit.surfaceId = sphere.id;
+    hit.type = sphere.meshObject.tags[0];
+    hit.material = rtMaterial(sphere.meshObject.material);
+    hit.specular = hit.material.spec;
+    hit.specularCoeff = hit.material.specCoef;
+
+    return hit;
 }
 
-function intersectPlane(obj, rayDir, center)
+function intersectPlane(obj, rayDir)
 {
+    let hit = {... hitResult };
+    let pNorm = obj.meshObject.getPlaneNormal(); //Plane normal
+    let pPos = obj.meshObject.getPosition(); //Plane center
+    let d = vec3.dot(pNorm, pPos) * -1; //Plane equation
+    let numer = (-d) - vec3.dot(pNorm, rt.camera.position);
+    let denom = vec3.dot(pNorm, rayDir);
+    let t = numer / denom;
+    let point = vec3.add(rt.camera.position, vec3.multiply(vec3.fromValues(t, t, t), rayDir));
 
+    if(t >= 0) hit.t = t;
+    else hit.t = null;
+
+    hit.normal = pNorm;
+    hit.point = point;
+    hit.surfaceId = obj.id;
+    hit.type = obj.meshObject.tags[0];
+    hit.material = rtMaterial(obj.meshObject.material);
+    hit.specular = hit.material.spec;
+    hit.specularCoeff = hit.material.specCoef;
+
+    return hit;
 }
 
-function intersectTriangle(obj, rayDir, center)
+function intersectTriangle(obj, rayDir)
 {
+    let hit = {... hitResult };
+    const limit = 0.00001;
 
+    let vertices = obj.meshObject.vertices;
+    let v0 = vec3.fromValues(vertices[0], vertices[1], vertices[2]);
+    let v1 = vec3.fromValues(vertices[3], vertices[4], vertices[5]);
+    let v2 = vec3.fromValues(vertices[6], vertices[7], vertices[8]);
+
+    let e1 = vec3.subtract(v1, v0);
+    let e2 = vec3.subtract(v2, v0);
+
+    let h = vec3.cross(rayDir, e2);
+    let a = vec3.dot(e1, h);
+
+    if(a > -limit && a < limit) return null;
+
+    let f = 1 / a;
+    let s = vec3.subtract(rt.camera.position, v0);
+    let u = f * vec3.dot(s, h);
+
+    if(u < 0 || u > 1) return null;
+
+    let q = vec3.cross(s, e1);
+    let v = f * vec3.dot(rayDir, q);
+
+    if(v < 0 || u + v > 1) return null;
+
+    let t = f * vec3.dot(e2, q);
+
+    if(t < limit) return null;
+
+    let point = vec3.add(rt.camera.position, vec3.multiply(vec3.fromValues(t, t, t), rayDir));
+    let normal = vec3.cross(e1, e2);
+
+    hit.t = Math.abs(t);
+    hit.normal = vec3.normalize(normal);
+    hit.point = point;
+    hit.surfaceId = obj.id;
+    hit.type = obj.meshObject.tags[0];
+    hit.material = rtMaterial(obj.meshObject.material);
+    hit.specular = hit.material.spec;
+    hit.specularCoeff = hit.material.specCoef;
+
+    return hit;
 }
 
 function main()
@@ -213,12 +318,7 @@ function rtMaterial(material, spec = false, specCoef = 0.5) //Converts wglEngine
 {
     material.rtCol = material.Ma;
     material.spec = spec;
-    if(specular){
-        material.specCoef = specCoef;
-    }
-    else{
-        material.specCoef = null;
-    }
+    material.specCoef = material.spec ? specCoef : null;
     return material;
 }
 

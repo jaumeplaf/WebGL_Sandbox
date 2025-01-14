@@ -93,8 +93,8 @@ function updateRtDisplay(time) //Update render time display
 
 function render() //Start rendering
 { 
-    rt.incX = calcIncrement(rt.camera, Screen, 0);
-    rt.incY = calcIncrement(rt.camera, Screen, 1);
+    rt.incX = calcIncrement(0);
+    rt.incY = calcIncrement(1);
     rt.P0 = calcP0(rt.incX, rt.incY, rt.camera, Screen);
 
     rayTracing();
@@ -102,21 +102,25 @@ function render() //Start rendering
     Screen.context.putImageData(Screen.buffer, 0, 0);
 }
 
-function calcIncrement(cam, scr, n)
+function calcIncrement(n)
 {
-    let t = (rt.camera.fov * Math.PI / 180);
+    let fov = radToDeg(rt.camera.fov);
+    console.log(fov);
+    let t = (fov * Math.PI / 180);
     let w = 2*Math.tan(t/2);
-    let h = w*scr.ratio;
-    let aux = w / scr.width;
+    let h = w*Screen.ratio;
+    let aux = w / Screen.width;
     switch(n)
     {
         case 0:
             let x = vec3.create();
-            vec3.scale(x, cam.rightVec, aux);
+            vec3.scale(x, rt.camera.rightVec, aux);
+            //console.log("Increment X: " + x);
             return x;
         case 1:
             let y = vec3.create();
-            vec3.scale(y, cam.upVec, aux);
+            vec3.scale(y, rt.camera.upVec, aux);
+            //console.log("Increment Y: " + y);
             return y;
         default:
             throw new Error("Invalid axis, should be 'x' or 'y'");
@@ -233,6 +237,7 @@ function computeFirstHit(rayDir)
         if(hit !== null && hit.t != null){
             if(minT === null || hit.t < minT.t){
                 minT = hit;
+                //console.log("Hit: " + hit.t + ", ID: " + hit.surfaceId);
             }
         }
         else{
@@ -402,6 +407,8 @@ function plot(x, y, color)
     Screen.buffer.data[index + 1] = color[1] * 255;
     Screen.buffer.data[index + 2] = color[2] * 255;
     Screen.buffer.data[index + 3] = 255;
+
+    //console.log("Plotting at " + x + ", " + y + " with color " + color);
 
     return index;
 }

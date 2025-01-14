@@ -10,6 +10,8 @@ class MeshActor
         this.getBuffers();
         this.initColors();
         this.scene.addMeshActor(this);
+
+        this.id = this.scene.meshActors.length - 1;
     }
 
     initColors()

@@ -42,8 +42,6 @@ function inicialitzar(Scene) {
 function calcularIncrementX(Cam,Scr) {
 	var rati = (Scr.height/Scr.width);
 
-	console.log(Cam.fov);
-
 	var theta = (Cam.fov * Math.PI / 180);
 	var w = 2*Math.tan(theta/2); // Calculem w' = 2*tg(theta/2)
 	var h = w*rati; // Calculem h' = w'*rati

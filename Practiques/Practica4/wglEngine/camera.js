@@ -57,6 +57,11 @@ class Camera
         return this.viewMatrix;
     }
 
+    getPosition()
+    {
+        return this.position;
+    }
+
     getSprint(inPlayer)
     {
         if(inPlayer.sprint) {

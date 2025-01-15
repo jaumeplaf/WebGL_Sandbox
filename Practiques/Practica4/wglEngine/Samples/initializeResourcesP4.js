@@ -69,3 +69,16 @@ const base_lightBulb = new MeshObject(
     m_matte01, //Material
     "ignore" //Tag
 );
+
+const base_arrowX = new MeshObject(
+    SM_DebugArrow_X, //Mesh origin
+    m_matte01 //Material
+);
+const base_arrowY = new MeshObject(
+    SM_DebugArrow_Y, //Mesh origin
+    m_matte01 //Material
+);
+const base_arrowZ = new MeshObject(
+    SM_DebugArrow_Z, //Mesh origin
+    m_matte01 //Material
+);

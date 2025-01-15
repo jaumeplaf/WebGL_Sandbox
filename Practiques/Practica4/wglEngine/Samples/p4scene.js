@@ -18,6 +18,12 @@ const sphere2 = new MeshActor(base_sphere);
 sphere2.setMatrix(0, 20, 0, 5);
 sphere2.setColor([1.0, 1.0, 1.0, 1.0]);
 
+const arrowX = new MeshActor(base_arrowX);
+arrowX.setMatrix(0, -9, -5, 40);
+const arrowY = new MeshActor(base_arrowY);
+arrowY.setMatrix(0, -9, -5, 40);
+const arrowZ = new MeshActor(base_arrowZ);
+arrowZ.setMatrix(0, -9, -5, 40);
 
 const L00 = new PointLight(1.45, 90, [-45, 11, 0], [1.0, 1.0, 1.0], [1.0, 1.0, 1.0], [1.0, 1.0, 1.0]);
 const L01 = new PointLight(2, 100, [27, 19.5, -66], [0.0, 1.0, 1.0], [0.0, 1.0, 1.0], [0.0, 1.0, 1.0]);

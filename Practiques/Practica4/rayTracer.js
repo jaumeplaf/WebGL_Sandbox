@@ -11,6 +11,7 @@ let rt = {
     display : document.getElementById('rtDisplay'),
     renderButton : document.getElementById('rtButton'),
     renderKey : 'Enter',
+    debugKey : 'ñ',
     theta : Math.PI,
     phi : -Math.PI/2.0,
     scene : null,
@@ -22,7 +23,10 @@ let rt = {
     lights : [],
     defaultColor : [1, 0, 1],
     bgColor : ACTIVE_SCENE.input.fogColor,
-    maxDepth : 2
+    maxDepth : 2,
+    fVec: null,
+    rVec: null,
+    uVec: null
 }
 let hitResult = {
     t : 0,
@@ -70,6 +74,9 @@ function initHandlers()
             const renderTime = endTime - startTime;
             updateRtDisplay(renderTime);
         }
+        if(event.key === rt.debugKey) {
+            debug();
+        }
     });
 }
 
@@ -93,19 +100,40 @@ function updateRtDisplay(time) //Update render time display
 
 function render() //Start rendering
 { 
+
+    
     rt.incX = calcIncrement(0);
     rt.incY = calcIncrement(1);
     rt.P0 = calcP0(rt.incX, rt.incY, rt.camera, Screen);
-
+    
+    debug();
     rayTracing();
 
     Screen.context.putImageData(Screen.buffer, 0, 0);
 }
 
+function debug()
+{
+    rt.camera.getDirectionVectors();
+    console.log("____Debugging____")
+    console.log("Camera position: " + rt.camera.position);
+    console.log("Camera forward: " + rt.camera.forwardVec);
+    console.log("Camera up: " + rt.camera.upVec);
+    console.log("Camera right: " + rt.camera.rightVec);
+    console.log("Camera fov: " + rt.camera.fov);
+    console.log("Camera ratio: " + Screen.ratio);
+    console.log("Screen width: " + Screen.width);
+    console.log("Screen height: " + Screen.height);
+    if(rt.incX) console.log("Increment X: " + rt.incX);
+    if(rt.incY) console.log("Increment Y: " + rt.incY);
+    if(rt.P0) console.log("P0: " + rt.P0);
+    console.log("Cam pos: " + rt.camera.getPosition());
+}
+
 function calcIncrement(n)
 {
+    rt.camera.getDirectionVectors();
     let fov = radToDeg(rt.camera.fov);
-    console.log(fov);
     let t = (fov * Math.PI / 180);
     let w = 2*Math.tan(t/2);
     let h = w*Screen.ratio;
@@ -123,14 +151,15 @@ function calcIncrement(n)
             //console.log("Increment Y: " + y);
             return y;
         default:
-            throw new Error("Invalid axis, should be 'x' or 'y'");
+            throw new Error("Invalid axis, should be '0' for X or '1' for Y");
     }
 }
 
 function calcP0(incX, incY, cam, scr)
 {
+    rt.camera.getDirectionVectors();
     let P = vec3.create();
-    vec3.subtract(P, cam.position, cam.forwardVec); //screen center
+    vec3.add(P, cam.position, cam.forwardVec); //screen center
     let hX = vec3.create();
     vec3.scale(hX, incX, ((scr.width - 1) / 2)); //half width
     let hY = vec3.create();
@@ -265,7 +294,7 @@ function intersectSphere(sphere, rayDir)
 {
     let a = vec3.dot(rayDir, rayDir);
 
-    let sRad = sphere.getUniformScale() / 2; //Sphere radius
+    let sRad = sphere.getUniformScale(); //Sphere radius
     let sPos = sphere.getPosition();
     let sCenter = vec3.fromValues(sPos[0], sPos[1], sPos[2]); //Sphere center
     let cCenter = vec3.fromValues(rt.camera.position[0], rt.camera.position[1], rt.camera.position[2]); //Camera position

@@ -32,7 +32,7 @@ class Camera
     initializeCamera()
     {
         this.setProjectionMatrix();
-        this.setViewMatrix(this.position, this.target, this.up);
+        this.setViewMatrix();
 
         updateFovDisplay(inFov.value);
     }
